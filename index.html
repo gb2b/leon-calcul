@@ -161,7 +161,7 @@ svg{flex:none}
   display:flex; align-items:center; justify-content:space-between; gap:.5rem;
 }
 .ticket h2 em{font-style:normal; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-family:var(--body); font-weight:600}
-.lines{margin:0; padding:.4rem .55rem; list-style:none; overflow-y:auto; flex:1; min-height:3rem}
+.lines{margin:0; padding:.4rem .55rem; list-style:none; overflow-y:auto; flex:1; min-height:5rem}
 .empty{color:var(--muted); text-align:center; padding:1.6rem .8rem; font-size:.88rem}
 .line{display:grid; grid-template-columns:1fr auto; gap:.2rem .6rem; padding:.5rem .45rem; border-bottom:1px dashed var(--line)}
 .line:last-child{border-bottom:0}
@@ -183,7 +183,7 @@ svg{flex:none}
 }
 .total span{font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
 .total strong{font-family:var(--mono); font-weight:700; font-size:2.6rem; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
-.pay{padding:.8rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.6rem}
+.pay{padding:.7rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.45rem}
 .pay-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
 .pay-row label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .pay input{
@@ -191,9 +191,30 @@ svg{flex:none}
   padding:.5rem .6rem; border-radius:10px; border:1px solid var(--line);
   background:var(--surface-2); color:var(--ink);
 }
-.cash-chips{display:grid; grid-template-columns:repeat(4,1fr); gap:.4rem}
-.chip{background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:.4rem .75rem; font-family:var(--mono); font-weight:600; font-size:.88rem}
+.cash-head{display:flex; align-items:center; gap:.5rem}
+.cash-head label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.cash-head input{flex:1; min-width:0; width:auto}
+.cash-clear{
+  border:1px solid var(--line); background:var(--surface-2); border-radius:10px;
+  padding:.5rem .7rem; font-size:.8rem; font-weight:600; color:var(--muted);
+}
+.cash-clear:hover:not(:disabled){border-color:var(--danger); color:var(--danger)}
+.cash-clear:disabled{opacity:.4; cursor:not-allowed}
+.denoms{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.35rem}
+.chip{
+  position:relative; background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+  padding:.5rem .2rem; font-family:var(--mono); font-weight:700; font-size:min(.9rem, 3.6vw);
+  min-height:2.6rem; display:flex; align-items:center; justify-content:center; white-space:nowrap;
+}
 .chip:hover{border-color:var(--accent)}
+.chip.note{background:var(--accent-soft); border-color:var(--accent-soft)}
+.chip.used{border-color:var(--accent)}
+.chip .x{
+  position:absolute; top:-.4rem; right:-.3rem; background:var(--accent); color:var(--accent-ink);
+  border-radius:999px; min-width:1.35rem; height:1.35rem; padding:0 .3rem; font-size:.72rem;
+  display:none; align-items:center; justify-content:center;
+}
+.chip.multi .x{display:flex}
 .change{background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.6rem .8rem; display:flex; align-items:baseline; justify-content:space-between; gap:.6rem}
 .change span{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
 .change strong{font-family:var(--mono); font-size:1.7rem; line-height:1}
@@ -434,16 +455,12 @@ body.settings .panel{transform:none; visibility:visible}
       <strong id="totalOut" aria-live="polite">0,00 €</strong>
     </div>
     <div class="pay">
-      <div class="pay-row">
+      <div class="cash-head">
         <label for="cash">Reçu</label>
-        <input id="cash" type="number" inputmode="decimal" step="0.5" min="0" placeholder="0">
+        <input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Montant reçu en euros">
+        <button type="button" class="cash-clear" id="cashClear" disabled>Effacer</button>
       </div>
-      <div class="cash-chips">
-        <button type="button" class="chip" data-cash="5">5 €</button>
-        <button type="button" class="chip" data-cash="10">10 €</button>
-        <button type="button" class="chip" data-cash="20">20 €</button>
-        <button type="button" class="chip" data-cash="50">50 €</button>
-      </div>
+      <div class="denoms" id="denoms" role="group" aria-label="Pièces et billets reçus"></div>
       <div class="change" id="changeBox" hidden>
         <span>À rendre</span>
         <strong id="changeOut">0,00 €</strong>
@@ -649,6 +666,38 @@ const changeOut = document.getElementById("changeOut");
 const cashBtn = document.getElementById("cashBtn");
 const clearBtn = document.getElementById("clearBtn");
 
+/* Monnaie reçue : on cumule les appuis, tout est compté en centimes. */
+const COINS = [10, 20, 50, 100, 200];              // 0,10 € à 2 €
+const NOTES = [500, 1000, 2000, 5000, 10000];      // 5 € à 100 €
+let givenCents = 0;
+let denomCount = {};
+
+const denomLabel = c => c % 100 === 0 ? (c / 100) + " €" : (c / 100).toFixed(2).replace(".", ",");
+const chipHtml = (c, cls) =>
+  `<button type="button" class="chip ${cls}" data-cash="${c}">${denomLabel(c)}<span class="x" data-dn="${c}"></span></button>`;
+document.getElementById("denoms").innerHTML =
+  COINS.map(c => chipHtml(c, "coin")).join("") + NOTES.map(c => chipHtml(c, "note")).join("");
+
+function addCash(cents){
+  givenCents += cents;
+  denomCount[cents] = (denomCount[cents] || 0) + 1;
+  renderCash();
+}
+function clearCash(){
+  givenCents = 0; denomCount = {}; renderCash();
+}
+function renderCash(syncInput = true){
+  if (syncInput) cashInput.value = givenCents ? (givenCents / 100).toFixed(2).replace(".", ",") : "";
+  document.getElementById("cashClear").disabled = !givenCents;
+  document.querySelectorAll("[data-dn]").forEach(x => {
+    const n = denomCount[x.dataset.dn] || 0;
+    x.textContent = n > 1 ? "×" + n : "";
+    x.closest(".chip").classList.toggle("used", n > 0);
+    x.closest(".chip").classList.toggle("multi", n > 1);
+  });
+  updateChange();
+}
+
 function add(id, n){
   order[id] = (order[id] || 0) + n;
   if (order[id] <= 0) delete order[id];
@@ -694,12 +743,11 @@ function render(){
 }
 
 function updateChange(){
-  const given = parseFloat((cashInput.value || "").replace(",", "."));
-  const t = total();
-  if (!isFinite(given) || given <= 0 || t <= 0){ changeBox.hidden = true; return; }
+  const t = Math.round(total() * 100);
+  if (givenCents <= 0 || t <= 0){ changeBox.hidden = true; return; }
   changeBox.hidden = false;
-  const diff = given - t;
-  changeOut.textContent = diff >= 0 ? euro(diff) : "Manque " + euro(-diff);
+  const diff = givenCents - t;
+  changeOut.textContent = diff >= 0 ? euro(diff / 100) : "Manque " + euro(-diff / 100);
 }
 
 function renderDay(){
@@ -711,7 +759,7 @@ function renderDay(){
 }
 
 function resetOrder(){
-  order = {}; cashInput.value = ""; render();
+  order = {}; clearCash(); render();
 }
 function backToMenu(){
   document.body.classList.remove("sheet");
@@ -796,7 +844,7 @@ document.addEventListener("click", e => {
   const delBtn = e.target.closest("[data-del]");
   if (delBtn){ delete order[delBtn.dataset.del]; render(); return; }
   const chip = e.target.closest("[data-cash]");
-  if (chip){ cashInput.value = chip.dataset.cash; updateChange(); return; }
+  if (chip){ addCash(parseInt(chip.dataset.cash, 10)); return; }
   const tab = e.target.closest("[data-cat-set]");
   if (tab){
     activeCat = tab.dataset.catSet === "__all" ? null : tab.dataset.catSet;
@@ -812,7 +860,13 @@ document.addEventListener("click", e => {
   if (!e.target.closest(".btn.armed")) disarm();
 });
 
-cashInput.addEventListener("input", updateChange);
+cashInput.addEventListener("input", () => {
+  const v = parseFloat((cashInput.value || "").replace(",", "."));
+  givenCents = isFinite(v) && v > 0 ? Math.round(v * 100) : 0;
+  denomCount = {};                 // saisie libre : le détail pièces/billets n'a plus de sens
+  renderCash(false);
+});
+document.getElementById("cashClear").addEventListener("click", clearCash);
 
 clearBtn.addEventListener("click", () => {
   if (!count()) return;
