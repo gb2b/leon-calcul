@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Caisse Léon en Rue Libre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#EFF2EE; --surface:#FFFFFF; --surface-2:#E5EAE3; --line:#CFD8CD;
+  --ink:#131A16; --muted:#55635B;
+  --accent:#0E6B4C; --accent-ink:#FFFFFF; --accent-soft:#DCEDE4;
+  --amber:#F2B705; --amber-ink:#221900;
+  --danger:#A32B1B;
+  --shadow:0 1px 2px rgba(19,26,22,.08), 0 8px 24px rgba(19,26,22,.06);
+  --r:14px;
+  --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
+  --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#313E37;
+    --ink:#E9F0EA; --muted:#9DACA2;
+    --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
+    --amber:#F5C243; --amber-ink:#221900;
+    --danger:#F08A7A;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#313E37;
+  --ink:#E9F0EA; --muted:#9DACA2;
+  --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
+  --amber:#F5C243; --amber-ink:#221900;
+  --danger:#F08A7A;
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+html{font-size:18px;-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-family:var(--body); font-size:1rem; line-height:1.45;
+  padding-bottom:6.5rem;
+}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:600}
+
+/* ---------- Header ---------- */
+.top{
+  position:sticky; top:0; z-index:30;
+  background:var(--surface); border-bottom:1px solid var(--line);
+  display:flex; align-items:center; gap:.75rem 1rem; flex-wrap:wrap;
+  padding:.6rem clamp(.7rem,2.5vw,1.4rem);
+}
+.brand{display:flex; flex-direction:column; margin-right:auto; min-width:0}
+.brand b{font-family:var(--display); font-weight:800; font-size:1.15rem; letter-spacing:-.01em; line-height:1.1}
+.brand span{font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.tools{display:flex; align-items:center; gap:.4rem}
+.tool{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
+  min-height:2.6rem; min-width:2.6rem; padding:0 .7rem; font-weight:600;
+  display:inline-flex; align-items:center; justify-content:center; gap:.35rem;
+}
+.tool:hover{border-color:var(--accent)}
+.tool small{font-size:.7rem; color:var(--muted)}
+.sizer{display:flex; align-items:center; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.sizer button{background:none; border:0; min-height:2.6rem; min-width:2.4rem; font-weight:700}
+.sizer button:hover{background:var(--accent-soft)}
+.sizer span{font-size:.68rem; color:var(--muted); padding:0 .35rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600}
+
+/* ---------- Layout ---------- */
+.wrap{
+  display:grid; grid-template-columns:1fr; gap:1.25rem;
+  max-width:1240px; margin:0 auto; padding:1.1rem clamp(.7rem,2.5vw,1.4rem);
+}
+@media (min-width:980px){
+  .wrap{grid-template-columns:minmax(0,1fr) 24rem; align-items:start}
+  body{padding-bottom:1rem}
+}
+
+/* ---------- Menu ---------- */
+.cat{margin:0 0 1.4rem}
+.cat h2{
+  font-family:var(--display); font-weight:600; font-size:.82rem; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--muted); margin:0 0 .55rem;
+  display:flex; align-items:center; gap:.6rem;
+}
+.cat h2::after{content:""; flex:1; height:1px; background:var(--line)}
+.grid{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr))}
+.item{
+  position:relative; text-align:left; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r); padding:.85rem .9rem; min-height:4.6rem;
+  display:flex; flex-direction:column; justify-content:space-between; gap:.5rem;
+  box-shadow:var(--shadow); transition:transform .08s ease, border-color .12s ease;
+}
+.item:hover{border-color:var(--accent)}
+.item:active{transform:scale(.98)}
+.item .name{font-weight:600; line-height:1.25; text-wrap:balance}
+.item .sub{display:block; font-weight:400; font-size:.8rem; color:var(--muted); margin-top:.15rem}
+.item .price{font-family:var(--mono); font-weight:700; font-size:1.05rem; color:var(--accent)}
+.item.on{border-color:var(--accent); background:var(--accent-soft)}
+.qty-badge{
+  position:absolute; top:-.55rem; right:-.5rem; min-width:2rem; height:2rem; padding:0 .45rem;
+  border-radius:1rem; background:var(--accent); color:var(--accent-ink);
+  font-family:var(--mono); font-weight:700; font-size:1rem;
+  display:none; align-items:center; justify-content:center;
+}
+.item.on .qty-badge{display:flex}
+
+/* ---------- Ticket ---------- */
+.ticket{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
+}
+@media (min-width:980px){ .ticket{position:sticky; top:5.2rem; max-height:calc(100vh - 6.4rem)} }
+.ticket h2{
+  font-family:var(--display); font-size:1rem; font-weight:800; margin:0;
+  padding:.85rem 1rem; border-bottom:1px solid var(--line);
+  display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+}
+.ticket h2 em{font-style:normal; font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-family:var(--body); font-weight:600}
+.lines{margin:0; padding:.4rem .55rem; list-style:none; overflow-y:auto; flex:1; min-height:3rem}
+.empty{color:var(--muted); text-align:center; padding:1.6rem .8rem; font-size:.9rem}
+.line{display:grid; grid-template-columns:1fr auto; gap:.2rem .6rem; padding:.5rem .45rem; border-bottom:1px dashed var(--line)}
+.line:last-child{border-bottom:0}
+.line .lname{font-weight:600; line-height:1.2}
+.line .lunit{font-size:.75rem; color:var(--muted)}
+.line .lsum{font-family:var(--mono); font-weight:700; align-self:center; text-align:right}
+.stepper{grid-column:1/-1; display:flex; align-items:center; gap:.4rem; margin-top:.35rem}
+.stepper button{
+  width:2.5rem; height:2.5rem; border-radius:9px; border:1px solid var(--line);
+  background:var(--surface-2); font-weight:700; font-size:1.15rem; line-height:1;
+}
+.stepper button:hover{border-color:var(--accent)}
+.stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center; font-size:1.05rem}
+.stepper .del{margin-left:auto; width:auto; padding:0 .7rem; font-size:.78rem; color:var(--danger); background:none; border-color:transparent}
+
+.total{
+  background:var(--accent); color:var(--accent-ink); padding:.9rem 1rem;
+  display:flex; align-items:baseline; justify-content:space-between; gap:.6rem;
+}
+.total span{font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
+.total strong{font-family:var(--mono); font-weight:700; font-size:2.6rem; line-height:1; letter-spacing:-.02em}
+.pay{padding:.8rem 1rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.6rem}
+.pay-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
+.pay-row label{font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.pay input{
+  font-family:var(--mono); font-weight:700; font-size:1.1rem; width:6.5rem;
+  padding:.5rem .6rem; border-radius:10px; border:1px solid var(--line);
+  background:var(--surface-2); color:var(--ink);
+}
+.chip{background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:.4rem .75rem; font-family:var(--mono); font-weight:600; font-size:.9rem}
+.chip:hover{border-color:var(--accent)}
+.change{background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.6rem .8rem; display:flex; align-items:baseline; justify-content:space-between; gap:.6rem}
+.change span{font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
+.change strong{font-family:var(--mono); font-size:1.7rem; line-height:1}
+.actions{display:flex; gap:.5rem; padding:0 1rem 1rem}
+.btn{
+  flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
+  min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
+}
+.btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.btn:disabled{opacity:.45; cursor:not-allowed}
+
+/* ---------- Day tally ---------- */
+.day{
+  margin-top:1rem; border:1px dashed var(--line); border-radius:var(--r);
+  padding:.7rem .9rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+  color:var(--muted); font-size:.85rem;
+}
+.day b{color:var(--ink); font-family:var(--mono)}
+.day button{margin-left:auto; background:none; border:0; text-decoration:underline; font-size:.8rem; color:var(--muted)}
+
+/* ---------- Mobile bar + sheet ---------- */
+.bar{
+  position:fixed; left:0; right:0; bottom:0; z-index:40;
+  background:var(--surface); border-top:1px solid var(--line);
+  padding:.6rem clamp(.7rem,2.5vw,1.4rem); display:flex; align-items:center; gap:.7rem;
+  box-shadow:0 -6px 20px rgba(0,0,0,.12);
+}
+.bar .b-total{display:flex; flex-direction:column; line-height:1.1}
+.bar .b-total span{font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.bar .b-total strong{font-family:var(--mono); font-size:1.8rem}
+.bar .btn{flex:0 1 auto; padding:0 1.1rem}
+@media (min-width:980px){ .bar{display:none} }
+@media (max-width:979px){
+  .ticket{
+    position:fixed; inset:0; z-index:50; border-radius:0; border:0;
+    transform:translateY(100%); transition:transform .22s ease; visibility:hidden;
+  }
+  body.sheet .ticket{transform:none; visibility:visible}
+  body.sheet{overflow:hidden}
+  .ticket .close{display:inline-flex}
+}
+.ticket .close{display:none; background:var(--surface-2); border:1px solid var(--line); border-radius:9px; width:2.4rem; height:2.4rem; align-items:center; justify-content:center; font-size:1.2rem; line-height:1}
+@media (prefers-reduced-motion:reduce){ *{transition:none !important} }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">
+    <b>Caisse — Léon en Rue Libre</b>
+    <span>Festival · plancha &amp; bar</span>
+  </div>
+  <div class="tools">
+    <div class="sizer" role="group" aria-label="Taille du texte">
+      <button type="button" id="fontDown" aria-label="Réduire le texte">A−</button>
+      <span id="fontLabel">100 %</span>
+      <button type="button" id="fontUp" aria-label="Agrandir le texte">A+</button>
+    </div>
+    <button type="button" class="tool" id="themeBtn" aria-label="Changer le thème">
+      <span id="themeIcon">◐</span><small id="themeLabel">Auto</small>
+    </button>
+  </div>
+</header>
+
+<div class="wrap">
+  <main id="menu"></main>
+
+  <aside class="ticket" id="ticket" aria-label="Commande en cours">
+    <h2>
+      Commande <em id="countLabel">0 article</em>
+      <button type="button" class="close" id="closeSheet" aria-label="Fermer la commande">✕</button>
+    </h2>
+    <ul class="lines" id="lines"><li class="empty">Touchez un plat ou une boisson pour l’ajouter.</li></ul>
+    <div class="total">
+      <span>Total à payer</span>
+      <strong id="totalOut" aria-live="polite">0,00 €</strong>
+    </div>
+    <div class="pay">
+      <div class="pay-row">
+        <label for="cash">Reçu</label>
+        <input id="cash" type="number" inputmode="decimal" step="0.5" min="0" placeholder="0">
+        <button type="button" class="chip" data-cash="5">5 €</button>
+        <button type="button" class="chip" data-cash="10">10 €</button>
+        <button type="button" class="chip" data-cash="20">20 €</button>
+        <button type="button" class="chip" data-cash="50">50 €</button>
+      </div>
+      <div class="change" id="changeBox" hidden>
+        <span>À rendre</span>
+        <strong id="changeOut">0,00 €</strong>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" class="btn" id="clearBtn">Annuler</button>
+      <button type="button" class="btn primary" id="cashBtn">Encaisser</button>
+    </div>
+  </aside>
+</div>
+
+<div class="wrap" style="padding-top:0">
+  <div class="day">
+    Journée : <b id="dayCount">0</b> commandes · <b id="dayTotal">0,00 €</b>
+    <button type="button" id="dayReset">Remettre à zéro</button>
+  </div>
+</div>
+
+<div class="bar">
+  <div class="b-total">
+    <span>Total</span>
+    <strong id="barTotal">0,00 €</strong>
+  </div>
+  <button type="button" class="btn primary" id="openSheet">Voir la commande</button>
+</div>
+
+<script>
+const MENU = [
+  { cat:"Plancha", items:[
+    { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8 },
+    { id:"poulet", name:"Poulet mariné + frites", sub:"Marinated chicken and chips", price:9 },
+    { id:"frites", name:"Frites maison", sub:"House fries", price:4 },
+  ]},
+  { cat:"Tapas & dessert", items:[
+    { id:"tapas", name:"Assiette tapas local", sub:"Jambon, fromage brebis/vache (G)", price:8 },
+    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3 },
+  ]},
+  { cat:"Bières", items:[
+    { id:"pression", name:"Bière pression", sub:"Le verre", price:3 },
+    { id:"pichet", name:"Pichet de bière", sub:"1 litre", price:12 },
+    { id:"biobout", name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5 },
+  ]},
+  { cat:"Vins, sangria & champagne", items:[
+    { id:"punch", name:"Punch La Fabrique", sub:"15 cL", price:4 },
+    { id:"sangriaV", name:"Sangria — verre", sub:"15 cL · rouge ou blanche", price:4 },
+    { id:"sangriaB", name:"Sangria — bouteille", sub:"Rouge ou blanche", price:10 },
+    { id:"vinV", name:"Vin — verre", sub:"12 cL · Côtes de Gascogne", price:3 },
+    { id:"vinB", name:"Vin — bouteille", sub:"Blanc, rosé ou rouge", price:12 },
+    { id:"champC", name:"Champagne — coupe", sub:"", price:6 },
+    { id:"champB", name:"Champagne — bouteille", sub:"", price:35 },
+  ]},
+  { cat:"Sans alcool", items:[
+    { id:"ginger", name:"Ginger beer", sub:"", price:2 },
+    { id:"eau15", name:"Eau 1,5 L", sub:"", price:2 },
+    { id:"coca", name:"Coca", sub:"", price:1 },
+    { id:"oasis", name:"Oasis", sub:"", price:1 },
+    { id:"icetea", name:"Ice tea pêche", sub:"", price:1 },
+    { id:"petillante", name:"Eau pétillante", sub:"", price:1 },
+    { id:"sirop", name:"Sirop à l’eau", sub:"", price:1 },
+    { id:"cafe", name:"Café", sub:"", price:1 },
+  ]},
+];
+
+const ALL = {};
+MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = i; }));
+
+const euro = n => n.toFixed(2).replace(".", ",") + " €";
+
+const store = {
+  get(k, d){ try { const v = localStorage.getItem("caisse-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v){ try { localStorage.setItem("caisse-" + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+let order = store.get("order", {});
+let day = store.get("day", { count:0, total:0 });
+
+/* ---------- Menu rendering ---------- */
+const menuEl = document.getElementById("menu");
+menuEl.innerHTML = MENU.map(c => `
+  <section class="cat">
+    <h2>${c.cat}</h2>
+    <div class="grid">
+      ${c.items.map(i => `
+        <button type="button" class="item" data-add="${i.id}">
+          <span class="qty-badge" data-badge="${i.id}">0</span>
+          <span class="name">${i.name}${i.sub ? `<span class="sub">${i.sub}</span>` : ""}</span>
+          <span class="price">${euro(i.price)}</span>
+        </button>`).join("")}
+    </div>
+  </section>`).join("");
+
+/* ---------- Order logic ---------- */
+function add(id, n){
+  order[id] = (order[id] || 0) + n;
+  if (order[id] <= 0) delete order[id];
+  render();
+}
+function total(){
+  return Object.keys(order).reduce((s, id) => s + ALL[id].price * order[id], 0);
+}
+function count(){
+  return Object.keys(order).reduce((s, id) => s + order[id], 0);
+}
+
+const linesEl = document.getElementById("lines");
+const totalOut = document.getElementById("totalOut");
+const barTotal = document.getElementById("barTotal");
+const countLabel = document.getElementById("countLabel");
+const cashInput = document.getElementById("cash");
+const changeBox = document.getElementById("changeBox");
+const changeOut = document.getElementById("changeOut");
+const cashBtn = document.getElementById("cashBtn");
+
+function render(){
+  const ids = Object.keys(order);
+  linesEl.innerHTML = ids.length ? ids.map(id => {
+    const it = ALL[id], q = order[id];
+    return `<li class="line">
+      <span><span class="lname">${it.name}</span><br><span class="lunit">${q} × ${euro(it.price)}</span></span>
+      <span class="lsum">${euro(it.price * q)}</span>
+      <span class="stepper">
+        <button type="button" data-add="${id}" data-n="-1" aria-label="Retirer un ${it.name}">−</button>
+        <span class="n">${q}</span>
+        <button type="button" data-add="${id}" data-n="1" aria-label="Ajouter un ${it.name}">+</button>
+        <button type="button" class="del" data-del="${id}">Supprimer</button>
+      </span>
+    </li>`;
+  }).join("") : `<li class="empty">Touchez un plat ou une boisson pour l’ajouter.</li>`;
+
+  const t = total(), n = count();
+  totalOut.textContent = euro(t);
+  barTotal.textContent = euro(t);
+  countLabel.textContent = n + (n > 1 ? " articles" : " article");
+  cashBtn.disabled = n === 0;
+
+  document.querySelectorAll("[data-badge]").forEach(b => {
+    const q = order[b.dataset.badge] || 0;
+    b.textContent = q;
+    b.closest(".item").classList.toggle("on", q > 0);
+  });
+
+  updateChange();
+  store.set("order", order);
+  renderDay();
+}
+
+function updateChange(){
+  const given = parseFloat((cashInput.value || "").replace(",", "."));
+  const t = total();
+  if (!isFinite(given) || given <= 0 || t <= 0){ changeBox.hidden = true; return; }
+  changeBox.hidden = false;
+  const diff = given - t;
+  changeOut.textContent = diff >= 0 ? euro(diff) : "Manque " + euro(-diff);
+}
+
+function renderDay(){
+  document.getElementById("dayCount").textContent = day.count;
+  document.getElementById("dayTotal").textContent = euro(day.total);
+}
+
+/* ---------- Events ---------- */
+document.addEventListener("click", e => {
+  const addBtn = e.target.closest("[data-add]");
+  if (addBtn){ add(addBtn.dataset.add, parseInt(addBtn.dataset.n || "1", 10)); return; }
+  const delBtn = e.target.closest("[data-del]");
+  if (delBtn){ delete order[delBtn.dataset.del]; render(); return; }
+  const chip = e.target.closest("[data-cash]");
+  if (chip){ cashInput.value = chip.dataset.cash; updateChange(); return; }
+});
+
+cashInput.addEventListener("input", updateChange);
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+  if (count() && !confirm("Annuler cette commande ?")) return;
+  order = {}; cashInput.value = ""; render();
+});
+
+document.getElementById("cashBtn").addEventListener("click", () => {
+  const t = total();
+  if (!t) return;
+  day = { count: day.count + 1, total: day.total + t };
+  store.set("day", day);
+  order = {}; cashInput.value = "";
+  document.body.classList.remove("sheet");
+  render();
+});
+
+document.getElementById("dayReset").addEventListener("click", () => {
+  if (!confirm("Remettre le total de la journée à zéro ?")) return;
+  day = { count:0, total:0 }; store.set("day", day); renderDay();
+});
+
+document.getElementById("openSheet").addEventListener("click", () => document.body.classList.add("sheet"));
+document.getElementById("closeSheet").addEventListener("click", () => document.body.classList.remove("sheet"));
+
+/* ---------- Font size ---------- */
+const SIZES = [16, 18, 21, 24, 28];
+let sizeIdx = store.get("size", 1);
+function applySize(){
+  sizeIdx = Math.max(0, Math.min(SIZES.length - 1, sizeIdx));
+  document.documentElement.style.fontSize = SIZES[sizeIdx] + "px";
+  document.getElementById("fontLabel").textContent = Math.round(SIZES[sizeIdx] / 18 * 100) + " %";
+  store.set("size", sizeIdx);
+}
+document.getElementById("fontUp").addEventListener("click", () => { sizeIdx++; applySize(); });
+document.getElementById("fontDown").addEventListener("click", () => { sizeIdx--; applySize(); });
+applySize();
+
+/* ---------- Theme ---------- */
+const MODES = [
+  { key:"auto",  icon:"◐", label:"Auto" },
+  { key:"light", icon:"☀", label:"Clair" },
+  { key:"dark",  icon:"☾", label:"Sombre" }
+];
+let modeIdx = MODES.findIndex(m => m.key === store.get("theme", "auto"));
+if (modeIdx < 0) modeIdx = 0;
+function applyTheme(){
+  const m = MODES[modeIdx];
+  if (m.key === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", m.key);
+  document.getElementById("themeIcon").textContent = m.icon;
+  document.getElementById("themeLabel").textContent = m.label;
+  store.set("theme", m.key);
+}
+document.getElementById("themeBtn").addEventListener("click", () => {
+  modeIdx = (modeIdx + 1) % MODES.length; applyTheme();
+});
+if (store.get("theme", null)) applyTheme();
+
+render();
+</script>
+</body>
+</html>
