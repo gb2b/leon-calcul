@@ -82,7 +82,7 @@ svg{flex:none}
 .head{position:sticky; top:0; z-index:30; background:var(--surface); border-bottom:1px solid var(--line)}
 .top{display:flex; align-items:center; gap:.75rem; padding:.6rem clamp(.7rem,2.5vw,1.4rem)}
 .brand{display:flex; flex-direction:column; margin-right:auto; min-width:0}
-.brand b{font-family:var(--display); font-weight:800; font-size:1.1rem; letter-spacing:-.01em; line-height:1.15}
+.brand b{font-family:var(--display); font-weight:800; font-size:min(1.1rem, 4.8vw); letter-spacing:-.01em; line-height:1.15; overflow-wrap:anywhere}
 .brand span{font-size:.7rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
 .icon-btn{
   background:var(--surface-2); border:1px solid var(--line); border-radius:11px;
@@ -121,8 +121,9 @@ svg{flex:none}
   text-transform:uppercase; color:var(--c); margin:0 0 .55rem;
   display:flex; align-items:center; gap:.6rem;
 }
+.cat h2 span{min-width:0; overflow-wrap:anywhere}
 .cat h2::after{content:""; flex:1; height:2px; border-radius:2px; background:var(--c); opacity:.35}
-.grid{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fill,minmax(16rem,1fr))}
+.grid{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),1fr))}
 .item{
   text-align:left; background:var(--surface); border:1px solid var(--line);
   border-radius:var(--r); padding:.7rem .8rem; min-height:4.2rem;
@@ -132,15 +133,15 @@ svg{flex:none}
 
 .item:active{transform:scale(.985)}
 .tile{
-  width:2.8rem; height:2.8rem; border-radius:10px; background:var(--surface-2);
+  width:min(2.8rem, 12vw); height:min(2.8rem, 12vw); border-radius:10px; background:var(--surface-2);
   display:flex; align-items:center; justify-content:center; color:var(--c);
 }
-.tile svg{width:1.55rem; height:1.55rem}
-.tile .q{display:none; font-family:var(--mono); font-weight:700; font-size:1.25rem}
+.tile svg{width:min(1.55rem, 6.5vw); height:min(1.55rem, 6.5vw)}
+.tile .q{display:none; font-family:var(--mono); font-weight:700; font-size:min(1.25rem, 5.5vw)}
 .item .name{font-weight:600; line-height:1.25}
 .item .sub{display:block; font-weight:400; font-size:.76rem; color:var(--muted); margin-top:.1rem}
 .item .price{
-  font-family:var(--mono); font-weight:700; font-size:1.15rem; text-align:right;
+  font-family:var(--mono); font-weight:700; font-size:min(1.15rem, 5.2vw); text-align:right;
   font-variant-numeric:tabular-nums; white-space:nowrap;
 }
 .item.on{border-color:var(--c); background:var(--c-soft)}
@@ -156,48 +157,57 @@ svg{flex:none}
 @media (min-width:980px){
   .ticket{position:sticky; top:calc(var(--headh) + 1rem); max-height:calc(100vh - var(--headh) - 2rem)}
 }
+.scroller{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch}
 .ticket h2{
-  font-family:var(--display); font-size:1rem; font-weight:800; margin:0;
-  padding:.8rem 1rem; border-bottom:1px solid var(--line);
-  display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+  font-family:var(--display); font-size:.95rem; font-weight:800; margin:0;
+  padding:.7rem 1rem .1rem;
+  display:flex; align-items:baseline; justify-content:space-between; gap:.5rem; flex-wrap:wrap;
 }
 .ticket h2 em{font-style:normal; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-family:var(--body); font-weight:600}
-.lines{margin:0; padding:.4rem .55rem; list-style:none; overflow-y:auto; flex:1; min-height:5rem}
+.lines{margin:0; padding:.3rem .55rem .5rem; list-style:none}
 .empty{color:var(--muted); text-align:center; padding:1.6rem .8rem; font-size:.88rem}
-.line{display:grid; grid-template-columns:1fr auto; gap:.2rem .6rem; padding:.5rem .45rem; border-bottom:1px dashed var(--line)}
+.line{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.15rem .6rem; padding:.45rem; border-bottom:1px dashed var(--line)}
 .line:last-child{border-bottom:0}
 .line .lname{font-weight:600; line-height:1.2}
 .line .lunit{font-size:.74rem; color:var(--muted)}
 .line .lsum{font-family:var(--mono); font-weight:700; align-self:center; text-align:right; font-variant-numeric:tabular-nums}
-.stepper{grid-column:1/-1; display:flex; align-items:center; gap:.4rem; margin-top:.35rem}
+.stepper{grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; margin-top:.25rem}
 .stepper button{
-  width:2.5rem; height:2.5rem; border-radius:9px; border:1px solid var(--line);
-  background:var(--surface-2); font-weight:700; font-size:1.15rem; line-height:1;
+  width:min(2.5rem, 12vw); height:min(2.5rem, 12vw); border-radius:9px; border:1px solid var(--line);
+  background:var(--surface-2); font-weight:700; font-size:min(1.15rem, 5vw); line-height:1;
+  display:inline-flex; align-items:center; justify-content:center;
 }
 
 .stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center; font-size:1.05rem}
-.stepper .del{margin-left:auto; width:auto; padding:0 .7rem; font-size:.76rem; color:var(--danger); background:none; border-color:transparent}
+.stepper .del{margin-left:auto; color:var(--danger)}
+.stepper .del svg{width:min(1.2rem, 5vw); height:min(1.2rem, 5vw)}
 
 .total{
-  background:var(--accent); color:var(--accent-ink); padding:.9rem 1rem;
-  display:flex; align-items:baseline; justify-content:space-between; gap:.6rem;
+  position:sticky; top:0; z-index:3;
+  background:var(--accent); color:var(--accent-ink); padding:.75rem 1rem;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
 }
-.total span{font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
-.total strong{font-family:var(--mono); font-weight:700; font-size:2.6rem; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.total span{font-size:min(.8rem, 3vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700; white-space:nowrap}
+/* La taille du texte réglable agrandit le contenu, pas les grands nombres :
+   au-delà, le montant débordait ou passait à la ligne sur téléphone. */
+.total strong{
+  font-family:var(--mono); font-weight:700; font-size:min(2.6rem, 12vw); line-height:1;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right;
+}
 .pay{padding:.7rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.45rem}
 .pay-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
 .pay-row label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .pay input{
-  font-family:var(--mono); font-weight:700; font-size:1.1rem; width:6.5rem;
+  font-family:var(--mono); font-weight:700; font-size:min(1.2rem, 5.5vw); width:100%;
   padding:.5rem .6rem; border-radius:10px; border:1px solid var(--line);
-  background:var(--surface-2); color:var(--ink);
+  background:var(--surface-2); color:var(--ink); text-align:right;
 }
 .cash-head{display:flex; align-items:center; gap:.5rem}
-.cash-head label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.cash-head input{flex:1; min-width:0; width:auto}
+.cash-head label{font-size:min(.76rem, 3.4vw); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.cash-head input{flex:1 1 5rem; min-width:0}
 .cash-clear{
   border:1px solid var(--line); background:var(--surface-2); border-radius:10px;
-  padding:.5rem .7rem; font-size:.8rem; font-weight:600; color:var(--muted);
+  padding:.5rem .7rem; font-size:min(.8rem, 3.6vw); font-weight:600; color:var(--muted); white-space:nowrap;
 }
 
 .cash-clear:disabled{opacity:.4; cursor:not-allowed}
@@ -216,10 +226,18 @@ svg{flex:none}
   display:none; align-items:center; justify-content:center;
 }
 .chip.multi .x{display:flex}
-.change{background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.6rem .8rem; display:flex; align-items:baseline; justify-content:space-between; gap:.6rem}
-.change span{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
-.change strong{font-family:var(--mono); font-size:1.7rem; line-height:1}
-.actions{display:flex; gap:.5rem; padding:0 1rem 1rem}
+.change{
+  margin:.6rem 1rem 0; flex:none;
+  background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.55rem .8rem;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
+}
+.change span{font-size:min(.76rem, 3.2vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700}
+.change strong{
+  font-family:var(--mono); font-weight:700; font-size:min(1.8rem, 8.5vw); line-height:1;
+  white-space:nowrap; font-variant-numeric:tabular-nums;
+}
+.actions{display:flex; gap:.5rem; padding:.7rem 1rem; background:var(--surface)}
+.ticket .scroller{border-bottom:1px solid var(--line)}
 .btn{
   flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
   min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
@@ -251,8 +269,8 @@ svg{flex:none}
 }
 .bar .b-total{display:flex; flex-direction:column; line-height:1.1}
 .bar .b-total span{font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.bar .b-total strong{font-family:var(--mono); font-size:1.8rem; font-variant-numeric:tabular-nums}
-.bar .btn{flex:0 1 auto; padding:0 1.1rem}
+.bar .b-total strong{font-family:var(--mono); font-size:min(1.8rem, 7.5vw); font-variant-numeric:tabular-nums}
+.bar .btn{flex:0 1 auto; min-width:0; padding:0 .9rem; font-size:min(1rem, 4.2vw)}
 @media (min-width:980px){ .bar{display:none} }
 @media (max-width:979px){
   .ticket{
@@ -261,6 +279,9 @@ svg{flex:none}
   }
   body.sheet .ticket{transform:none; visibility:visible}
   body.sheet{overflow:hidden}
+  .ticket .dayline{display:none}                       /* le bilan est dans les réglages */
+  .ticket .actions{padding-bottom:calc(.7rem + env(safe-area-inset-bottom))}
+  .ticket .back{padding:.7rem 1rem; font-size:min(1rem, 4.4vw)}
   .ticket .back{display:flex}
 }
 
@@ -283,9 +304,9 @@ body.settings .panel{transform:none; visibility:visible}
 .set:last-child{border-bottom:0}
 .set h3{margin:0; font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .set p{margin:0; font-size:.85rem; color:var(--muted)}
-.seg{display:flex; gap:.35rem; background:var(--surface-2); border:1px solid var(--line); border-radius:11px; padding:.25rem}
+.seg{display:flex; flex-wrap:wrap; gap:.35rem; background:var(--surface-2); border:1px solid var(--line); border-radius:11px; padding:.25rem}
 .seg button{
-  flex:1; border:0; background:none; border-radius:8px; min-height:2.7rem; font-weight:600;
+  flex:1 1 40%; border:0; background:none; border-radius:8px; min-height:2.7rem; font-weight:600;
   display:inline-flex; align-items:center; justify-content:center; gap:.35rem; font-size:.9rem;
 }
 .seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
@@ -451,6 +472,10 @@ body.settings .panel{transform:none; visibility:visible}
     <circle cx="12" cy="12" r="3.2"/>
     <path d="M19.5 12a7.5 7.5 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7.4 7.4 0 0 0-2-1.2L14.7 3h-3.9l-.4 2.7c-.7.3-1.4.7-2 1.2l-2.3-1-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1c.6.5 1.3.9 2 1.2l.4 2.7h3.9l.4-2.7c.7-.3 1.4-.7 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/>
   </symbol>
+  <symbol id="ic-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 6.5h16M9.5 6.5V4.5h5v2M6.5 6.5l1 13a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-13"/>
+    <path d="M10.5 10.5v7M13.5 10.5v7"/>
+  </symbol>
   <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10 5 3.5 12 10 19M3.8 12H20.5"/>
   </symbol>
@@ -486,26 +511,28 @@ body.settings .panel{transform:none; visibility:visible}
     <button type="button" class="back" id="closeSheet">
       <svg aria-hidden="true"><use href="#ic-back"></use></svg> Retour au menu
     </button>
-    <h2>Commande <b id="orderNo">n° 1</b> <em id="countLabel">0 article</em></h2>
-    <ul class="lines" id="lines"></ul>
-    <div class="total">
-      <span>Total à payer</span>
-      <strong id="totalOut" aria-live="polite">0,00 €</strong>
-    </div>
-    <div class="pay">
+    <div class="scroller">
+      <div class="total">
+        <span>Total à payer</span>
+        <strong id="totalOut" aria-live="polite">0,00 €</strong>
+      </div>
+      <h2>Commande <b id="orderNo">n° 1</b> <em id="countLabel">0 article</em></h2>
+      <ul class="lines" id="lines"></ul>
+      <div class="pay">
       <div class="cash-head">
         <label for="cash">Reçu</label>
         <input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Montant reçu en euros">
         <button type="button" class="cash-clear" id="cashClear" disabled>Effacer</button>
       </div>
       <div class="denoms" id="denoms" role="group" aria-label="Pièces et billets reçus"></div>
-      <div class="change" id="changeBox" hidden>
-        <div class="col">
-          <span>À rendre</span>
-          <span class="breakdown" id="breakdown"></span>
-        </div>
-        <strong id="changeOut">0,00 €</strong>
       </div>
+    </div>
+    <div class="change" id="changeBox" hidden>
+      <div class="col">
+        <span id="changeLabel">À rendre</span>
+        <span class="breakdown" id="breakdown"></span>
+      </div>
+      <strong id="changeOut">0,00 €</strong>
     </div>
     <div class="actions">
       <button type="button" class="btn" id="clearBtn">Annuler</button>
@@ -695,7 +722,7 @@ const tabsEl = document.getElementById("tabs");
 
 menuEl.innerHTML = MENU.map(c => `
   <section class="cat ${c.c}" data-cat="${c.cat}">
-    <h2>${c.cat}</h2>
+    <h2><span>${c.cat}</span></h2>
     <div class="grid">
       ${c.items.map(i => `
         <button type="button" class="item" data-add="${i.id}">
@@ -801,7 +828,7 @@ function render(){
         <button type="button" data-add="${id}" data-n="-1" aria-label="Retirer un ${it.name}">−</button>
         <span class="n">${q}</span>
         <button type="button" data-add="${id}" data-n="1" aria-label="Ajouter un ${it.name}">+</button>
-        <button type="button" class="del" data-del="${id}">Supprimer</button>
+        <button type="button" class="del" data-del="${id}" aria-label="Supprimer ${it.name}"><svg aria-hidden="true"><use href="#ic-trash"></use></svg></button>
       </span>
     </li>`;
   }).join("") : `<li class="empty">Touchez un plat ou une boisson pour l’ajouter.</li>`;
@@ -833,8 +860,11 @@ function updateChange(){
   if (givenCents <= 0 || t <= 0){ changeBox.hidden = true; return; }
   changeBox.hidden = false;
   const diff = givenCents - t;
-  changeOut.textContent = diff >= 0 ? euro(diff / 100) : "Manque " + euro(-diff / 100);
+  document.getElementById("changeLabel").textContent = diff >= 0 ? "À rendre" : "Manque";
+  changeOut.textContent = euro(Math.abs(diff) / 100);
   breakdown.textContent = diff > 0 ? change(diff) : "";
+  changeBox.style.background = diff >= 0 ? "" : "var(--danger-soft)";
+  changeBox.style.color = diff >= 0 ? "" : "var(--danger)";
 }
 
 /* Décomposition de la monnaie à rendre, du plus gros au plus petit. */

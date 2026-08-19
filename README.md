@@ -6,7 +6,9 @@ les quantités, le total s'affiche en grand et l'application calcule la monnaie 
 - Menu complet (plancha, tapas & dessert, bières, vins & sangria, sans alcool) avec une
   icône et une couleur propres à chaque catégorie, reprises jusque dans le récapitulatif.
 - Filtre par catégorie ou affichage de tout le menu d'un coup.
-- Récapitulatif de commande et total en gros.
+- Récapitulatif de commande : total figé en haut, articles et clavier de monnaie qui
+  défilent, « à rendre » et boutons figés en bas — la mise en page tient aux cinq
+  tailles de police, de l'iPhone SE au grand écran.
 - Encaissement : on appuie sur les pièces (0,10 à 2 €) et les billets (5 à 100 €)
   reçus, autant de fois que nécessaire — les montants s'additionnent (comptés en
   centimes, sans erreur d'arrondi) — ou on saisit un montant libre ; « à rendre »
