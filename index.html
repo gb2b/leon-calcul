@@ -2,8 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caisse Léon en Rue Libre</title>
+<meta name="description" content="Caisse du stand : menu, quantités, total et rendu de monnaie.">
+<meta name="theme-color" content="#0E6B4C">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -13,9 +17,9 @@
   --ink:#131A16; --muted:#55635B;
   --accent:#0E6B4C; --accent-ink:#FFFFFF; --accent-soft:#DCEDE4;
   --amber:#F2B705; --amber-ink:#221900;
-  --danger:#A32B1B;
+  --danger:#A32B1B; --danger-soft:#F7DED9;
   --shadow:0 1px 2px rgba(19,26,22,.08), 0 8px 24px rgba(19,26,22,.06);
-  --r:14px;
+  --r:14px; --headh:7rem;
   --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
@@ -26,7 +30,7 @@
     --ink:#E9F0EA; --muted:#9DACA2;
     --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
     --amber:#F5C243; --amber-ink:#221900;
-    --danger:#F08A7A;
+    --danger:#F08A7A; --danger-soft:#38211D;
     --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
   }
 }
@@ -35,7 +39,7 @@
   --ink:#E9F0EA; --muted:#9DACA2;
   --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
   --amber:#F5C243; --amber-ink:#221900;
-  --danger:#F08A7A;
+  --danger:#F08A7A; --danger-soft:#38211D;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
 }
 
@@ -46,32 +50,36 @@ body{
   font-family:var(--body); font-size:1rem; line-height:1.45;
   padding-bottom:6.5rem;
 }
-button{font:inherit; color:inherit; cursor:pointer}
+button{font:inherit; color:inherit; cursor:pointer; font-family:var(--body)}
 :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
-.num{font-family:var(--mono); font-variant-numeric:tabular-nums; font-weight:600}
+svg{flex:none}
+[hidden]{display:none !important}
 
-/* ---------- Header ---------- */
-.top{
-  position:sticky; top:0; z-index:30;
-  background:var(--surface); border-bottom:1px solid var(--line);
-  display:flex; align-items:center; gap:.75rem 1rem; flex-wrap:wrap;
-  padding:.6rem clamp(.7rem,2.5vw,1.4rem);
-}
+/* ---------- Header + filtres ---------- */
+.head{position:sticky; top:0; z-index:30; background:var(--surface); border-bottom:1px solid var(--line)}
+.top{display:flex; align-items:center; gap:.75rem; padding:.6rem clamp(.7rem,2.5vw,1.4rem)}
 .brand{display:flex; flex-direction:column; margin-right:auto; min-width:0}
-.brand b{font-family:var(--display); font-weight:800; font-size:1.15rem; letter-spacing:-.01em; line-height:1.1}
-.brand span{font-size:.72rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
-.tools{display:flex; align-items:center; gap:.4rem}
-.tool{
-  background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
-  min-height:2.6rem; min-width:2.6rem; padding:0 .7rem; font-weight:600;
-  display:inline-flex; align-items:center; justify-content:center; gap:.35rem;
+.brand b{font-family:var(--display); font-weight:800; font-size:1.1rem; letter-spacing:-.01em; line-height:1.15}
+.brand span{font-size:.7rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.icon-btn{
+  background:var(--surface-2); border:1px solid var(--line); border-radius:11px;
+  width:2.9rem; height:2.9rem; display:inline-flex; align-items:center; justify-content:center;
 }
-.tool:hover{border-color:var(--accent)}
-.tool small{font-size:.7rem; color:var(--muted)}
-.sizer{display:flex; align-items:center; background:var(--surface-2); border:1px solid var(--line); border-radius:10px; overflow:hidden}
-.sizer button{background:none; border:0; min-height:2.6rem; min-width:2.4rem; font-weight:700}
-.sizer button:hover{background:var(--accent-soft)}
-.sizer span{font-size:.68rem; color:var(--muted); padding:0 .35rem; letter-spacing:.08em; text-transform:uppercase; font-weight:600}
+.icon-btn:hover{border-color:var(--accent)}
+
+.tabs{
+  display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none;
+  padding:0 clamp(.7rem,2.5vw,1.4rem) .6rem;
+}
+.tabs::-webkit-scrollbar{display:none}
+.tab{
+  flex:none; background:var(--surface-2); border:1px solid var(--line); border-radius:999px;
+  padding:.45rem .85rem; font-weight:600; font-size:.9rem; white-space:nowrap;
+  display:inline-flex; align-items:center; gap:.4rem;
+}
+.tab svg{width:1rem; height:1rem}
+.tab:hover{border-color:var(--accent)}
+.tab[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 
 /* ---------- Layout ---------- */
 .wrap{
@@ -86,51 +94,58 @@ button{font:inherit; color:inherit; cursor:pointer}
 /* ---------- Menu ---------- */
 .cat{margin:0 0 1.4rem}
 .cat h2{
-  font-family:var(--display); font-weight:600; font-size:.82rem; letter-spacing:.16em;
+  font-family:var(--display); font-weight:600; font-size:.8rem; letter-spacing:.16em;
   text-transform:uppercase; color:var(--muted); margin:0 0 .55rem;
   display:flex; align-items:center; gap:.6rem;
 }
 .cat h2::after{content:""; flex:1; height:1px; background:var(--line)}
-.grid{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fill,minmax(13.5rem,1fr))}
+.grid{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fill,minmax(16rem,1fr))}
 .item{
-  position:relative; text-align:left; background:var(--surface); border:1px solid var(--line);
-  border-radius:var(--r); padding:.85rem .9rem; min-height:4.6rem;
-  display:flex; flex-direction:column; justify-content:space-between; gap:.5rem;
+  text-align:left; background:var(--surface); border:1px solid var(--line);
+  border-radius:var(--r); padding:.7rem .8rem; min-height:4.2rem;
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:.75rem;
   box-shadow:var(--shadow); transition:transform .08s ease, border-color .12s ease;
 }
 .item:hover{border-color:var(--accent)}
-.item:active{transform:scale(.98)}
-.item .name{font-weight:600; line-height:1.25; text-wrap:balance}
-.item .sub{display:block; font-weight:400; font-size:.8rem; color:var(--muted); margin-top:.15rem}
-.item .price{font-family:var(--mono); font-weight:700; font-size:1.05rem; color:var(--accent)}
-.item.on{border-color:var(--accent); background:var(--accent-soft)}
-.qty-badge{
-  position:absolute; top:-.55rem; right:-.5rem; min-width:2rem; height:2rem; padding:0 .45rem;
-  border-radius:1rem; background:var(--accent); color:var(--accent-ink);
-  font-family:var(--mono); font-weight:700; font-size:1rem;
-  display:none; align-items:center; justify-content:center;
+.item:active{transform:scale(.985)}
+.tile{
+  width:2.8rem; height:2.8rem; border-radius:10px; background:var(--surface-2);
+  display:flex; align-items:center; justify-content:center; color:var(--accent);
 }
-.item.on .qty-badge{display:flex}
+.tile svg{width:1.55rem; height:1.55rem}
+.tile .q{display:none; font-family:var(--mono); font-weight:700; font-size:1.25rem}
+.item .name{font-weight:600; line-height:1.25}
+.item .sub{display:block; font-weight:400; font-size:.76rem; color:var(--muted); margin-top:.1rem}
+.item .price{
+  font-family:var(--mono); font-weight:700; font-size:1.15rem; text-align:right;
+  font-variant-numeric:tabular-nums; white-space:nowrap;
+}
+.item.on{border-color:var(--accent); background:var(--accent-soft)}
+.item.on .tile{background:var(--accent); color:var(--accent-ink)}
+.item.on .tile svg{display:none}
+.item.on .tile .q{display:block}
 
 /* ---------- Ticket ---------- */
 .ticket{
   background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
   box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
 }
-@media (min-width:980px){ .ticket{position:sticky; top:5.2rem; max-height:calc(100vh - 6.4rem)} }
+@media (min-width:980px){
+  .ticket{position:sticky; top:calc(var(--headh) + 1rem); max-height:calc(100vh - var(--headh) - 2rem)}
+}
 .ticket h2{
   font-family:var(--display); font-size:1rem; font-weight:800; margin:0;
-  padding:.85rem 1rem; border-bottom:1px solid var(--line);
+  padding:.8rem 1rem; border-bottom:1px solid var(--line);
   display:flex; align-items:center; justify-content:space-between; gap:.5rem;
 }
-.ticket h2 em{font-style:normal; font-size:.75rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-family:var(--body); font-weight:600}
+.ticket h2 em{font-style:normal; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-family:var(--body); font-weight:600}
 .lines{margin:0; padding:.4rem .55rem; list-style:none; overflow-y:auto; flex:1; min-height:3rem}
-.empty{color:var(--muted); text-align:center; padding:1.6rem .8rem; font-size:.9rem}
+.empty{color:var(--muted); text-align:center; padding:1.6rem .8rem; font-size:.88rem}
 .line{display:grid; grid-template-columns:1fr auto; gap:.2rem .6rem; padding:.5rem .45rem; border-bottom:1px dashed var(--line)}
 .line:last-child{border-bottom:0}
 .line .lname{font-weight:600; line-height:1.2}
-.line .lunit{font-size:.75rem; color:var(--muted)}
-.line .lsum{font-family:var(--mono); font-weight:700; align-self:center; text-align:right}
+.line .lunit{font-size:.74rem; color:var(--muted)}
+.line .lsum{font-family:var(--mono); font-weight:700; align-self:center; text-align:right; font-variant-numeric:tabular-nums}
 .stepper{grid-column:1/-1; display:flex; align-items:center; gap:.4rem; margin-top:.35rem}
 .stepper button{
   width:2.5rem; height:2.5rem; border-radius:9px; border:1px solid var(--line);
@@ -138,54 +153,56 @@ button{font:inherit; color:inherit; cursor:pointer}
 }
 .stepper button:hover{border-color:var(--accent)}
 .stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center; font-size:1.05rem}
-.stepper .del{margin-left:auto; width:auto; padding:0 .7rem; font-size:.78rem; color:var(--danger); background:none; border-color:transparent}
+.stepper .del{margin-left:auto; width:auto; padding:0 .7rem; font-size:.76rem; color:var(--danger); background:none; border-color:transparent}
 
 .total{
   background:var(--accent); color:var(--accent-ink); padding:.9rem 1rem;
   display:flex; align-items:baseline; justify-content:space-between; gap:.6rem;
 }
-.total span{font-size:.82rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
-.total strong{font-family:var(--mono); font-weight:700; font-size:2.6rem; line-height:1; letter-spacing:-.02em}
-.pay{padding:.8rem 1rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.6rem}
+.total span{font-size:.8rem; letter-spacing:.14em; text-transform:uppercase; font-weight:700}
+.total strong{font-family:var(--mono); font-weight:700; font-size:2.6rem; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.pay{padding:.8rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.6rem}
 .pay-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
-.pay-row label{font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.pay-row label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .pay input{
   font-family:var(--mono); font-weight:700; font-size:1.1rem; width:6.5rem;
   padding:.5rem .6rem; border-radius:10px; border:1px solid var(--line);
   background:var(--surface-2); color:var(--ink);
 }
-.chip{background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:.4rem .75rem; font-family:var(--mono); font-weight:600; font-size:.9rem}
+.cash-chips{display:grid; grid-template-columns:repeat(4,1fr); gap:.4rem}
+.chip{background:var(--surface-2); border:1px solid var(--line); border-radius:999px; padding:.4rem .75rem; font-family:var(--mono); font-weight:600; font-size:.88rem}
 .chip:hover{border-color:var(--accent)}
 .change{background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.6rem .8rem; display:flex; align-items:baseline; justify-content:space-between; gap:.6rem}
-.change span{font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
+.change span{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700}
 .change strong{font-family:var(--mono); font-size:1.7rem; line-height:1}
 .actions{display:flex; gap:.5rem; padding:0 1rem 1rem}
 .btn{
   flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
-  min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.4rem;
+  min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
 }
+.btn:hover{border-color:var(--accent)}
 .btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
+.btn.armed{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
 .btn:disabled{opacity:.45; cursor:not-allowed}
-
-/* ---------- Day tally ---------- */
-.day{
-  margin-top:1rem; border:1px dashed var(--line); border-radius:var(--r);
-  padding:.7rem .9rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
-  color:var(--muted); font-size:.85rem;
+.dayline{
+  border-top:1px solid var(--line); padding:.55rem 1rem .7rem; color:var(--muted); font-size:.8rem;
+  display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
 }
-.day b{color:var(--ink); font-family:var(--mono)}
-.day button{margin-left:auto; background:none; border:0; text-decoration:underline; font-size:.8rem; color:var(--muted)}
+.dayline b{color:var(--ink); font-family:var(--mono); font-variant-numeric:tabular-nums}
 
-/* ---------- Mobile bar + sheet ---------- */
+.ticket .close{display:none; background:var(--surface-2); border:1px solid var(--line); border-radius:9px; width:2.4rem; height:2.4rem; align-items:center; justify-content:center}
+
+/* ---------- Barre mobile ---------- */
 .bar{
   position:fixed; left:0; right:0; bottom:0; z-index:40;
   background:var(--surface); border-top:1px solid var(--line);
-  padding:.6rem clamp(.7rem,2.5vw,1.4rem); display:flex; align-items:center; gap:.7rem;
+  padding:.6rem clamp(.7rem,2.5vw,1.4rem) calc(.6rem + env(safe-area-inset-bottom));
+  display:flex; align-items:center; gap:.7rem;
   box-shadow:0 -6px 20px rgba(0,0,0,.12);
 }
 .bar .b-total{display:flex; flex-direction:column; line-height:1.1}
-.bar .b-total span{font-size:.68rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.bar .b-total strong{font-family:var(--mono); font-size:1.8rem}
+.bar .b-total span{font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.bar .b-total strong{font-family:var(--mono); font-size:1.8rem; font-variant-numeric:tabular-nums}
 .bar .btn{flex:0 1 auto; padding:0 1.1rem}
 @media (min-width:980px){ .bar{display:none} }
 @media (max-width:979px){
@@ -197,28 +214,150 @@ button{font:inherit; color:inherit; cursor:pointer}
   body.sheet{overflow:hidden}
   .ticket .close{display:inline-flex}
 }
-.ticket .close{display:none; background:var(--surface-2); border:1px solid var(--line); border-radius:9px; width:2.4rem; height:2.4rem; align-items:center; justify-content:center; font-size:1.2rem; line-height:1}
+
+/* ---------- Réglages ---------- */
+.scrim{position:fixed; inset:0; z-index:60; background:rgba(10,16,13,.5); opacity:0; visibility:hidden; transition:opacity .2s ease}
+body.settings .scrim{opacity:1; visibility:visible}
+.panel{
+  position:fixed; z-index:61; right:0; top:0; bottom:0; width:min(23rem,100%);
+  background:var(--surface); border-left:1px solid var(--line);
+  transform:translateX(100%); transition:transform .22s ease; visibility:hidden;
+  display:flex; flex-direction:column; overflow-y:auto;
+}
+body.settings .panel{transform:none; visibility:visible}
+.panel header{
+  display:flex; align-items:center; justify-content:space-between; gap:.5rem;
+  padding:.85rem 1rem; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--surface);
+}
+.panel header h2{font-family:var(--display); font-size:1.05rem; font-weight:800; margin:0}
+.set{padding:1rem; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:.6rem}
+.set:last-child{border-bottom:0}
+.set h3{margin:0; font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.set p{margin:0; font-size:.85rem; color:var(--muted)}
+.seg{display:flex; gap:.35rem; background:var(--surface-2); border:1px solid var(--line); border-radius:11px; padding:.25rem}
+.seg button{
+  flex:1; border:0; background:none; border-radius:8px; min-height:2.7rem; font-weight:600;
+  display:inline-flex; align-items:center; justify-content:center; gap:.35rem; font-size:.9rem;
+}
+.seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.sizer{display:flex; align-items:center; gap:.5rem}
+.sizer button{
+  flex:none; width:3.4rem; height:3rem; border-radius:10px; border:1px solid var(--line);
+  background:var(--surface-2); font-weight:700;
+}
+.sizer button:hover{border-color:var(--accent)}
+.sizer .val{flex:1; text-align:center; font-family:var(--mono); font-weight:700}
+.sample{border:1px dashed var(--line); border-radius:10px; padding:.6rem .8rem; display:flex; justify-content:space-between; align-items:center; gap:.6rem}
+.sample b{font-weight:600}
+.sample span{font-family:var(--mono); font-weight:700; color:var(--accent)}
+.set .btn{min-height:2.8rem}
+.ok{color:var(--accent); font-weight:600; font-size:.85rem}
 @media (prefers-reduced-motion:reduce){ *{transition:none !important} }
 </style>
 </head>
 <body>
 
-<header class="top">
-  <div class="brand">
-    <b>Caisse — Léon en Rue Libre</b>
-    <span>Festival · plancha &amp; bar</span>
-  </div>
-  <div class="tools">
-    <div class="sizer" role="group" aria-label="Taille du texte">
-      <button type="button" id="fontDown" aria-label="Réduire le texte">A−</button>
-      <span id="fontLabel">100 %</span>
-      <button type="button" id="fontUp" aria-label="Agrandir le texte">A+</button>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="ic-sausage" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 8.5c0-1.4 1.1-2.5 2.5-2.5S9 7.1 9 8.5c0 4.1 2.4 6.5 6.5 6.5 1.4 0 2.5 1.1 2.5 2.5S16.9 20 15.5 20C8.6 20 4 15.4 4 8.5Z"/>
+    <path d="M7.4 12.4 9.6 11M9.4 15.2l1.8-1.8M12.6 17.2l1.3-2"/>
+  </symbol>
+  <symbol id="ic-chicken" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19.3 4.7a4.4 4.4 0 0 0-6.6.5c-1 1.3-1.1 2.7-1 3.9.1 1.1-.1 1.9-.8 2.6l-4 4"/>
+    <path d="M19.3 4.7a4.4 4.4 0 0 1-.5 6.6c-1.3 1-2.7 1.1-3.9 1-1.1-.1-1.9.1-2.6.8l-4 4"/>
+    <circle cx="6.6" cy="17.4" r="2.6"/>
+  </symbol>
+  <symbol id="ic-fries" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 11h12l-1.2 8.2a1 1 0 0 1-1 .8H8.2a1 1 0 0 1-1-.8Z"/>
+    <path d="M6.5 14h11M9 11V5.5M12 11V4M15 11V6.5"/>
+  </symbol>
+  <symbol id="ic-plate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="12" cy="14.5" rx="9" ry="4.5"/>
+    <ellipse cx="12" cy="14.5" rx="5.5" ry="2.4"/>
+    <path d="M8.5 9.5 11 7l2 1.8L16 6"/>
+  </symbol>
+  <symbol id="ic-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 19.5h15M6 19.5v-6a6 6 0 0 1 12 0v6"/>
+    <path d="M6.4 12.6c1.2 1.2 2.6 1.2 3.8 0s2.6-1.2 3.8 0 2.6 1.2 3.6.1"/>
+    <path d="M12 7.5V5"/>
+  </symbol>
+  <symbol id="ic-mug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 8.5h9.5V19a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Z"/>
+    <path d="M14.5 11H18a1.5 1.5 0 0 1 1.5 1.5v2A1.5 1.5 0 0 1 18 16h-3.5"/>
+    <path d="M5 8.5c0-2 1.5-3 3-2.6.4-1.6 3.2-1.9 4 0 1.4-.7 2.7.5 2.5 2.6"/>
+  </symbol>
+  <symbol id="ic-pitcher" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 7.5h9v11.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1Z"/>
+    <path d="M15 10.5h2.5a2 2 0 0 1 2 2v1.5a2 2 0 0 1-2 2H15"/>
+    <path d="M6 7.5 8 5.5h4.5M6 11.5h9"/>
+  </symbol>
+  <symbol id="ic-bottle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10 3h4v3.2l1.6 2.6a3 3 0 0 1 .4 1.5V19a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8.7c0-.5.1-1 .4-1.5L10 6.2Z"/>
+    <path d="M8 12.5h8"/>
+  </symbol>
+  <symbol id="ic-cocktail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 6h16l-8 7.5Z"/><path d="M12 13.5V20M8.5 20h7M17 4l-3 2"/>
+  </symbol>
+  <symbol id="ic-wine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 4h9c.3 4.6-1.4 8-4.5 8s-4.8-3.4-4.5-8Z"/>
+    <path d="M7.7 8h8.6M12 12v7M9 19h6"/>
+  </symbol>
+  <symbol id="ic-flute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 3.5h6l-1 8.5h-4Z"/><path d="M12 12v7M9 19.5h6M9.4 7h5.2"/>
+  </symbol>
+  <symbol id="ic-champbottle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M10.2 3h3.6v2.6l2 4.4c.2.5.2 1 .2 1.4V19a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7.6c0-.5 0-.9.2-1.4l2-4.4Z"/>
+    <path d="M9.6 5.6h4.8M8 14h8"/>
+  </symbol>
+  <symbol id="ic-can" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="7.5" y="3" width="9" height="18" rx="2.4"/><path d="M7.5 7.5h9M7.5 16.5h9"/>
+  </symbol>
+  <symbol id="ic-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 4h10l-1.3 15.2a1 1 0 0 1-1 .8H9.3a1 1 0 0 1-1-.8Z"/><path d="M7.7 11h8.6"/>
+  </symbol>
+  <symbol id="ic-straw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6.5 7h9l-1.2 12.2a1 1 0 0 1-1 .8H8.7a1 1 0 0 1-1-.8Z"/>
+    <path d="M13 7 17 2.8M7.2 12.5h8"/>
+  </symbol>
+  <symbol id="ic-bubbles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7 8h10l-1.2 11.2a1 1 0 0 1-1 .8H9.2a1 1 0 0 1-1-.8Z"/>
+    <circle cx="10.5" cy="12.5" r="1"/><circle cx="13.5" cy="15" r="1"/><circle cx="11.5" cy="16.8" r=".8"/>
+    <path d="M9.5 5.2 10.4 4M13 5 14.6 3.4"/>
+  </symbol>
+  <symbol id="ic-water" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9.5 3h5v2l1.3 2.2c.3.5.4 1 .4 1.6V19a2 2 0 0 1-2 2h-4.4a2 2 0 0 1-2-2V8.8c0-.6.1-1.1.4-1.6L9.5 5Z"/>
+    <path d="M8.8 11h6.4M8.8 14h6.4"/>
+  </symbol>
+  <symbol id="ic-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4.5 8h11v6.5a4 4 0 0 1-4 4h-3a4 4 0 0 1-4-4Z"/>
+    <path d="M15.5 10H18a2.5 2.5 0 0 1 0 5h-2.5"/>
+    <path d="M7.5 3.5v2M11 3.5v2M3.5 21h13"/>
+  </symbol>
+  <symbol id="ic-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="3.2"/>
+    <path d="M19.5 12a7.5 7.5 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7.4 7.4 0 0 0-2-1.2L14.7 3h-3.9l-.4 2.7c-.7.3-1.4.7-2 1.2l-2.3-1-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1c.6.5 1.3.9 2 1.2l.4 2.7h3.9l.4-2.7c.7-.3 1.4-.7 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/>
+  </symbol>
+  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
+    <path d="M6 6l12 12M18 6 6 18"/>
+  </symbol>
+  <symbol id="ic-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/>
+    <rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/>
+  </symbol>
+</svg>
+
+<div class="head">
+  <div class="top">
+    <div class="brand">
+      <b>Caisse — Léon en Rue Libre</b>
+      <span>Festival · plancha &amp; bar</span>
     </div>
-    <button type="button" class="tool" id="themeBtn" aria-label="Changer le thème">
-      <span id="themeIcon">◐</span><small id="themeLabel">Auto</small>
+    <button type="button" class="icon-btn" id="settingsBtn" aria-label="Réglages">
+      <svg width="22" height="22" aria-hidden="true"><use href="#ic-gear"></use></svg>
     </button>
   </div>
-</header>
+  <div class="tabs" id="tabs" role="group" aria-label="Catégories"></div>
+</div>
 
 <div class="wrap">
   <main id="menu"></main>
@@ -226,9 +365,11 @@ button{font:inherit; color:inherit; cursor:pointer}
   <aside class="ticket" id="ticket" aria-label="Commande en cours">
     <h2>
       Commande <em id="countLabel">0 article</em>
-      <button type="button" class="close" id="closeSheet" aria-label="Fermer la commande">✕</button>
+      <button type="button" class="close" id="closeSheet" aria-label="Fermer la commande">
+        <svg width="20" height="20" aria-hidden="true"><use href="#ic-close"></use></svg>
+      </button>
     </h2>
-    <ul class="lines" id="lines"><li class="empty">Touchez un plat ou une boisson pour l’ajouter.</li></ul>
+    <ul class="lines" id="lines"></ul>
     <div class="total">
       <span>Total à payer</span>
       <strong id="totalOut" aria-live="polite">0,00 €</strong>
@@ -237,6 +378,8 @@ button{font:inherit; color:inherit; cursor:pointer}
       <div class="pay-row">
         <label for="cash">Reçu</label>
         <input id="cash" type="number" inputmode="decimal" step="0.5" min="0" placeholder="0">
+      </div>
+      <div class="cash-chips">
         <button type="button" class="chip" data-cash="5">5 €</button>
         <button type="button" class="chip" data-cash="10">10 €</button>
         <button type="button" class="chip" data-cash="20">20 €</button>
@@ -251,14 +394,10 @@ button{font:inherit; color:inherit; cursor:pointer}
       <button type="button" class="btn" id="clearBtn">Annuler</button>
       <button type="button" class="btn primary" id="cashBtn">Encaisser</button>
     </div>
+    <div class="dayline">
+      Journée : <b id="dayCount">0</b> commandes · <b id="dayTotal">0,00 €</b>
+    </div>
   </aside>
-</div>
-
-<div class="wrap" style="padding-top:0">
-  <div class="day">
-    Journée : <b id="dayCount">0</b> commandes · <b id="dayTotal">0,00 €</b>
-    <button type="button" id="dayReset">Remettre à zéro</button>
-  </div>
 </div>
 
 <div class="bar">
@@ -269,46 +408,97 @@ button{font:inherit; color:inherit; cursor:pointer}
   <button type="button" class="btn primary" id="openSheet">Voir la commande</button>
 </div>
 
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" aria-label="Réglages">
+  <header>
+    <h2>Réglages</h2>
+    <button type="button" class="icon-btn" id="closeSettings" aria-label="Fermer les réglages">
+      <svg width="20" height="20" aria-hidden="true"><use href="#ic-close"></use></svg>
+    </button>
+  </header>
+
+  <section class="set">
+    <h3>Taille du texte</h3>
+    <div class="sizer">
+      <button type="button" id="fontDown" aria-label="Réduire le texte">A−</button>
+      <span class="val" id="fontLabel">100 %</span>
+      <button type="button" id="fontUp" aria-label="Agrandir le texte">A+</button>
+    </div>
+    <div class="sample"><b>Poulet mariné + frites</b><span>9,00 €</span></div>
+  </section>
+
+  <section class="set">
+    <h3>Thème</h3>
+    <div class="seg" id="themeSeg">
+      <button type="button" data-theme-set="auto" aria-pressed="true">Auto</button>
+      <button type="button" data-theme-set="light" aria-pressed="false">Clair</button>
+      <button type="button" data-theme-set="dark" aria-pressed="false">Sombre</button>
+    </div>
+    <p>« Auto » suit le réglage du téléphone.</p>
+  </section>
+
+  <section class="set">
+    <h3>Affichage du menu</h3>
+    <div class="seg" id="viewSeg">
+      <button type="button" data-view="grouped" aria-pressed="true">Par catégorie</button>
+      <button type="button" data-view="all" aria-pressed="false">Tout d’un coup</button>
+    </div>
+    <p>En mode « par catégorie », les onglets du haut filtrent le menu.</p>
+  </section>
+
+  <section class="set">
+    <h3>Total de la journée</h3>
+    <p><b id="dayCount2">0</b> commandes encaissées · <b id="dayTotal2">0,00 €</b></p>
+    <button type="button" class="btn" id="dayReset">Remettre à zéro</button>
+  </section>
+
+  <section class="set" id="offlineBox">
+    <h3>Hors ligne</h3>
+    <p id="offlineText">Une fois la page ouverte, tout fonctionne sans réseau : rien n’est envoyé, tout est calculé sur l’appareil.</p>
+    <button type="button" class="btn" id="installBtn" hidden>Installer l’application</button>
+    <p id="installHint" hidden>iPhone : bouton Partager, puis « Sur l’écran d’accueil ». Android : menu ⋮, puis « Installer l’application ».</p>
+  </section>
+</aside>
+
 <script>
 const MENU = [
-  { cat:"Plancha", items:[
-    { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8 },
-    { id:"poulet", name:"Poulet mariné + frites", sub:"Marinated chicken and chips", price:9 },
-    { id:"frites", name:"Frites maison", sub:"House fries", price:4 },
+  { cat:"Plancha", icon:"ic-sausage", items:[
+    { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8, icon:"ic-sausage" },
+    { id:"poulet", name:"Poulet mariné + frites", sub:"Marinated chicken and chips", price:9, icon:"ic-chicken" },
+    { id:"frites", name:"Frites maison", sub:"House fries", price:4, icon:"ic-fries" },
   ]},
-  { cat:"Tapas & dessert", items:[
-    { id:"tapas", name:"Assiette tapas local", sub:"Jambon, fromage brebis/vache (G)", price:8 },
-    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3 },
+  { cat:"Tapas & dessert", icon:"ic-plate", items:[
+    { id:"tapas", name:"Assiette tapas local", sub:"Jambon, fromage brebis/vache (G)", price:8, icon:"ic-plate" },
+    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3, icon:"ic-cake" },
   ]},
-  { cat:"Bières", items:[
-    { id:"pression", name:"Bière pression", sub:"Le verre", price:3 },
-    { id:"pichet", name:"Pichet de bière", sub:"1 litre", price:12 },
-    { id:"biobout", name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5 },
+  { cat:"Bières", icon:"ic-mug", items:[
+    { id:"pression", name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
+    { id:"pichet", name:"Pichet de bière", sub:"1 litre", price:12, icon:"ic-pitcher" },
+    { id:"biobout", name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5, icon:"ic-bottle" },
   ]},
-  { cat:"Vins, sangria & champagne", items:[
-    { id:"punch", name:"Punch La Fabrique", sub:"15 cL", price:4 },
-    { id:"sangriaV", name:"Sangria — verre", sub:"15 cL · rouge ou blanche", price:4 },
-    { id:"sangriaB", name:"Sangria — bouteille", sub:"Rouge ou blanche", price:10 },
-    { id:"vinV", name:"Vin — verre", sub:"12 cL · Côtes de Gascogne", price:3 },
-    { id:"vinB", name:"Vin — bouteille", sub:"Blanc, rosé ou rouge", price:12 },
-    { id:"champC", name:"Champagne — coupe", sub:"", price:6 },
-    { id:"champB", name:"Champagne — bouteille", sub:"", price:35 },
+  { cat:"Vins & sangria", icon:"ic-wine", items:[
+    { id:"punch", name:"Punch La Fabrique", sub:"15 cL", price:4, icon:"ic-cocktail" },
+    { id:"sangriaV", name:"Sangria — verre", sub:"15 cL · rouge ou blanche", price:4, icon:"ic-wine" },
+    { id:"sangriaB", name:"Sangria — bouteille", sub:"Rouge ou blanche", price:10, icon:"ic-bottle" },
+    { id:"vinV", name:"Vin — verre", sub:"12 cL · Côtes de Gascogne", price:3, icon:"ic-wine" },
+    { id:"vinB", name:"Vin — bouteille", sub:"Blanc, rosé ou rouge", price:12, icon:"ic-bottle" },
+    { id:"champC", name:"Champagne — coupe", sub:"", price:6, icon:"ic-flute" },
+    { id:"champB", name:"Champagne — bouteille", sub:"", price:35, icon:"ic-champbottle" },
   ]},
-  { cat:"Sans alcool", items:[
-    { id:"ginger", name:"Ginger beer", sub:"", price:2 },
-    { id:"eau15", name:"Eau 1,5 L", sub:"", price:2 },
-    { id:"coca", name:"Coca", sub:"", price:1 },
-    { id:"oasis", name:"Oasis", sub:"", price:1 },
-    { id:"icetea", name:"Ice tea pêche", sub:"", price:1 },
-    { id:"petillante", name:"Eau pétillante", sub:"", price:1 },
-    { id:"sirop", name:"Sirop à l’eau", sub:"", price:1 },
-    { id:"cafe", name:"Café", sub:"", price:1 },
+  { cat:"Sans alcool", icon:"ic-glass", items:[
+    { id:"ginger", name:"Ginger beer", sub:"", price:2, icon:"ic-bottle" },
+    { id:"eau15", name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
+    { id:"coca", name:"Coca", sub:"", price:1, icon:"ic-can" },
+    { id:"oasis", name:"Oasis", sub:"", price:1, icon:"ic-can" },
+    { id:"icetea", name:"Ice tea pêche", sub:"", price:1, icon:"ic-straw" },
+    { id:"petillante", name:"Eau pétillante", sub:"", price:1, icon:"ic-bubbles" },
+    { id:"sirop", name:"Sirop à l’eau", sub:"", price:1, icon:"ic-glass" },
+    { id:"cafe", name:"Café", sub:"", price:1, icon:"ic-coffee" },
   ]},
 ];
 
 const ALL = {};
 MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = i; }));
-
 const euro = n => n.toFixed(2).replace(".", ",") + " €";
 
 const store = {
@@ -318,35 +508,53 @@ const store = {
 
 let order = store.get("order", {});
 let day = store.get("day", { count:0, total:0 });
+let activeCat = store.get("cat", MENU[0].cat);   // null = toutes les catégories
 
-/* ---------- Menu rendering ---------- */
+/* ---------- Rendu du menu ---------- */
 const menuEl = document.getElementById("menu");
+const tabsEl = document.getElementById("tabs");
+
 menuEl.innerHTML = MENU.map(c => `
-  <section class="cat">
+  <section class="cat" data-cat="${c.cat}">
     <h2>${c.cat}</h2>
     <div class="grid">
       ${c.items.map(i => `
         <button type="button" class="item" data-add="${i.id}">
-          <span class="qty-badge" data-badge="${i.id}">0</span>
+          <span class="tile">
+            <svg width="24" height="24" aria-hidden="true"><use href="#${i.icon}"></use></svg>
+            <span class="q" data-badge="${i.id}">0</span>
+          </span>
           <span class="name">${i.name}${i.sub ? `<span class="sub">${i.sub}</span>` : ""}</span>
           <span class="price">${euro(i.price)}</span>
         </button>`).join("")}
     </div>
   </section>`).join("");
 
-/* ---------- Order logic ---------- */
-function add(id, n){
-  order[id] = (order[id] || 0) + n;
-  if (order[id] <= 0) delete order[id];
-  render();
-}
-function total(){
-  return Object.keys(order).reduce((s, id) => s + ALL[id].price * order[id], 0);
-}
-function count(){
-  return Object.keys(order).reduce((s, id) => s + order[id], 0);
+tabsEl.innerHTML = `
+  <button type="button" class="tab" data-cat-set="__all">
+    <svg width="17" height="17" aria-hidden="true"><use href="#ic-all"></use></svg>Tout
+  </button>` + MENU.map(c => `
+  <button type="button" class="tab" data-cat-set="${c.cat}">
+    <svg width="17" height="17" aria-hidden="true"><use href="#${c.icon}"></use></svg>${c.cat}
+  </button>`).join("");
+
+function renderView(){
+  const showAll = activeCat === null;
+  document.querySelectorAll(".cat").forEach(s => {
+    s.hidden = !showAll && s.dataset.cat !== activeCat;
+  });
+  document.querySelectorAll("[data-cat-set]").forEach(b => {
+    const on = b.dataset.catSet === "__all" ? showAll : b.dataset.catSet === activeCat;
+    b.setAttribute("aria-pressed", String(on));
+  });
+  document.querySelectorAll("[data-view]").forEach(b => {
+    b.setAttribute("aria-pressed", String((b.dataset.view === "all") === showAll));
+  });
+  store.set("cat", activeCat);
+  measureHead();
 }
 
+/* ---------- Commande ---------- */
 const linesEl = document.getElementById("lines");
 const totalOut = document.getElementById("totalOut");
 const barTotal = document.getElementById("barTotal");
@@ -355,6 +563,15 @@ const cashInput = document.getElementById("cash");
 const changeBox = document.getElementById("changeBox");
 const changeOut = document.getElementById("changeOut");
 const cashBtn = document.getElementById("cashBtn");
+const clearBtn = document.getElementById("clearBtn");
+
+function add(id, n){
+  order[id] = (order[id] || 0) + n;
+  if (order[id] <= 0) delete order[id];
+  render();
+}
+const total = () => Object.keys(order).reduce((s, id) => s + ALL[id].price * order[id], 0);
+const count = () => Object.keys(order).reduce((s, id) => s + order[id], 0);
 
 function render(){
   const ids = Object.keys(order);
@@ -377,6 +594,8 @@ function render(){
   barTotal.textContent = euro(t);
   countLabel.textContent = n + (n > 1 ? " articles" : " article");
   cashBtn.disabled = n === 0;
+  clearBtn.disabled = n === 0;
+  disarm();
 
   document.querySelectorAll("[data-badge]").forEach(b => {
     const q = order[b.dataset.badge] || 0;
@@ -399,11 +618,32 @@ function updateChange(){
 }
 
 function renderDay(){
-  document.getElementById("dayCount").textContent = day.count;
-  document.getElementById("dayTotal").textContent = euro(day.total);
+  const c = String(day.count), t = euro(day.total);
+  document.getElementById("dayCount").textContent = c;
+  document.getElementById("dayCount2").textContent = c;
+  document.getElementById("dayTotal").textContent = t;
+  document.getElementById("dayTotal2").textContent = t;
 }
 
-/* ---------- Events ---------- */
+/* ---------- Confirmation en deux temps (pas de confirm() natif) ---------- */
+let armedBtn = null, armedTimer = null, armedLabel = "";
+function disarm(){
+  if (!armedBtn) return;
+  armedBtn.textContent = armedLabel;
+  armedBtn.classList.remove("armed");
+  clearTimeout(armedTimer);
+  armedBtn = null;
+}
+function arm(btn, label, action){
+  if (armedBtn === btn){ const done = action; disarm(); done(); return; }
+  disarm();
+  armedBtn = btn; armedLabel = btn.textContent;
+  btn.textContent = label;
+  btn.classList.add("armed");
+  armedTimer = setTimeout(disarm, 4000);
+}
+
+/* ---------- Événements ---------- */
 document.addEventListener("click", e => {
   const addBtn = e.target.closest("[data-add]");
   if (addBtn){ add(addBtn.dataset.add, parseInt(addBtn.dataset.n || "1", 10)); return; }
@@ -411,16 +651,29 @@ document.addEventListener("click", e => {
   if (delBtn){ delete order[delBtn.dataset.del]; render(); return; }
   const chip = e.target.closest("[data-cash]");
   if (chip){ cashInput.value = chip.dataset.cash; updateChange(); return; }
+  const tab = e.target.closest("[data-cat-set]");
+  if (tab){
+    activeCat = tab.dataset.catSet === "__all" ? null : tab.dataset.catSet;
+    renderView();
+    return;
+  }
+  const vb = e.target.closest("[data-view]");
+  if (vb){
+    activeCat = vb.dataset.view === "all" ? null : (activeCat || MENU[0].cat);
+    renderView();
+    return;
+  }
+  if (!e.target.closest(".btn.armed")) disarm();
 });
 
 cashInput.addEventListener("input", updateChange);
 
-document.getElementById("clearBtn").addEventListener("click", () => {
-  if (count() && !confirm("Annuler cette commande ?")) return;
-  order = {}; cashInput.value = ""; render();
+clearBtn.addEventListener("click", () => {
+  if (!count()) return;
+  arm(clearBtn, "Confirmer ?", () => { order = {}; cashInput.value = ""; render(); });
 });
 
-document.getElementById("cashBtn").addEventListener("click", () => {
+cashBtn.addEventListener("click", () => {
   const t = total();
   if (!t) return;
   day = { count: day.count + 1, total: day.total + t };
@@ -430,15 +683,28 @@ document.getElementById("cashBtn").addEventListener("click", () => {
   render();
 });
 
-document.getElementById("dayReset").addEventListener("click", () => {
-  if (!confirm("Remettre le total de la journée à zéro ?")) return;
-  day = { count:0, total:0 }; store.set("day", day); renderDay();
+const dayResetBtn = document.getElementById("dayReset");
+dayResetBtn.addEventListener("click", () => {
+  arm(dayResetBtn, "Confirmer la remise à zéro ?", () => {
+    day = { count:0, total:0 }; store.set("day", day); renderDay();
+  });
 });
 
 document.getElementById("openSheet").addEventListener("click", () => document.body.classList.add("sheet"));
 document.getElementById("closeSheet").addEventListener("click", () => document.body.classList.remove("sheet"));
 
-/* ---------- Font size ---------- */
+const openSettings = () => document.body.classList.add("settings");
+const closeSettings = () => { disarm(); document.body.classList.remove("settings"); };
+document.getElementById("settingsBtn").addEventListener("click", openSettings);
+document.getElementById("closeSettings").addEventListener("click", closeSettings);
+document.getElementById("scrim").addEventListener("click", closeSettings);
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  closeSettings();
+  document.body.classList.remove("sheet");
+});
+
+/* ---------- Taille du texte ---------- */
 const SIZES = [16, 18, 21, 24, 28];
 let sizeIdx = store.get("size", 1);
 function applySize(){
@@ -446,32 +712,56 @@ function applySize(){
   document.documentElement.style.fontSize = SIZES[sizeIdx] + "px";
   document.getElementById("fontLabel").textContent = Math.round(SIZES[sizeIdx] / 18 * 100) + " %";
   store.set("size", sizeIdx);
+  measureHead();
 }
 document.getElementById("fontUp").addEventListener("click", () => { sizeIdx++; applySize(); });
 document.getElementById("fontDown").addEventListener("click", () => { sizeIdx--; applySize(); });
-applySize();
 
-/* ---------- Theme ---------- */
-const MODES = [
-  { key:"auto",  icon:"◐", label:"Auto" },
-  { key:"light", icon:"☀", label:"Clair" },
-  { key:"dark",  icon:"☾", label:"Sombre" }
-];
-let modeIdx = MODES.findIndex(m => m.key === store.get("theme", "auto"));
-if (modeIdx < 0) modeIdx = 0;
+/* ---------- Thème ---------- */
+let theme = store.get("theme", "auto");
 function applyTheme(){
-  const m = MODES[modeIdx];
-  if (m.key === "auto") document.documentElement.removeAttribute("data-theme");
-  else document.documentElement.setAttribute("data-theme", m.key);
-  document.getElementById("themeIcon").textContent = m.icon;
-  document.getElementById("themeLabel").textContent = m.label;
-  store.set("theme", m.key);
+  if (theme === "auto") document.documentElement.removeAttribute("data-theme");
+  else document.documentElement.setAttribute("data-theme", theme);
+  document.querySelectorAll("[data-theme-set]").forEach(b => {
+    b.setAttribute("aria-pressed", String(b.dataset.themeSet === theme));
+  });
+  store.set("theme", theme);
 }
-document.getElementById("themeBtn").addEventListener("click", () => {
-  modeIdx = (modeIdx + 1) % MODES.length; applyTheme();
+document.getElementById("themeSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-theme-set]");
+  if (!b) return;
+  theme = b.dataset.themeSet; applyTheme();
 });
-if (store.get("theme", null)) applyTheme();
 
+/* ---------- En-tête collant ---------- */
+const headEl = document.querySelector(".head");
+function measureHead(){
+  document.documentElement.style.setProperty("--headh", headEl.offsetHeight + "px");
+}
+addEventListener("resize", measureHead);
+
+/* ---------- Hors ligne (PWA quand le manifeste est servi) ---------- */
+if (document.querySelector('link[rel="manifest"]') && "serviceWorker" in navigator){
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
+  document.getElementById("installHint").hidden = false;
+  document.getElementById("offlineText").textContent =
+    "Installez l’application sur l’écran d’accueil : elle s’ouvre et fonctionne ensuite sans réseau.";
+}
+let deferredPrompt = null;
+const installBtn = document.getElementById("installBtn");
+addEventListener("beforeinstallprompt", e => {
+  e.preventDefault(); deferredPrompt = e; installBtn.hidden = false;
+});
+installBtn.addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt = null; installBtn.hidden = true;
+});
+
+applySize();
+applyTheme();
+renderView();
 render();
 </script>
 </body>
