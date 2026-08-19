@@ -35,11 +35,11 @@
     --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
     --cat-ink:#0F1412;
   }
-  .c1{--c:#F58F70; --c-soft:#33201A}
-  .c2{--c:#EE8FC0; --c-soft:#331B29}
-  .c3{--c:#E3AE4E; --c-soft:#332810}
-  .c4{--c:#BCA2F2; --c-soft:#251F3B}
-  .c5{--c:#59BCE4; --c-soft:#142C38}
+  :root:not([data-theme="light"]) .c1{--c:#F58F70; --c-soft:#33201A}
+  :root:not([data-theme="light"]) .c2{--c:#EE8FC0; --c-soft:#331B29}
+  :root:not([data-theme="light"]) .c3{--c:#E3AE4E; --c-soft:#332810}
+  :root:not([data-theme="light"]) .c4{--c:#BCA2F2; --c-soft:#251F3B}
+  :root:not([data-theme="light"]) .c5{--c:#59BCE4; --c-soft:#142C38}
 }
 :root[data-theme="dark"]{
   --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#313E37;
@@ -63,7 +63,8 @@ body{
   font-family:var(--body); font-size:1rem; line-height:1.45;
   padding-bottom:6.5rem;
 }
-button{font:inherit; color:inherit; cursor:pointer; font-family:var(--body)}
+button{font:inherit; color:inherit; cursor:pointer; font-family:var(--body); touch-action:manipulation}
+button, a{-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
 svg{flex:none}
 [hidden]{display:none !important}
@@ -87,7 +88,7 @@ svg{flex:none}
   background:var(--surface-2); border:1px solid var(--line); border-radius:11px;
   width:2.9rem; height:2.9rem; display:inline-flex; align-items:center; justify-content:center;
 }
-.icon-btn:hover{border-color:var(--accent)}
+
 
 .tabs{
   display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none;
@@ -100,7 +101,7 @@ svg{flex:none}
   display:inline-flex; align-items:center; gap:.4rem;
 }
 .tab svg{width:1rem; height:1rem}
-.tab:hover{border-color:var(--accent)}
+
 .tab[aria-pressed="true"]{background:var(--c); border-color:var(--c); color:var(--cat-ink)}
 
 /* ---------- Layout ---------- */
@@ -128,7 +129,7 @@ svg{flex:none}
   display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:.75rem;
   box-shadow:var(--shadow); transition:transform .08s ease, border-color .12s ease;
 }
-.item:hover{border-color:var(--c)}
+
 .item:active{transform:scale(.985)}
 .tile{
   width:2.8rem; height:2.8rem; border-radius:10px; background:var(--surface-2);
@@ -173,7 +174,7 @@ svg{flex:none}
   width:2.5rem; height:2.5rem; border-radius:9px; border:1px solid var(--line);
   background:var(--surface-2); font-weight:700; font-size:1.15rem; line-height:1;
 }
-.stepper button:hover{border-color:var(--accent)}
+
 .stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center; font-size:1.05rem}
 .stepper .del{margin-left:auto; width:auto; padding:0 .7rem; font-size:.76rem; color:var(--danger); background:none; border-color:transparent}
 
@@ -198,7 +199,7 @@ svg{flex:none}
   border:1px solid var(--line); background:var(--surface-2); border-radius:10px;
   padding:.5rem .7rem; font-size:.8rem; font-weight:600; color:var(--muted);
 }
-.cash-clear:hover:not(:disabled){border-color:var(--danger); color:var(--danger)}
+
 .cash-clear:disabled{opacity:.4; cursor:not-allowed}
 .denoms{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.35rem}
 .chip{
@@ -206,7 +207,7 @@ svg{flex:none}
   padding:.5rem .2rem; font-family:var(--mono); font-weight:700; font-size:min(.9rem, 3.6vw);
   min-height:2.6rem; display:flex; align-items:center; justify-content:center; white-space:nowrap;
 }
-.chip:hover{border-color:var(--accent)}
+
 .chip.note{background:var(--accent-soft); border-color:var(--accent-soft)}
 .chip.used{border-color:var(--accent)}
 .chip .x{
@@ -223,7 +224,7 @@ svg{flex:none}
   flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
   min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
 }
-.btn:hover{border-color:var(--accent)}
+
 .btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
 .btn.armed{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
 .btn:disabled{opacity:.45; cursor:not-allowed}
@@ -293,13 +294,29 @@ body.settings .panel{transform:none; visibility:visible}
   flex:none; width:3.4rem; height:3rem; border-radius:10px; border:1px solid var(--line);
   background:var(--surface-2); font-weight:700;
 }
-.sizer button:hover{border-color:var(--accent)}
+
 .sizer .val{flex:1; text-align:center; font-family:var(--mono); font-weight:700}
 .sample{border:1px dashed var(--line); border-radius:10px; padding:.6rem .8rem; display:flex; justify-content:space-between; align-items:center; gap:.6rem}
 .sample b{font-weight:600}
 .sample span{font-family:var(--mono); font-weight:700; color:var(--accent)}
 .set .btn{min-height:2.8rem}
 .ok{color:var(--accent); font-weight:600; font-size:.85rem}
+/* Le survol n'existe que pour une souris : sur écran tactile il restait
+   collé sur la carte touchée pendant le défilement. */
+@media (hover:hover) and (pointer:fine){
+  .icon-btn:hover{border-color:var(--accent)}
+  .tab:hover{border-color:var(--accent)}
+  .item:hover{border-color:var(--c)}
+  .stepper button:hover{border-color:var(--accent)}
+  .chip:hover{border-color:var(--accent)}
+  .btn:hover{border-color:var(--accent)}
+  .sizer button:hover{border-color:var(--accent)}
+  .cash-clear:hover:not(:disabled){border-color:var(--danger); color:var(--danger)}
+}
+@media (hover:none){
+  .item:active{transform:none}
+}
+
 /* ---------- Modale d'inactivité ---------- */
 .modal-scrim{
   position:fixed; inset:0; z-index:70; background:rgba(8,14,11,.62);
@@ -321,6 +338,21 @@ body.settings .panel{transform:none; visibility:visible}
 .modal-actions{display:flex; gap:.5rem; flex-wrap:wrap}
 .modal-actions .btn{min-width:8rem}
 .btn.danger{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
+
+/* ---------- Bilan de la journée ---------- */
+.tally{display:flex; flex-direction:column; gap:.1rem; max-height:16rem; overflow-y:auto}
+.trow{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:.5rem; align-items:baseline; padding:.28rem 0; border-bottom:1px dashed var(--line)}
+.trow:last-child{border-bottom:0}
+.trow .tq{font-family:var(--mono); font-weight:700; color:var(--c, var(--accent)); min-width:2.2rem}
+.trow .tn{font-size:.88rem; line-height:1.25}
+.trow .tt{font-family:var(--mono); font-weight:700; font-size:.88rem; font-variant-numeric:tabular-nums}
+.tally-empty{color:var(--muted); font-size:.85rem}
+.share-box{width:100%; min-height:9rem; font-family:var(--mono); font-size:.8rem; padding:.6rem;
+  border:1px solid var(--line); border-radius:10px; background:var(--surface-2); color:var(--ink)}
+.breakdown{display:block; font-family:var(--body); font-size:.76rem; font-weight:600; opacity:.85; margin-top:.15rem}
+.change{flex-wrap:wrap}
+.change .col{display:flex; flex-direction:column; min-width:0}
+.ticket h2 b{font-family:var(--mono); font-weight:700; color:var(--accent)}
 
 /* ---------- Confirmation d'encaissement ---------- */
 .toast{
@@ -412,6 +444,9 @@ body.settings .panel{transform:none; visibility:visible}
     <path d="M15.5 10H18a2.5 2.5 0 0 1 0 5h-2.5"/>
     <path d="M7.5 3.5v2M11 3.5v2M3.5 21h13"/>
   </symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 6.5h16M4 12h16M4 17.5h16"/>
+  </symbol>
   <symbol id="ic-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="3.2"/>
     <path d="M19.5 12a7.5 7.5 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7.4 7.4 0 0 0-2-1.2L14.7 3h-3.9l-.4 2.7c-.7.3-1.4.7-2 1.2l-2.3-1-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1c.6.5 1.3.9 2 1.2l.4 2.7h3.9l.4-2.7c.7-.3 1.4-.7 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/>
@@ -434,6 +469,9 @@ body.settings .panel{transform:none; visibility:visible}
       <b>Caisse — Léon en Rue Libre</b>
       <span>Festival · plancha &amp; bar</span>
     </div>
+    <button type="button" class="icon-btn" id="viewBtn" aria-label="Afficher tout le menu">
+      <svg width="22" height="22" aria-hidden="true"><use href="#ic-all" id="viewIcon"></use></svg>
+    </button>
     <button type="button" class="icon-btn" id="settingsBtn" aria-label="Réglages">
       <svg width="22" height="22" aria-hidden="true"><use href="#ic-gear"></use></svg>
     </button>
@@ -448,7 +486,7 @@ body.settings .panel{transform:none; visibility:visible}
     <button type="button" class="back" id="closeSheet">
       <svg aria-hidden="true"><use href="#ic-back"></use></svg> Retour au menu
     </button>
-    <h2>Commande <em id="countLabel">0 article</em></h2>
+    <h2>Commande <b id="orderNo">n° 1</b> <em id="countLabel">0 article</em></h2>
     <ul class="lines" id="lines"></ul>
     <div class="total">
       <span>Total à payer</span>
@@ -462,7 +500,10 @@ body.settings .panel{transform:none; visibility:visible}
       </div>
       <div class="denoms" id="denoms" role="group" aria-label="Pièces et billets reçus"></div>
       <div class="change" id="changeBox" hidden>
-        <span>À rendre</span>
+        <div class="col">
+          <span>À rendre</span>
+          <span class="breakdown" id="breakdown"></span>
+        </div>
         <strong id="changeOut">0,00 €</strong>
       </div>
     </div>
@@ -471,7 +512,7 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" class="btn primary" id="cashBtn">Encaisser</button>
     </div>
     <div class="dayline">
-      Journée : <b id="dayCount">0</b> commandes · <b id="dayTotal">0,00 €</b>
+      Journée : <b id="dayCount">0</b> <span id="dayWord">commande</span> · <b id="dayTotal">0,00 €</b>
     </div>
   </aside>
 </div>
@@ -494,6 +535,17 @@ body.settings .panel{transform:none; visibility:visible}
     <div class="modal-actions">
       <button type="button" class="btn danger" id="idleClear">Remettre à zéro</button>
       <button type="button" class="btn primary" id="idleKeep">Garder la commande</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-scrim" id="shareModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <h2 id="shareTitle">Bilan de la journée</h2>
+    <p>Sélectionnez le texte pour le copier.</p>
+    <textarea class="share-box" id="shareText" readonly></textarea>
+    <div class="modal-actions">
+      <button type="button" class="btn primary" id="shareClose">Fermer</button>
     </div>
   </div>
 </div>
@@ -537,6 +589,15 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set">
+    <h3>Retour tactile</h3>
+    <div class="seg" id="vibeSeg">
+      <button type="button" data-vibe="1" aria-pressed="true">Vibration</button>
+      <button type="button" data-vibe="0" aria-pressed="false">Silencieux</button>
+    </div>
+    <p>Une courte vibration à chaque ajout, pour être sûr de l’appui sans regarder l’écran.</p>
+  </section>
+
+  <section class="set">
     <h3>Commande oubliée</h3>
     <div class="seg" id="idleSeg">
       <button type="button" data-idle="0" aria-pressed="false">Jamais</button>
@@ -548,9 +609,21 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set">
-    <h3>Total de la journée</h3>
-    <p><b id="dayCount2">0</b> commandes encaissées · <b id="dayTotal2">0,00 €</b></p>
-    <button type="button" class="btn" id="dayReset">Remettre à zéro</button>
+    <h3>Bilan de la journée</h3>
+    <p><b id="dayCount2">0</b> <span id="dayWord2">commande</span> encaissée<span id="dayS"></span> · <b id="dayTotal2">0,00 €</b></p>
+    <div class="tally" id="tally"></div>
+    <button type="button" class="btn" id="shareBtn">Partager le bilan</button>
+    <button type="button" class="btn" id="undoBtn" disabled>Annuler le dernier encaissement</button>
+    <button type="button" class="btn" id="dayReset">Remettre le bilan à zéro</button>
+  </section>
+
+  <section class="set">
+    <h3>Ouverture des réglages</h3>
+    <div class="seg" id="lockSeg">
+      <button type="button" data-lock="0" aria-pressed="true">Appui simple</button>
+      <button type="button" data-lock="1" aria-pressed="false">Appui long</button>
+    </div>
+    <p>« Appui long » évite d’ouvrir les réglages par erreur en plein service.</p>
   </section>
 
   <section class="set" id="offlineBox">
@@ -608,8 +681,13 @@ const store = {
 };
 
 let order = store.get("order", {});
-let day = store.get("day", { count:0, total:0 });
+let day = store.get("day", { count:0, total:0, items:{} });
+if (!day.items) day.items = {};                    // reprise d'un bilan enregistré avant cette version
+let lastSale = store.get("lastSale", null);
+let vibe = store.get("vibe", 1);
+let lockSettings = store.get("lock", 0);
 let activeCat = store.get("cat", MENU[0].cat);   // null = toutes les catégories
+let lastCat = activeCat || MENU[0].cat;
 
 /* ---------- Rendu du menu ---------- */
 const menuEl = document.getElementById("menu");
@@ -641,6 +719,10 @@ tabsEl.innerHTML = `
 
 function renderView(){
   const showAll = activeCat === null;
+  tabsEl.hidden = showAll;
+  document.getElementById("viewIcon").setAttribute("href", showAll ? "#ic-list" : "#ic-all");
+  document.getElementById("viewBtn").setAttribute("aria-label",
+    showAll ? "Afficher le menu par catégorie" : "Afficher tout le menu");
   document.querySelectorAll(".cat").forEach(s => {
     s.hidden = !showAll && s.dataset.cat !== activeCat;
   });
@@ -651,6 +733,7 @@ function renderView(){
   document.querySelectorAll("[data-view]").forEach(b => {
     b.setAttribute("aria-pressed", String((b.dataset.view === "all") === showAll));
   });
+  if (activeCat) lastCat = activeCat;
   store.set("cat", activeCat);
   measureHead();
 }
@@ -699,6 +782,7 @@ function renderCash(syncInput = true){
 }
 
 function add(id, n){
+  if (vibe && navigator.vibrate) navigator.vibrate(n > 0 ? 12 : [8]);
   order[id] = (order[id] || 0) + n;
   if (order[id] <= 0) delete order[id];
   render();
@@ -726,6 +810,7 @@ function render(){
   totalOut.textContent = euro(t);
   barTotal.textContent = euro(t);
   countLabel.textContent = n + (n > 1 ? " articles" : " article");
+  document.getElementById("orderNo").textContent = "n° " + (day.count + 1);
   cashBtn.disabled = n === 0;
   clearBtn.disabled = n === 0;
   disarm();
@@ -744,10 +829,22 @@ function render(){
 
 function updateChange(){
   const t = Math.round(total() * 100);
+  const breakdown = document.getElementById("breakdown");
   if (givenCents <= 0 || t <= 0){ changeBox.hidden = true; return; }
   changeBox.hidden = false;
   const diff = givenCents - t;
   changeOut.textContent = diff >= 0 ? euro(diff / 100) : "Manque " + euro(-diff / 100);
+  breakdown.textContent = diff > 0 ? change(diff) : "";
+}
+
+/* Décomposition de la monnaie à rendre, du plus gros au plus petit. */
+function change(cents){
+  const parts = [];
+  NOTES.concat(COINS).sort((a, b) => b - a).forEach(v => {
+    const n = Math.floor(cents / v);
+    if (n){ parts.push(n + " × " + denomLabel(v)); cents -= n * v; }
+  });
+  return parts.join(" · ");
 }
 
 function renderDay(){
@@ -756,7 +853,73 @@ function renderDay(){
   document.getElementById("dayCount2").textContent = c;
   document.getElementById("dayTotal").textContent = t;
   document.getElementById("dayTotal2").textContent = t;
+  const plural = day.count > 1 ? "commandes" : "commande";
+  document.getElementById("dayWord").textContent = plural;
+  document.getElementById("dayWord2").textContent = plural;
+  document.getElementById("dayS").textContent = day.count > 1 ? "s" : "";
+  document.getElementById("undoBtn").disabled = !lastSale;
+  renderTally();
 }
+
+function soldLines(){
+  return Object.keys(day.items)
+    .filter(id => ALL[id] && day.items[id] > 0)
+    .map(id => ({ id, name: ALL[id].name, c: ALL[id].c, q: day.items[id], sum: ALL[id].price * day.items[id] }))
+    .sort((a, b) => b.sum - a.sum);
+}
+
+function renderTally(){
+  const rows = soldLines();
+  document.getElementById("tally").innerHTML = rows.length
+    ? rows.map(r => `<div class="trow ${r.c}"><span class="tq">${r.q}×</span><span class="tn">${r.name}</span><span class="tt">${euro(r.sum)}</span></div>`).join("")
+    : `<p class="tally-empty">Aucune vente encaissée pour l’instant.</p>`;
+}
+
+function reportText(){
+  const rows = soldLines();
+  const pad = rows.length ? Math.max(...rows.map(r => r.name.length)) : 0;
+  return ["Caisse — Léon en Rue Libre",
+          day.count + (day.count > 1 ? " commandes · " : " commande · ") + euro(day.total), ""]
+    .concat(rows.map(r => (r.q + "×").padStart(4) + "  " + r.name.padEnd(pad) + "  " + euro(r.sum).padStart(9)))
+    .join("\n");
+}
+
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  const text = reportText();
+  try {
+    if (navigator.share){ await navigator.share({ title: "Bilan de la journée", text }); return; }
+    await navigator.clipboard.writeText(text);
+    toast("Bilan copié");
+  } catch (e) {
+    if (e && e.name === "AbortError") return;      // partage annulé par l'utilisateur
+    const box = document.getElementById("shareText");
+    box.value = text;
+    document.getElementById("shareModal").hidden = false;
+    box.select();
+  }
+});
+document.getElementById("shareClose").addEventListener("click", () => {
+  document.getElementById("shareModal").hidden = true;
+});
+
+const undoBtn = document.getElementById("undoBtn");
+undoBtn.addEventListener("click", () => {
+  if (!lastSale) return;
+  if (count()){ toast("Terminez d’abord la commande en cours"); return; }
+  arm(undoBtn, "Confirmer l’annulation ?", () => {
+    day.count = Math.max(0, day.count - 1);
+    day.total = Math.round((day.total - lastSale.total) * 100) / 100;
+    Object.keys(lastSale.order).forEach(id => {
+      day.items[id] = (day.items[id] || 0) - lastSale.order[id];
+      if (day.items[id] <= 0) delete day.items[id];
+    });
+    order = Object.assign({}, lastSale.order);
+    toast("Commande n° " + lastSale.no + " remise en cours");
+    lastSale = null; store.set("lastSale", null); store.set("day", day);
+    render();
+    closeSettings();
+  });
+});
 
 function resetOrder(){
   order = {}; clearCash(); render();
@@ -851,9 +1014,14 @@ document.addEventListener("click", e => {
     renderView();
     return;
   }
+  if (e.target.closest("#viewBtn")){
+    activeCat = activeCat === null ? (lastCat || MENU[0].cat) : null;
+    renderView();
+    return;
+  }
   const vb = e.target.closest("[data-view]");
   if (vb){
-    activeCat = vb.dataset.view === "all" ? null : (activeCat || MENU[0].cat);
+    activeCat = vb.dataset.view === "all" ? null : (lastCat || MENU[0].cat);
     renderView();
     return;
   }
@@ -876,30 +1044,72 @@ clearBtn.addEventListener("click", () => {
 cashBtn.addEventListener("click", () => {
   const t = total();
   if (!t) return;
-  day = { count: day.count + 1, total: day.total + t };
+  const no = day.count + 1;
+  lastSale = { order: Object.assign({}, order), total: t, no };
+  store.set("lastSale", lastSale);
+  day.count = no;
+  day.total = Math.round((day.total + t) * 100) / 100;
+  Object.keys(order).forEach(id => { day.items[id] = (day.items[id] || 0) + order[id]; });
   store.set("day", day);
+  if (vibe && navigator.vibrate) navigator.vibrate([14, 40, 14]);
   resetOrder();
-  toast("Encaissé · " + euro(t));
+  toast("Encaissé · n° " + no + " · " + euro(t));
   backToMenu();
 });
 
 const dayResetBtn = document.getElementById("dayReset");
 dayResetBtn.addEventListener("click", () => {
   arm(dayResetBtn, "Confirmer la remise à zéro ?", () => {
-    day = { count:0, total:0 }; store.set("day", day); renderDay();
+    day = { count:0, total:0, items:{} };
+    lastSale = null; store.set("lastSale", null); store.set("day", day); renderDay();
   });
 });
 
 document.getElementById("openSheet").addEventListener("click", () => document.body.classList.add("sheet"));
 document.getElementById("closeSheet").addEventListener("click", () => document.body.classList.remove("sheet"));
 
+document.getElementById("vibeSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-vibe]");
+  if (!b) return;
+  vibe = parseInt(b.dataset.vibe, 10);
+  store.set("vibe", vibe);
+  applyToggles();
+  if (vibe && navigator.vibrate) navigator.vibrate(12);
+});
+document.getElementById("lockSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-lock]");
+  if (!b) return;
+  lockSettings = parseInt(b.dataset.lock, 10);
+  store.set("lock", lockSettings);
+  applyToggles();
+});
+function applyToggles(){
+  document.querySelectorAll("[data-vibe]").forEach(b =>
+    b.setAttribute("aria-pressed", String(parseInt(b.dataset.vibe, 10) === vibe)));
+  document.querySelectorAll("[data-lock]").forEach(b =>
+    b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
+}
+
 const openSettings = () => document.body.classList.add("settings");
 const closeSettings = () => { disarm(); document.body.classList.remove("settings"); };
-document.getElementById("settingsBtn").addEventListener("click", openSettings);
+const settingsBtn = document.getElementById("settingsBtn");
+let holdTimer = null;
+settingsBtn.addEventListener("click", () => { if (!lockSettings) openSettings(); });
+settingsBtn.addEventListener("pointerdown", () => {
+  if (!lockSettings) return;
+  clearTimeout(holdTimer);
+  holdTimer = setTimeout(() => {
+    if (navigator.vibrate && vibe) navigator.vibrate(18);
+    openSettings();
+  }, 600);
+});
+["pointerup", "pointerleave", "pointercancel"].forEach(ev =>
+  settingsBtn.addEventListener(ev, () => clearTimeout(holdTimer)));
 document.getElementById("closeSettings").addEventListener("click", closeSettings);
 document.getElementById("scrim").addEventListener("click", closeSettings);
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape" || !idleModal.hidden) return;
+  document.getElementById("shareModal").hidden = true;
   closeSettings();
   document.body.classList.remove("sheet");
 });
@@ -962,6 +1172,7 @@ installBtn.addEventListener("click", async () => {
 applySize();
 applyTheme();
 applyIdle();
+applyToggles();
 renderView();
 render();
 </script>

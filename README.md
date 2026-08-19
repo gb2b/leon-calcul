@@ -11,7 +11,15 @@ les quantités, le total s'affiche en grand et l'application calcule la monnaie 
   reçus, autant de fois que nécessaire — les montants s'additionnent (comptés en
   centimes, sans erreur d'arrondi) — ou on saisit un montant libre ; « à rendre »
   s'affiche en jaune, « manque X € » si le compte n'y est pas.
-- Total de la journée (nombre de commandes + recette).
+- Numéro de commande affiché en cours de saisie, et annonce « Encaissé · n° 12 · 21,00 € ».
+- Bilan de la journée : nombre de commandes, recette, détail par article (classé par
+  chiffre d'affaires) et bouton « Partager le bilan » (partage natif, presse-papiers,
+  ou texte à copier en dernier recours).
+- « Annuler le dernier encaissement » : la commande revient telle quelle et le bilan
+  est corrigé — pour rattraper un double encaissement.
+- Suggestion de monnaie : « à rendre 29,00 € » s'accompagne de « 1 × 20 € · 1 × 5 € · 2 × 2 € ».
+- Vibration courte à chaque ajout (désactivable) et ouverture des réglages par appui
+  long, pour éviter les fausses manœuvres en plein service.
 - Rappel « commande oubliée » : sans aucun appui pendant 5 minutes (réglable, ou
   désactivable), la caisse demande s'il faut remettre la commande en cours à zéro.
 - Thème clair / sombre / auto et 5 tailles de police, dans le menu Réglages.
