@@ -3,10 +3,13 @@
 Petite caisse web pour le stand du festival : on touche les articles du menu, on ajuste
 les quantités, le total s'affiche en grand et l'application calcule la monnaie à rendre.
 
-- Menu complet (plancha, tapas & dessert, bières, vins & sangria, sans alcool) avec icônes.
+- Menu complet (plancha, tapas & dessert, bières, vins & sangria, sans alcool) avec une
+  icône et une couleur propres à chaque catégorie, reprises jusque dans le récapitulatif.
 - Filtre par catégorie ou affichage de tout le menu d'un coup.
 - Récapitulatif de commande, total en gros, « reçu » → « à rendre ».
 - Total de la journée (nombre de commandes + recette).
+- Rappel « commande oubliée » : sans aucun appui pendant 5 minutes (réglable, ou
+  désactivable), la caisse demande s'il faut remettre la commande en cours à zéro.
 - Thème clair / sombre / auto et 5 tailles de police, dans le menu Réglages.
 - Tout est calculé sur l'appareil : aucune donnée n'est envoyée, la commande en cours
   et les réglages survivent à un rechargement.
