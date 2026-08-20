@@ -1,51 +1,53 @@
 # Caisse — Léon en Rue Libre
 
 Petite caisse web pour le stand du festival : on touche les articles du menu, on ajuste
-les quantités, le total s'affiche en grand et l'application calcule la monnaie à rendre.
+les quantités, le total s'affiche en grand, puis un écran d'encaissement calcule la
+monnaie à rendre — en billets et en pièces.
 
-- Menu complet (plancha, tapas & dessert, bières, vins & sangria, sans alcool) avec une
-  icône et une couleur propres à chaque catégorie, reprises jusque dans le récapitulatif.
-- Filtre par catégorie ou affichage de tout le menu d'un coup.
-- Récapitulatif de commande : total figé en haut, articles et clavier de monnaie qui
-  défilent, « à rendre » et boutons figés en bas — la mise en page tient aux cinq
-  tailles de police, de l'iPhone SE au grand écran.
-- Encaissement : on appuie sur les pièces (0,10 à 2 €) et les billets (5 à 100 €)
-  reçus, autant de fois que nécessaire — les montants s'additionnent (comptés en
-  centimes, sans erreur d'arrondi) — ou on saisit un montant libre ; « à rendre »
-  s'affiche en jaune, « manque X € » si le compte n'y est pas.
-- Numéro de commande affiché en cours de saisie, et annonce « Encaissé · n° 12 · 21,00 € ».
-- Bilan de la journée : nombre de commandes, recette, détail par article (classé par
-  chiffre d'affaires) et bouton « Partager le bilan » (partage natif, presse-papiers,
-  ou texte à copier en dernier recours).
-- « Annuler le dernier encaissement » : la commande revient telle quelle et le bilan
-  est corrigé — pour rattraper un double encaissement.
-- Suggestion de monnaie : « à rendre 29,00 € » s'accompagne de « 1 × 20 € · 1 × 5 € · 2 × 2 € ».
-- Vibration courte à chaque ajout (désactivable) et ouverture des réglages par appui
-  long, pour éviter les fausses manœuvres en plein service.
-- Rappel « commande oubliée » : sans aucun appui pendant 5 minutes (réglable, ou
-  désactivable), la caisse demande s'il faut remettre la commande en cours à zéro.
-- Thème clair / sombre / auto et 5 tailles de police, dans le menu Réglages.
-- Tout est calculé sur l'appareil : aucune donnée n'est envoyée, la commande en cours
-  et les réglages survivent à un rechargement.
+## Ce que ça fait
+
+- Menu complet (plancha, tapas & dessert, bières, vins & sangria, sans alcool), une
+  icône et une couleur par catégorie, en clair comme en sombre.
+- Affichage de tout le menu d'un coup (par défaut) ou filtré par catégorie.
+- Ajout par simple appui ; un bouton « − » apparaît sur la carte pour retirer un article
+  sans passer par le récapitulatif.
+- Récapitulatif : total figé en haut, articles au milieu, actions figées en bas.
+- Écran d'encaissement séparé : on appuie sur les billets et les pièces que le client
+  donne (1 € à 100 €, aux couleurs réelles des coupures), le montant s'additionne, et
+  « à rendre » s'affiche avec le détail des coupures à rendre. Un champ libre reste
+  disponible pour n'importe quel montant.
+- Confirmation après validation, avec la monnaie à rendre en gros et un bouton pour
+  annuler tout de suite l'encaissement en cas d'erreur.
+- Bilan de la journée : nombre de commandes, recette, détail par article, partage du
+  bilan (partage natif, presse-papiers ou texte à copier).
+- Historique des commandes encaissées : chacune peut être annulée ou reprise pour
+  modification.
+- Rappel « commande oubliée » après un délai sans appui (réglable, désactivable).
+- Réglages à part : taille du texte (5 paliers), thème auto/clair/sombre, affichage du
+  menu, retour tactile, ouverture des réglages par appui long.
+- Tout est calculé sur l'appareil ; la commande en cours, l'historique et les réglages
+  survivent à un rechargement.
 
 ## Utiliser hors ligne
 
-**Option 1 — le fichier seul.** Envoyez `index.html` sur le téléphone (mail, AirDrop,
-clé USB) et ouvrez-le. Il n'a besoin de rien d'autre ; sans réseau, les polices Google
-sont simplement remplacées par celles du téléphone.
+**Option 1 — le fichier seul.** Envoyez `index.html` sur le téléphone et ouvrez-le.
+Il est autonome ; sans réseau, les polices Google sont remplacées par celles du système.
 
-**Option 2 — application installée (recommandée).** Réglages → « Installer sur l'écran
-d'accueil » indique la marche à suivre pour l'appareil utilisé, et affiche un diagnostic
-(adresse, https, manifeste, service worker) si l'installation ne se propose pas.
- Publiez le dossier sur un hébergement
-HTTPS — par exemple GitHub Pages : *Settings → Pages → Deploy from a branch*, branche
-`main`, dossier `/ (root)`. Ouvrez ensuite l'adresse sur le téléphone :
+**Option 2 — application installée.** Publiez le dossier sur un hébergement HTTPS
+(GitHub Pages : *Settings → Pages → Deploy from a branch*). Le service worker met
+l'application en cache dès la première visite.
 
-- Android / Chrome : menu ⋮ → « Installer l'application » (ou le bouton dans Réglages).
-- iPhone / Safari : bouton Partager → « Sur l'écran d'accueil ».
+- Android / Chrome : menu ⋮ → « Installer l'application ».
+- iPhone : **aucun navigateur ne propose de bouton d'installation** — cela passe
+  toujours par le menu Partager. Dans Safari : Partager → « Sur l'écran d'accueil »
+  (mode plein écran). Dans Chrome iOS : ⋯ → « Ajouter à l'écran d'accueil », qui crée
+  un raccourci ouvert par Safari.
 
-Le service worker (`sw.js`) met l'application en cache : une fois installée, elle
-démarre et fonctionne entièrement sans réseau.
+Réglages → « Installer sur l'écran d'accueil » détecte l'appareil, donne les étapes et
+affiche un diagnostic : adresse, https, manifeste, service worker, vibration.
+
+**Vibration :** `navigator.vibrate` n'existe sur aucun navigateur iPhone. Le réglage se
+désactive tout seul et l'indique quand l'appareil ne la prend pas en charge.
 
 ## Fichiers
 
@@ -64,5 +66,8 @@ punch 4 €, sangria 4 € / 10 €, vin 3 € / 12 €, champagne 6 € / 35 �
 eau 1,5 L 2 €, sodas et café 1 €.
 
 Les sauces (mayonnaise, ketchup) sont offertes « à la demande » sur le menu : elles ne
-figurent donc pas dans la caisse. Pour changer un prix ou un libellé, modifiez le tableau
-`MENU` en haut du `<script>` dans `index.html`.
+figurent donc pas dans la caisse. Tous les prix étant des euros entiers, le clavier
+d'encaissement ne propose pas de centimes ; le champ libre accepte n'importe quel montant.
+
+Pour changer un prix ou un libellé, modifiez le tableau `MENU` en haut du `<script>`
+dans `index.html`.

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Caisse Léon en Rue Libre</title>
 <meta name="description" content="Caisse du stand : menu, quantités, total et rendu de monnaie.">
 <meta name="theme-color" content="#0E6B4C">
@@ -24,136 +24,140 @@
   --danger:#A32B1B; --danger-soft:#F7DED9;
   --cat-ink:#FFFFFF;
   --shadow:0 1px 2px rgba(19,26,22,.08), 0 8px 24px rgba(19,26,22,.06);
-  --r:14px; --headh:7rem;
+  --r:14px; --headh:5rem;
   --display:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;
   --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
 }
+/* Une couleur par catégorie — thème clair */
+.c0{--c:var(--accent); --c-soft:var(--accent-soft)}
+.c1{--c:#B0432A; --c-soft:#F8E4DD}
+.c2{--c:#8E3568; --c-soft:#F8E2EF}
+.c3{--c:#8A6110; --c-soft:#F6ECD6}
+.c4{--c:#6B45A8; --c-soft:#EBE5F9}
+.c5{--c:#14688C; --c-soft:#DEEEF6}
+
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#313E37;
-    --ink:#E9F0EA; --muted:#9DACA2;
+    --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#333F38;
+    --ink:#E9F0EA; --muted:#A3B2A8;
     --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
     --amber:#F5C243; --amber-ink:#221900;
-    --danger:#F08A7A; --danger-soft:#38211D;
-    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
+    --danger:#F08A7A; --danger-soft:#3B221E;
     --cat-ink:#0F1412;
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
   }
-  :root:not([data-theme="light"]) .c1{--c:#F58F70; --c-soft:#33201A}
-  :root:not([data-theme="light"]) .c2{--c:#EE8FC0; --c-soft:#331B29}
-  :root:not([data-theme="light"]) .c3{--c:#E3AE4E; --c-soft:#332810}
-  :root:not([data-theme="light"]) .c4{--c:#BCA2F2; --c-soft:#251F3B}
-  :root:not([data-theme="light"]) .c5{--c:#59BCE4; --c-soft:#142C38}
+  /* Spécificité renforcée : sinon les couleurs claires, déclarées plus haut,
+     l'emportaient à égalité en mode sombre système. */
+  :root:not([data-theme="light"]) .c1{--c:#FF9C74; --c-soft:#43261D}
+  :root:not([data-theme="light"]) .c2{--c:#FF9AD0; --c-soft:#3F2033}
+  :root:not([data-theme="light"]) .c3{--c:#F2C25C; --c-soft:#3D2F12}
+  :root:not([data-theme="light"]) .c4{--c:#C2ACFF; --c-soft:#2D2549}
+  :root:not([data-theme="light"]) .c5{--c:#6BCBF5; --c-soft:#153341}
 }
 :root[data-theme="dark"]{
-  --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#313E37;
-  --ink:#E9F0EA; --muted:#9DACA2;
+  --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#333F38;
+  --ink:#E9F0EA; --muted:#A3B2A8;
   --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
   --amber:#F5C243; --amber-ink:#221900;
-  --danger:#F08A7A; --danger-soft:#38211D;
+  --danger:#F08A7A; --danger-soft:#3B221E;
   --cat-ink:#0F1412;
   --shadow:0 1px 2px rgba(0,0,0,.5), 0 10px 28px rgba(0,0,0,.35);
 }
-:root[data-theme="dark"] .c1{--c:#F58F70; --c-soft:#33201A}
-:root[data-theme="dark"] .c2{--c:#EE8FC0; --c-soft:#331B29}
-:root[data-theme="dark"] .c3{--c:#E3AE4E; --c-soft:#332810}
-:root[data-theme="dark"] .c4{--c:#BCA2F2; --c-soft:#251F3B}
-:root[data-theme="dark"] .c5{--c:#59BCE4; --c-soft:#142C38}
+:root[data-theme="dark"] .c1{--c:#FF9C74; --c-soft:#43261D}
+:root[data-theme="dark"] .c2{--c:#FF9AD0; --c-soft:#3F2033}
+:root[data-theme="dark"] .c3{--c:#F2C25C; --c-soft:#3D2F12}
+:root[data-theme="dark"] .c4{--c:#C2ACFF; --c-soft:#2D2549}
+:root[data-theme="dark"] .c5{--c:#6BCBF5; --c-soft:#153341}
 
 *{box-sizing:border-box}
-html{font-size:18px;-webkit-text-size-adjust:100%}
+html{font-size:18px; -webkit-text-size-adjust:100%}
 body{
-  margin:0; background:var(--bg); color:var(--ink);
+  margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
   font-family:var(--body); font-size:1rem; line-height:1.45;
   padding-bottom:6.5rem;
 }
+body.empty{padding-bottom:1rem}
 button{font:inherit; color:inherit; cursor:pointer; font-family:var(--body); touch-action:manipulation}
 button, a{-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:3px solid var(--accent); outline-offset:2px; border-radius:6px}
 svg{flex:none}
 [hidden]{display:none !important}
 
-
-/* Une couleur par catégorie (thème clair) */
-.c0{--c:var(--accent); --c-soft:var(--accent-soft)}
-.c1{--c:#B0432A; --c-soft:#F8E4DD}   /* plancha */
-.c2{--c:#8E3568; --c-soft:#F8E2EF}   /* tapas & dessert */
-.c3{--c:#8A6110; --c-soft:#F6ECD6}   /* bières */
-.c4{--c:#6B45A8; --c-soft:#EBE5F9}   /* vins & sangria */
-.c5{--c:#14688C; --c-soft:#DEEEF6}   /* sans alcool */
-
-/* ---------- Header + filtres ---------- */
+/* ---------- En-tête ---------- */
 .head{position:sticky; top:0; z-index:30; background:var(--surface); border-bottom:1px solid var(--line)}
-.top{display:flex; align-items:center; gap:.75rem; padding:.6rem clamp(.7rem,2.5vw,1.4rem)}
+.top{display:flex; align-items:center; gap:.6rem; padding:.55rem clamp(.7rem,2.5vw,1.4rem)}
 .brand{display:flex; flex-direction:column; margin-right:auto; min-width:0}
-.brand b{font-family:var(--display); font-weight:800; font-size:min(1.1rem, 4.8vw); letter-spacing:-.01em; line-height:1.15; overflow-wrap:anywhere}
-.brand span{font-size:.7rem; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.brand b{font-family:var(--display); font-weight:800; font-size:min(1.1rem,4.6vw); letter-spacing:-.01em; line-height:1.15}
+.brand span{font-size:min(.7rem,3vw); letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
 .icon-btn{
-  background:var(--surface-2); border:1px solid var(--line); border-radius:11px;
-  width:2.9rem; height:2.9rem; display:inline-flex; align-items:center; justify-content:center;
+  background:var(--surface-2); border:1px solid var(--line); border-radius:11px; flex:none;
+  width:min(2.9rem,13vw); height:min(2.9rem,13vw); display:inline-flex; align-items:center; justify-content:center;
 }
-
-
-.tabs{
-  display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none;
-  padding:0 clamp(.7rem,2.5vw,1.4rem) .6rem;
-}
+.icon-btn svg{width:min(1.35rem,6vw); height:min(1.35rem,6vw)}
+.tabs{display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none; padding:0 clamp(.7rem,2.5vw,1.4rem) .55rem}
 .tabs::-webkit-scrollbar{display:none}
 .tab{
   flex:none; background:var(--surface-2); border:1px solid var(--line); border-radius:999px;
-  padding:.45rem .85rem; font-weight:600; font-size:.9rem; white-space:nowrap;
-  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.4rem .8rem; font-weight:600; font-size:min(.9rem,3.8vw); white-space:nowrap;
+  display:inline-flex; align-items:center; gap:.35rem;
 }
 .tab svg{width:1rem; height:1rem}
-
 .tab[aria-pressed="true"]{background:var(--c); border-color:var(--c); color:var(--cat-ink)}
 
-/* ---------- Layout ---------- */
+/* ---------- Structure ---------- */
 .wrap{
   display:grid; grid-template-columns:1fr; gap:1.25rem;
-  max-width:1240px; margin:0 auto; padding:1.1rem clamp(.7rem,2.5vw,1.4rem);
+  max-width:1240px; margin:0 auto; padding:1rem clamp(.7rem,2.5vw,1.4rem);
 }
 @media (min-width:980px){
   .wrap{grid-template-columns:minmax(0,1fr) 24rem; align-items:start}
-  body{padding-bottom:1rem}
+  body, body.empty{padding-bottom:1rem}
 }
 
 /* ---------- Menu ---------- */
-.cat{margin:0 0 1.4rem}
+.cat{margin:0 0 1.3rem}
 .cat h2{
-  font-family:var(--display); font-weight:600; font-size:.8rem; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--c); margin:0 0 .55rem;
+  font-family:var(--display); font-weight:600; font-size:min(.8rem,3.4vw); letter-spacing:.14em;
+  text-transform:uppercase; color:var(--c); margin:0 0 .5rem;
   display:flex; align-items:center; gap:.6rem;
 }
 .cat h2 span{min-width:0; overflow-wrap:anywhere}
-.cat h2::after{content:""; flex:1; height:2px; border-radius:2px; background:var(--c); opacity:.35}
-.grid{display:grid; gap:.6rem; grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),1fr))}
+.cat h2::after{content:""; flex:1; height:2px; border-radius:2px; background:var(--c); opacity:.5}
+.grid{display:grid; gap:.55rem; grid-template-columns:repeat(auto-fill,minmax(min(16rem,100%),1fr))}
 .item{
-  text-align:left; background:var(--surface); border:1px solid var(--line);
-  border-radius:var(--r); padding:.7rem .8rem; min-height:4.2rem;
-  display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:.75rem;
-  box-shadow:var(--shadow); transition:transform .08s ease, border-color .12s ease;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
+  box-shadow:var(--shadow); display:flex; align-items:stretch; overflow:hidden;
+  transition:border-color .12s ease;
 }
-
-.item:active{transform:scale(.985)}
+.item .plus{
+  flex:1; min-width:0; text-align:left; background:none; border:0; padding:.65rem .75rem;
+  display:grid; grid-template-columns:auto minmax(0,1fr) auto; align-items:center; gap:.7rem;
+}
 .tile{
-  width:min(2.8rem, 12vw); height:min(2.8rem, 12vw); border-radius:10px; background:var(--surface-2);
+  width:min(2.8rem,12vw); height:min(2.8rem,12vw); border-radius:10px; background:var(--surface-2);
   display:flex; align-items:center; justify-content:center; color:var(--c);
 }
-.tile svg{width:min(1.55rem, 6.5vw); height:min(1.55rem, 6.5vw)}
-.tile .q{display:none; font-family:var(--mono); font-weight:700; font-size:min(1.25rem, 5.5vw)}
+.tile svg{width:min(1.55rem,6.5vw); height:min(1.55rem,6.5vw)}
+.tile .q{display:none; font-family:var(--mono); font-weight:700; font-size:min(1.25rem,5.5vw)}
 .item .name{font-weight:600; line-height:1.25}
-.item .sub{display:block; font-weight:400; font-size:.76rem; color:var(--muted); margin-top:.1rem}
+.item .sub{display:block; font-weight:400; font-size:min(.76rem,3.2vw); color:var(--muted); margin-top:.1rem}
 .item .price{
-  font-family:var(--mono); font-weight:700; font-size:min(1.15rem, 5.2vw); text-align:right;
+  font-family:var(--mono); font-weight:700; font-size:min(1.15rem,5.2vw); text-align:right;
   font-variant-numeric:tabular-nums; white-space:nowrap;
 }
-.item.on{border-color:var(--c); background:var(--c-soft)}
+.item .minus{
+  display:none; flex:none; width:min(3rem,13vw); border:0; border-left:1px solid var(--c);
+  background:var(--c-soft); color:var(--c); font-size:1.5rem; font-weight:700; line-height:1;
+  align-items:center; justify-content:center;
+}
+.item.on{border-color:var(--c); background:var(--c-soft); box-shadow:var(--shadow), inset 0 0 0 1px var(--c)}
 .item.on .tile{background:var(--c); color:var(--cat-ink)}
 .item.on .tile svg{display:none}
 .item.on .tile .q{display:block}
+.item.on .minus{display:flex}
 
-/* ---------- Ticket ---------- */
+/* ---------- Récapitulatif ---------- */
 .ticket{
   background:var(--surface); border:1px solid var(--line); border-radius:var(--r);
   box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
@@ -162,129 +166,81 @@ svg{flex:none}
   .ticket{position:sticky; top:calc(var(--headh) + 1rem); max-height:calc(100vh - var(--headh) - 2rem)}
 }
 .scroller{flex:1; min-height:0; overflow-y:auto; -webkit-overflow-scrolling:touch}
-.ticket h2{
-  font-family:var(--display); font-size:.95rem; font-weight:800; margin:0;
-  padding:.7rem 1rem .1rem;
-  display:flex; align-items:baseline; justify-content:space-between; gap:.5rem; flex-wrap:wrap;
+.ticket .back{
+  display:none; align-items:center; gap:.5rem; width:100%; border:0; border-bottom:1px solid var(--line);
+  background:var(--accent-soft); color:var(--ink); font-weight:700; padding:.7rem 1rem;
+  text-align:left; font-size:min(1rem,4.4vw);
 }
-.ticket h2 em{font-style:normal; font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-family:var(--body); font-weight:600}
+.ticket .back svg{width:1.25rem; height:1.25rem; color:var(--accent)}
+.total{
+  position:sticky; top:0; z-index:3;
+  background:var(--accent); color:var(--accent-ink); padding:.7rem 1rem;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
+}
+.total span{font-size:min(.8rem,3vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700; white-space:nowrap}
+.total strong{
+  font-family:var(--mono); font-weight:700; font-size:min(2.5rem,11.5vw); line-height:1;
+  letter-spacing:-.02em; font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right;
+}
+.ticket h2{
+  font-family:var(--display); font-size:min(.95rem,4vw); font-weight:800; margin:0;
+  padding:.65rem 1rem .1rem; display:flex; align-items:baseline; justify-content:space-between;
+  gap:.5rem; flex-wrap:wrap;
+}
+.ticket h2 b{font-family:var(--mono); color:var(--accent)}
+.ticket h2 em{
+  font-style:normal; font-size:min(.72rem,3vw); letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); font-family:var(--body); font-weight:600;
+}
 .lines{margin:0; padding:.3rem .55rem .5rem; list-style:none}
-.empty{color:var(--muted); text-align:center; padding:1.6rem .8rem; font-size:.88rem}
-.line{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.15rem .6rem; padding:.45rem; border-bottom:1px dashed var(--line)}
+.empty-note{color:var(--muted); text-align:center; padding:1.4rem .8rem; font-size:.88rem}
+.line{
+  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:.15rem .6rem;
+  padding:.45rem; border-bottom:1px dashed var(--line);
+}
 .line:last-child{border-bottom:0}
 .line .lname{font-weight:600; line-height:1.2}
-.line .lunit{font-size:.74rem; color:var(--muted)}
+.line .dot{width:.62rem; height:.62rem; border-radius:50%; background:var(--c); display:inline-block; margin-right:.45rem}
+.line .lunit{font-size:min(.74rem,3.1vw); color:var(--muted)}
 .line .lsum{font-family:var(--mono); font-weight:700; align-self:center; text-align:right; font-variant-numeric:tabular-nums}
 .stepper{grid-column:1/-1; display:flex; flex-wrap:wrap; align-items:center; gap:.4rem; margin-top:.25rem}
 .stepper button{
-  width:min(2.5rem, 12vw); height:min(2.5rem, 12vw); border-radius:9px; border:1px solid var(--line);
-  background:var(--surface-2); font-weight:700; font-size:min(1.15rem, 5vw); line-height:1;
+  width:min(2.5rem,12vw); height:min(2.5rem,12vw); border-radius:9px; border:1px solid var(--line);
+  background:var(--surface-2); font-weight:700; font-size:min(1.15rem,5vw); line-height:1;
   display:inline-flex; align-items:center; justify-content:center;
 }
-
-.stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center; font-size:1.05rem}
+.stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center}
 .stepper .del{margin-left:auto; color:var(--danger)}
-.stepper .del svg{width:min(1.2rem, 5vw); height:min(1.2rem, 5vw)}
-
-.total{
-  position:sticky; top:0; z-index:3;
-  background:var(--accent); color:var(--accent-ink); padding:.75rem 1rem;
-  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
-}
-.total span{font-size:min(.8rem, 3vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700; white-space:nowrap}
-/* La taille du texte réglable agrandit le contenu, pas les grands nombres :
-   au-delà, le montant débordait ou passait à la ligne sur téléphone. */
-.total strong{
-  font-family:var(--mono); font-weight:700; font-size:min(2.6rem, 12vw); line-height:1;
-  letter-spacing:-.02em; font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right;
-}
-.pay{padding:.6rem 1rem .7rem; border-top:1px solid var(--line); background:var(--surface); display:flex; flex-direction:column; gap:.45rem; flex:none}
-.pay-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
-.pay-row label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.pay input{
-  font-family:var(--mono); font-weight:700; font-size:min(1.2rem, 5.5vw); width:100%;
-  padding:.5rem .6rem; border-radius:10px; border:1px solid var(--line);
-  background:var(--surface-2); color:var(--ink); text-align:right;
-}
-.cash-head{display:flex; align-items:center; gap:.5rem}
-.cash-head label{font-size:min(.76rem, 3.4vw); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.cash-head input{flex:1 1 5rem; min-width:0}
-.cash-clear{
-  border:1px solid var(--line); background:var(--surface-2); border-radius:10px;
-  padding:.5rem .7rem; font-size:min(.8rem, 3.6vw); font-weight:600; color:var(--muted); white-space:nowrap;
-}
-
-.cash-clear:disabled{opacity:.4; cursor:not-allowed}
-.denoms{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.35rem}
-.chip{
-  position:relative; background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
-  padding:.45rem .2rem; font-family:var(--mono); font-weight:700; font-size:min(.9rem, 3.6vw);
-  min-height:min(2.6rem, 11vw); display:flex; align-items:center; justify-content:center; white-space:nowrap;
-}
-
-.chip.note{background:var(--accent-soft); border-color:var(--accent-soft)}
-.chip.used{border-color:var(--accent)}
-.chip .x{
-  position:absolute; top:-.4rem; right:-.3rem; background:var(--accent); color:var(--accent-ink);
-  border-radius:999px; min-width:1.35rem; height:1.35rem; padding:0 .3rem; font-size:.72rem;
-  display:none; align-items:center; justify-content:center;
-}
-.chip.multi .x{display:flex}
-.change.off{visibility:hidden}
-.change{
-  margin:.55rem 1rem 0; flex:none; min-height:calc(4.35em + .5rem);
-  background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.5rem .7rem .55rem;
-}
-.change-top{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem}
-.pills{display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.35rem}
-.pills:empty{display:none}
-.pill{
-  background:rgba(0,0,0,.16); border-radius:999px; padding:.2rem .5rem;
-  font-family:var(--mono); font-weight:700; font-size:min(.95rem, 4vw); white-space:nowrap;
-}
-.pill b{font-size:1.1em}
-.change span{font-size:min(.76rem, 3.2vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700}
-.change strong{
-  font-family:var(--mono); font-weight:700; font-size:min(1.8rem, 8.5vw); line-height:1;
-  white-space:nowrap; font-variant-numeric:tabular-nums;
-}
-.actions{display:flex; gap:.5rem; padding:.7rem 1rem; background:var(--surface)}
-
+.stepper .del svg{width:min(1.2rem,5vw); height:min(1.2rem,5vw)}
+.actions{display:flex; gap:.5rem; padding:.7rem 1rem; background:var(--surface); border-top:1px solid var(--line)}
 .btn{
   flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
-  min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
+  min-height:3rem; font-weight:700; font-size:min(1rem,4.2vw);
+  display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
 }
-
 .btn.primary{background:var(--accent); color:var(--accent-ink); border-color:var(--accent)}
 .btn.armed{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
+.btn.ghost{background:none}
+.btn.danger{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
 .btn:disabled{opacity:.45; cursor:not-allowed}
 .dayline{
-  border-top:1px solid var(--line); padding:.55rem 1rem .7rem; color:var(--muted); font-size:.8rem;
+  border-top:1px solid var(--line); padding:.5rem 1rem .6rem; color:var(--muted); font-size:.8rem;
   display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
 }
 .dayline b{color:var(--ink); font-family:var(--mono); font-variant-numeric:tabular-nums}
 
-.ticket .back{
-  display:none; align-items:center; gap:.5rem; width:100%; border:0; border-bottom:1px solid var(--line);
-  background:var(--accent-soft); color:var(--ink); font-weight:700; padding:.85rem 1rem; text-align:left;
-}
-.ticket .back svg{width:1.25rem; height:1.25rem; color:var(--accent)}
-.line .dot{width:.62rem; height:.62rem; border-radius:50%; background:var(--c); display:inline-block; margin-right:.45rem; vertical-align:baseline}
-
-/* ---------- Barre mobile ---------- */
+/* ---------- Barre du bas (mobile) ---------- */
 .bar{
   position:fixed; left:0; right:0; bottom:0; z-index:40;
   background:var(--surface); border-top:1px solid var(--line);
-  padding:.6rem clamp(.7rem,2.5vw,1.4rem) calc(.6rem + env(safe-area-inset-bottom));
-  display:flex; align-items:center; gap:.7rem;
-  box-shadow:0 -6px 20px rgba(0,0,0,.12);
+  padding:.55rem clamp(.7rem,2.5vw,1.4rem) calc(.55rem + env(safe-area-inset-bottom));
+  display:flex; align-items:center; gap:.7rem; box-shadow:0 -6px 20px rgba(0,0,0,.12);
 }
 body.empty .bar{display:none}
-body.empty{padding-bottom:1.2rem}
-.bar .b-total{display:flex; flex-direction:column; line-height:1.1}
-.bar .b-total span{font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.bar .b-total strong{font-family:var(--mono); font-size:min(1.8rem, 7.5vw); font-variant-numeric:tabular-nums}
-.bar .btn{flex:0 1 auto; min-width:0; margin-left:auto; padding:0 .9rem; font-size:min(1rem, 4.2vw)}
+.bar .b-total{display:flex; flex-direction:column; line-height:1.1; min-width:0}
+.bar .b-total span{font-size:min(.66rem,2.8vw); letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.bar .b-total strong{font-family:var(--mono); font-size:min(1.8rem,7.5vw); font-variant-numeric:tabular-nums}
+.bar .btn{flex:0 1 auto; min-width:0; margin-left:auto; padding:0 1rem}
 @media (min-width:980px){ .bar{display:none} }
 @media (max-width:979px){
   .ticket{
@@ -292,18 +248,119 @@ body.empty{padding-bottom:1.2rem}
     transform:translateY(100%); transition:transform .22s ease; visibility:hidden;
   }
   body.sheet .ticket{transform:none; visibility:visible}
-  body.sheet{overflow:hidden}
-  .ticket .dayline{display:none}                       /* le bilan est dans les réglages */
-  .ticket .actions{padding-bottom:calc(.7rem + env(safe-area-inset-bottom))}
-  .ticket .back{padding:.7rem 1rem; font-size:min(1rem, 4.4vw)}
+  body.sheet, body.pay{overflow:hidden}
   .ticket .back{display:flex}
+  .ticket .dayline{display:none}
+  .ticket .actions{padding-bottom:calc(.7rem + env(safe-area-inset-bottom))}
 }
 
+/* ---------- Écran d'encaissement ---------- */
+.pay-backdrop{position:fixed; inset:0; z-index:59; background:rgba(8,14,11,.55); opacity:0; visibility:hidden; transition:opacity .2s ease}
+.pay-screen{
+  position:fixed; inset:0; z-index:60; background:var(--bg);
+  display:flex; flex-direction:column; visibility:hidden; transform:translateY(100%);
+  transition:transform .2s ease;
+}
+body.pay .pay-screen{visibility:visible; transform:none}
+@media (min-width:980px){
+  .pay-screen{
+    inset:auto; top:50%; left:50%; width:min(30rem,94vw); max-height:92vh;
+    transform:translate(-50%,-50%) scale(.97); border-radius:18px; border:1px solid var(--line);
+    box-shadow:0 24px 60px rgba(0,0,0,.4); overflow:hidden;
+  }
+  body.pay .pay-screen{transform:translate(-50%,-50%)}
+  body.pay .pay-backdrop{opacity:1; visibility:visible}
+}
+.pay-head{
+  display:flex; align-items:center; gap:.6rem; padding:.55rem .9rem;
+  border-bottom:1px solid var(--line); background:var(--surface); flex:none;
+}
+.pay-head h2{font-family:var(--display); font-size:min(1.05rem,4.4vw); font-weight:800; margin:0}
+.due{
+  background:var(--accent); color:var(--accent-ink); padding:.6rem .9rem; flex:none;
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.5rem;
+}
+.due span{font-size:min(.78rem,3vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700; white-space:nowrap}
+.due strong{font-family:var(--mono); font-weight:700; font-size:min(2.2rem,10vw); line-height:1; font-variant-numeric:tabular-nums}
+.pay-body{flex:1; min-height:0; overflow-y:auto; padding:.7rem .9rem 1rem; display:flex; flex-direction:column; gap:.6rem}
+.pay-label{font-size:min(.76rem,3.2vw); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.received{
+  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
+  background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:.5rem .8rem;
+}
+.received input{
+  font-family:var(--mono); font-weight:700; font-size:min(1.7rem,8vw); width:100%;
+  border:0; background:none; color:var(--ink); padding:0; min-width:0;
+}
+.received input:focus{outline:none}
+.cash-clear{
+  border:1px solid var(--line); background:var(--surface-2); border-radius:10px; white-space:nowrap;
+  padding:.45rem .7rem; font-size:min(.8rem,3.4vw); font-weight:600; color:var(--muted);
+}
+.cash-clear:disabled{opacity:.4}
+
+/* ---------- Billets et pièces ---------- */
+.money-grid{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.5rem}
+.money-btn{position:relative; background:none; border:0; padding:0; display:flex; align-items:center; justify-content:center}
+.note, .coin{
+  font-family:var(--mono); font-weight:700; font-variant-numeric:tabular-nums;
+  display:flex; align-items:center; justify-content:center; white-space:nowrap;
+  border:1px solid rgba(0,0,0,.25);
+}
+.note{width:100%; height:min(2.9rem,13vw); border-radius:5px; font-size:min(1rem,4.4vw); box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.coin{
+  width:min(2.9rem,13vw); height:min(2.9rem,13vw); border-radius:50%; font-size:min(.9rem,4vw);
+  box-shadow:0 1px 2px rgba(0,0,0,.3), inset 0 0 0 3px rgba(255,255,255,.28);
+}
+.money-btn .badge{
+  position:absolute; top:-.4rem; right:-.35rem; background:var(--ink); color:var(--bg);
+  border-radius:999px; min-width:1.4rem; height:1.4rem; padding:0 .35rem;
+  font-family:var(--mono); font-weight:700; font-size:.78rem;
+  display:none; align-items:center; justify-content:center; border:2px solid var(--bg);
+}
+.money-btn.used .badge{display:flex}
+.money-btn.used .note, .money-btn.used .coin{outline:2.5px solid var(--ink); outline-offset:2px}
+.money-list{display:flex; flex-wrap:wrap; gap:.4rem .5rem; align-items:center}
+.money-list:empty{display:none}
+.money-list .unit{display:flex; align-items:center; gap:.25rem}
+.money-list .unit b{font-family:var(--mono); font-weight:700; font-size:min(1rem,4.2vw)}
+.money-list .note{width:auto; padding:0 .5rem; height:min(2.1rem,9vw); font-size:min(.85rem,3.8vw)}
+.money-list .coin{width:min(2.1rem,9vw); height:min(2.1rem,9vw); font-size:min(.72rem,3.2vw)}
+.given-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; min-height:.5rem}
+
+.change-card{margin-top:auto; border-radius:12px; padding:.6rem .8rem; background:var(--amber); color:var(--amber-ink)}
+.change-card.short{background:var(--danger-soft); color:var(--danger)}
+.change-card .ctop{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem}
+.change-card .ctop span{font-size:min(.78rem,3.2vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700}
+.change-card .ctop strong{font-family:var(--mono); font-weight:700; font-size:min(1.9rem,8.5vw); line-height:1; font-variant-numeric:tabular-nums}
+.change-card .money-list{margin-top:.5rem}
+.pay-actions{
+  padding:.7rem .9rem calc(.7rem + env(safe-area-inset-bottom)); border-top:1px solid var(--line);
+  background:var(--surface); display:flex; gap:.5rem; flex:none;
+}
+
+/* ---------- Modales ---------- */
+.modal-scrim{position:fixed; inset:0; z-index:70; background:rgba(8,14,11,.62); display:flex; align-items:center; justify-content:center; padding:1rem}
+.modal{
+  background:var(--surface); border:1px solid var(--line); border-radius:16px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35); padding:1.1rem; width:min(26rem,100%);
+  display:flex; flex-direction:column; gap:.8rem; max-height:92vh; overflow-y:auto;
+}
+.modal h2{font-family:var(--display); font-size:min(1.2rem,5.2vw); font-weight:800; margin:0}
+.modal p{margin:0; color:var(--muted); font-size:min(.92rem,3.9vw)}
+.modal .amount{background:var(--surface-2); border-radius:11px; padding:.7rem .9rem; display:flex; align-items:baseline; justify-content:space-between; gap:.6rem}
+.modal .amount span{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted)}
+.modal .amount b{font-family:var(--mono); font-size:min(1.6rem,7vw); font-variant-numeric:tabular-nums}
+.modal-actions{display:flex; gap:.5rem; flex-wrap:wrap}
+.share-box{width:100%; min-height:9rem; font-family:var(--mono); font-size:.8rem; padding:.6rem; border:1px solid var(--line); border-radius:10px; background:var(--surface-2); color:var(--ink)}
+.done-ok{display:flex; align-items:center; gap:.5rem; color:var(--accent); font-weight:700; font-size:min(.92rem,3.9vw)}
+.done-ok svg{width:1.4rem; height:1.4rem}
+
 /* ---------- Réglages ---------- */
-.scrim{position:fixed; inset:0; z-index:60; background:rgba(10,16,13,.5); opacity:0; visibility:hidden; transition:opacity .2s ease}
+.scrim{position:fixed; inset:0; z-index:65; background:rgba(10,16,13,.5); opacity:0; visibility:hidden; transition:opacity .2s ease}
 body.settings .scrim{opacity:1; visibility:visible}
 .panel{
-  position:fixed; z-index:61; right:0; top:0; bottom:0; width:min(23rem,100%);
+  position:fixed; z-index:66; right:0; top:0; bottom:0; width:min(23rem,100%);
   background:var(--surface); border-left:1px solid var(--line);
   transform:translateX(100%); transition:transform .22s ease; visibility:hidden;
   display:flex; flex-direction:column; overflow-y:auto;
@@ -311,91 +368,61 @@ body.settings .scrim{opacity:1; visibility:visible}
 body.settings .panel{transform:none; visibility:visible}
 .panel header{
   display:flex; align-items:center; justify-content:space-between; gap:.5rem;
-  padding:.85rem 1rem; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--surface);
+  padding:.8rem 1rem; border-bottom:1px solid var(--line); position:sticky; top:0; background:var(--surface); z-index:2;
 }
-.panel header h2{font-family:var(--display); font-size:1.05rem; font-weight:800; margin:0}
-.set{padding:1rem; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:.6rem}
+.panel header h2{font-family:var(--display); font-size:min(1.05rem,4.6vw); font-weight:800; margin:0}
+.set{padding:.9rem 1rem; border-bottom:1px solid var(--line); display:flex; flex-direction:column; gap:.55rem}
 .set:last-child{border-bottom:0}
-.set h3{margin:0; font-size:.74rem; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:700}
-.set p{margin:0; font-size:.85rem; color:var(--muted)}
-.seg{display:flex; flex-wrap:wrap; gap:.35rem; background:var(--surface-2); border:1px solid var(--line); border-radius:11px; padding:.25rem}
+.set h3{margin:0; font-size:min(.74rem,3.2vw); letter-spacing:.14em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.set p{margin:0; font-size:min(.85rem,3.6vw); color:var(--muted)}
+.seg{display:flex; background:var(--surface-2); border:1px solid var(--line); border-radius:11px; padding:.25rem; gap:.25rem}
 .seg button{
-  flex:1 1 40%; border:0; background:none; border-radius:8px; min-height:2.7rem; font-weight:600;
-  display:inline-flex; align-items:center; justify-content:center; gap:.35rem; font-size:.9rem;
+  flex:1 1 0; min-width:0; border:0; background:none; border-radius:8px; min-height:2.7rem;
+  font-weight:600; font-size:min(.9rem,3.5vw); white-space:nowrap; padding:0 .25rem;
+  display:inline-flex; align-items:center; justify-content:center;
 }
 .seg button[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.seg button:disabled{opacity:.45}
 .sizer{display:flex; align-items:center; gap:.5rem}
-.sizer button{
-  flex:none; width:3.4rem; height:3rem; border-radius:10px; border:1px solid var(--line);
-  background:var(--surface-2); font-weight:700;
-}
-
+.sizer button{flex:none; width:3.4rem; height:3rem; border-radius:10px; border:1px solid var(--line); background:var(--surface-2); font-weight:700}
 .sizer .val{flex:1; text-align:center; font-family:var(--mono); font-weight:700}
-.sample{border:1px dashed var(--line); border-radius:10px; padding:.6rem .8rem; display:flex; justify-content:space-between; align-items:center; gap:.6rem}
-.sample b{font-weight:600}
+.sample{border:1px dashed var(--line); border-radius:10px; padding:.55rem .8rem; display:flex; justify-content:space-between; align-items:center; gap:.6rem}
 .sample span{font-family:var(--mono); font-weight:700; color:var(--accent)}
-.set .btn{min-height:2.8rem}
-.steps{margin:0; padding-left:1.3rem; font-size:.85rem; color:var(--muted); display:flex; flex-direction:column; gap:.3rem}
-.diag{font-family:var(--mono); font-size:.72rem; color:var(--muted); white-space:pre-line; opacity:.8}
-/* Le survol n'existe que pour une souris : sur écran tactile il restait
-   collé sur la carte touchée pendant le défilement. */
+.tally{display:flex; flex-direction:column; gap:.1rem; max-height:15rem; overflow-y:auto}
+.trow{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:.5rem; align-items:baseline; padding:.28rem 0; border-bottom:1px dashed var(--line)}
+.trow:last-child{border-bottom:0}
+.trow .tq{font-family:var(--mono); font-weight:700; color:var(--c,var(--accent)); min-width:2.2rem}
+.trow .tn{font-size:.88rem; line-height:1.25}
+.trow .tt{font-family:var(--mono); font-weight:700; font-size:.88rem; font-variant-numeric:tabular-nums}
+.hist{display:flex; flex-direction:column; gap:.45rem; max-height:22rem; overflow-y:auto}
+.sale{border:1px solid var(--line); border-radius:11px; padding:.5rem .6rem; display:grid; gap:.35rem}
+.sale-top{display:flex; align-items:baseline; gap:.5rem; flex-wrap:wrap}
+.sale-top b{font-family:var(--mono)}
+.sale-top .amt{margin-left:auto; font-family:var(--mono); font-weight:700; font-variant-numeric:tabular-nums}
+.sale-items{font-size:.8rem; color:var(--muted); line-height:1.3}
+.sale-btns{display:flex; gap:.4rem}
+.sale-btns .btn{min-height:2.4rem; font-size:.82rem; border-radius:9px}
+.muted-note{color:var(--muted); font-size:.85rem; margin:0}
+.steps{margin:0; padding-left:1.3rem; font-size:min(.85rem,3.6vw); color:var(--muted); display:flex; flex-direction:column; gap:.3rem}
+.diag{font-family:var(--mono); font-size:.72rem; color:var(--muted); white-space:pre-line; opacity:.85}
+.toast{
+  position:fixed; left:50%; bottom:7.5rem; transform:translateX(-50%); z-index:80;
+  background:var(--accent); color:var(--accent-ink); border-radius:999px;
+  padding:.7rem 1.2rem; font-weight:700; box-shadow:var(--shadow); pointer-events:none;
+  max-width:92vw; text-align:center;
+}
+@media (min-width:980px){ .toast{bottom:2rem} }
+
 @media (hover:hover) and (pointer:fine){
   .icon-btn:hover{border-color:var(--accent)}
   .tab:hover{border-color:var(--accent)}
   .item:hover{border-color:var(--c)}
   .stepper button:hover{border-color:var(--accent)}
-  .chip:hover{border-color:var(--accent)}
   .btn:hover{border-color:var(--accent)}
   .sizer button:hover{border-color:var(--accent)}
   .cash-clear:hover:not(:disabled){border-color:var(--danger); color:var(--danger)}
+  .money-btn:hover .note, .money-btn:hover .coin{filter:brightness(1.08)}
 }
-@media (hover:none){
-  .item:active{transform:none}
-}
-
-/* ---------- Modale d'inactivité ---------- */
-.modal-scrim{
-  position:fixed; inset:0; z-index:70; background:rgba(8,14,11,.62);
-  display:flex; align-items:center; justify-content:center; padding:1rem;
-}
-.modal{
-  background:var(--surface); border:1px solid var(--line); border-radius:16px;
-  box-shadow:0 20px 50px rgba(0,0,0,.35); padding:1.2rem; width:min(26rem,100%);
-  display:flex; flex-direction:column; gap:.9rem;
-}
-.modal h2{font-family:var(--display); font-size:1.15rem; font-weight:800; margin:0}
-.modal p{margin:0; color:var(--muted); font-size:.92rem}
-.modal .amount{
-  background:var(--surface-2); border-radius:11px; padding:.7rem .9rem;
-  display:flex; align-items:baseline; justify-content:space-between; gap:.6rem;
-}
-.modal .amount span{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; font-weight:700; color:var(--muted)}
-.modal .amount b{font-family:var(--mono); font-size:1.6rem; font-variant-numeric:tabular-nums}
-.modal-actions{display:flex; gap:.5rem; flex-wrap:wrap}
-.modal-actions .btn{min-width:8rem}
-.btn.danger{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
-
-/* ---------- Bilan de la journée ---------- */
-.tally{display:flex; flex-direction:column; gap:.1rem; max-height:16rem; overflow-y:auto}
-.trow{display:grid; grid-template-columns:auto minmax(0,1fr) auto; gap:.5rem; align-items:baseline; padding:.28rem 0; border-bottom:1px dashed var(--line)}
-.trow:last-child{border-bottom:0}
-.trow .tq{font-family:var(--mono); font-weight:700; color:var(--c, var(--accent)); min-width:2.2rem}
-.trow .tn{font-size:.88rem; line-height:1.25}
-.trow .tt{font-family:var(--mono); font-weight:700; font-size:.88rem; font-variant-numeric:tabular-nums}
-.tally-empty{color:var(--muted); font-size:.85rem}
-.share-box{width:100%; min-height:9rem; font-family:var(--mono); font-size:.8rem; padding:.6rem;
-  border:1px solid var(--line); border-radius:10px; background:var(--surface-2); color:var(--ink)}
-.ticket h2 b{font-family:var(--mono); font-weight:700; color:var(--accent)}
-
-/* ---------- Confirmation d'encaissement ---------- */
-.toast{
-  position:fixed; left:50%; bottom:7.5rem; transform:translateX(-50%); z-index:80;
-  background:var(--accent); color:var(--accent-ink); border-radius:999px;
-  padding:.7rem 1.2rem; font-weight:700; box-shadow:var(--shadow);
-  display:flex; align-items:center; gap:.5rem; pointer-events:none;
-}
-@media (min-width:980px){ .toast{bottom:2rem} }
-
 @media (prefers-reduced-motion:reduce){ *{transition:none !important} }
 </style>
 </head>
@@ -416,14 +443,12 @@ body.settings .panel{transform:none; visibility:visible}
     <path d="M6.5 14h11M9 11V5.5M12 11V4M15 11V6.5"/>
   </symbol>
   <symbol id="ic-plate" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <ellipse cx="12" cy="14.5" rx="9" ry="4.5"/>
-    <ellipse cx="12" cy="14.5" rx="5.5" ry="2.4"/>
+    <ellipse cx="12" cy="14.5" rx="9" ry="4.5"/><ellipse cx="12" cy="14.5" rx="5.5" ry="2.4"/>
     <path d="M8.5 9.5 11 7l2 1.8L16 6"/>
   </symbol>
   <symbol id="ic-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4.5 19.5h15M6 19.5v-6a6 6 0 0 1 12 0v6"/>
-    <path d="M6.4 12.6c1.2 1.2 2.6 1.2 3.8 0s2.6-1.2 3.8 0 2.6 1.2 3.6.1"/>
-    <path d="M12 7.5V5"/>
+    <path d="M6.4 12.6c1.2 1.2 2.6 1.2 3.8 0s2.6-1.2 3.8 0 2.6 1.2 3.6.1"/><path d="M12 7.5V5"/>
   </symbol>
   <symbol id="ic-mug" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M5 8.5h9.5V19a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1Z"/>
@@ -432,8 +457,7 @@ body.settings .panel{transform:none; visibility:visible}
   </symbol>
   <symbol id="ic-pitcher" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M6 7.5h9v11.5a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1Z"/>
-    <path d="M15 10.5h2.5a2 2 0 0 1 2 2v1.5a2 2 0 0 1-2 2H15"/>
-    <path d="M6 7.5 8 5.5h4.5M6 11.5h9"/>
+    <path d="M15 10.5h2.5a2 2 0 0 1 2 2v1.5a2 2 0 0 1-2 2H15"/><path d="M6 7.5 8 5.5h4.5M6 11.5h9"/>
   </symbol>
   <symbol id="ic-bottle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10 3h4v3.2l1.6 2.6a3 3 0 0 1 .4 1.5V19a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-8.7c0-.5.1-1 .4-1.5L10 6.2Z"/>
@@ -443,11 +467,10 @@ body.settings .panel{transform:none; visibility:visible}
     <path d="M4 6h16l-8 7.5Z"/><path d="M12 13.5V20M8.5 20h7M17 4l-3 2"/>
   </symbol>
   <symbol id="ic-wine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M7.5 4h9c.3 4.6-1.4 8-4.5 8s-4.8-3.4-4.5-8Z"/>
-    <path d="M7.7 8h8.6M12 12v7M9 19h6"/>
+    <path d="M7.5 4h9c.3 4.6-1.4 8-4.5 8s-4.8-3.4-4.5-8Z"/><path d="M7.7 8h8.6M12 12v7M9 19h6"/>
   </symbol>
   <symbol id="ic-flute" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M9 3.5h6l-1 8.5h-4Z"/><path d="M12 12v7M9 19.5h6M9.4 7h5.2"/>
+    <path d="M9 3.5h6l-1 8.5h-4Z"/><path d="M12 12v6M9 19.5h6M9.4 7h5.2"/>
   </symbol>
   <symbol id="ic-champbottle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M10.2 3h3.6v2.6l2 4.4c.2.5.2 1 .2 1.4V19a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-7.6c0-.5 0-.9.2-1.4l2-4.4Z"/>
@@ -460,8 +483,7 @@ body.settings .panel{transform:none; visibility:visible}
     <path d="M7 4h10l-1.3 15.2a1 1 0 0 1-1 .8H9.3a1 1 0 0 1-1-.8Z"/><path d="M7.7 11h8.6"/>
   </symbol>
   <symbol id="ic-straw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M6.5 7h9l-1.2 12.2a1 1 0 0 1-1 .8H8.7a1 1 0 0 1-1-.8Z"/>
-    <path d="M13 7 17 2.8M7.2 12.5h8"/>
+    <path d="M6.5 7h9l-1.2 12.2a1 1 0 0 1-1 .8H8.7a1 1 0 0 1-1-.8Z"/><path d="M13 7 17 2.8M7.2 12.5h8"/>
   </symbol>
   <symbol id="ic-bubbles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
     <path d="M7 8h10l-1.2 11.2a1 1 0 0 1-1 .8H9.2a1 1 0 0 1-1-.8Z"/>
@@ -473,31 +495,25 @@ body.settings .panel{transform:none; visibility:visible}
     <path d="M8.8 11h6.4M8.8 14h6.4"/>
   </symbol>
   <symbol id="ic-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4.5 8h11v6.5a4 4 0 0 1-4 4h-3a4 4 0 0 1-4-4Z"/>
-    <path d="M15.5 10H18a2.5 2.5 0 0 1 0 5h-2.5"/>
+    <path d="M4.5 8h11v6.5a4 4 0 0 1-4 4h-3a4 4 0 0 1-4-4Z"/><path d="M15.5 10H18a2.5 2.5 0 0 1 0 5h-2.5"/>
     <path d="M7.5 3.5v2M11 3.5v2M3.5 21h13"/>
-  </symbol>
-  <symbol id="ic-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M4 6.5h16M4 12h16M4 17.5h16"/>
   </symbol>
   <symbol id="ic-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="3.2"/>
     <path d="M19.5 12a7.5 7.5 0 0 0-.1-1.2l2-1.5-2-3.4-2.3 1a7.4 7.4 0 0 0-2-1.2L14.7 3h-3.9l-.4 2.7c-.7.3-1.4.7-2 1.2l-2.3-1-2 3.4 2 1.5a7.5 7.5 0 0 0 0 2.4l-2 1.5 2 3.4 2.3-1c.6.5 1.3.9 2 1.2l.4 2.7h3.9l.4-2.7c.7-.3 1.4-.7 2-1.2l2.3 1 2-3.4-2-1.5c.1-.4.1-.8.1-1.2Z"/>
   </symbol>
+  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5 3.5 12 10 19M3.8 12H20.5"/></symbol>
   <symbol id="ic-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
     <path d="M4 6.5h16M9.5 6.5V4.5h5v2M6.5 6.5l1 13a1.5 1.5 0 0 0 1.5 1.4h6a1.5 1.5 0 0 0 1.5-1.4l1-13"/>
     <path d="M10.5 10.5v7M13.5 10.5v7"/>
-  </symbol>
-  <symbol id="ic-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M10 5 3.5 12 10 19M3.8 12H20.5"/>
-  </symbol>
-  <symbol id="ic-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
-    <path d="M6 6l12 12M18 6 6 18"/>
   </symbol>
   <symbol id="ic-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
     <rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/>
     <rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/>
   </symbol>
+  <symbol id="ic-list" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5h16M4 12h16M4 17.5h16"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5 9.5 18 20 6.5"/></symbol>
 </svg>
 
 <div class="head">
@@ -506,11 +522,11 @@ body.settings .panel{transform:none; visibility:visible}
       <b>Caisse — Léon en Rue Libre</b>
       <span>Festival · plancha &amp; bar</span>
     </div>
-    <button type="button" class="icon-btn" id="viewBtn" aria-label="Afficher tout le menu">
-      <svg width="22" height="22" aria-hidden="true"><use href="#ic-all" id="viewIcon"></use></svg>
+    <button type="button" class="icon-btn" id="viewBtn" aria-label="Afficher le menu par catégorie">
+      <svg aria-hidden="true"><use href="#ic-list" id="viewIcon"></use></svg>
     </button>
     <button type="button" class="icon-btn" id="settingsBtn" aria-label="Réglages">
-      <svg width="22" height="22" aria-hidden="true"><use href="#ic-gear"></use></svg>
+      <svg aria-hidden="true"><use href="#ic-gear"></use></svg>
     </button>
   </div>
   <div class="tabs" id="tabs" role="group" aria-label="Catégories"></div>
@@ -531,24 +547,9 @@ body.settings .panel{transform:none; visibility:visible}
       <h2>Commande <b id="orderNo">n° 1</b> <em id="countLabel">0 article</em></h2>
       <ul class="lines" id="lines"></ul>
     </div>
-    <div class="pay">
-      <div class="cash-head">
-        <label for="cash">Reçu</label>
-        <input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Montant reçu en euros">
-        <button type="button" class="cash-clear" id="cashClear" disabled>Effacer</button>
-      </div>
-      <div class="denoms" id="denoms" role="group" aria-label="Pièces et billets reçus"></div>
-    </div>
-    <div class="change off" id="changeBox">
-      <div class="change-top">
-        <span id="changeLabel">À rendre</span>
-        <strong id="changeOut">0,00 €</strong>
-      </div>
-      <div class="pills" id="breakdown"></div>
-    </div>
     <div class="actions">
       <button type="button" class="btn" id="clearBtn">Annuler</button>
-      <button type="button" class="btn primary" id="cashBtn">Encaisser</button>
+      <button type="button" class="btn primary" id="payBtn">Encaisser</button>
     </div>
     <div class="dayline">
       Journée : <b id="dayCount">0</b> <span id="dayWord">commande</span> · <b id="dayTotal">0,00 €</b>
@@ -564,12 +565,55 @@ body.settings .panel{transform:none; visibility:visible}
   <button type="button" class="btn primary" id="openSheet">Voir la commande</button>
 </div>
 
-<div class="toast" id="toast" hidden></div>
+<div class="pay-backdrop" id="payBackdrop"></div>
+<section class="pay-screen" id="payScreen" aria-label="Encaissement">
+  <div class="pay-head">
+    <button type="button" class="icon-btn" id="payBack" aria-label="Retour à la commande">
+      <svg aria-hidden="true"><use href="#ic-back"></use></svg>
+    </button>
+    <h2>Encaissement <span id="payNo"></span></h2>
+  </div>
+  <div class="due">
+    <span>À payer</span>
+    <strong id="dueOut">0,00 €</strong>
+  </div>
+  <div class="pay-body">
+    <span class="pay-label">Ce que le client donne</span>
+    <div class="received">
+      <input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Montant reçu en euros">
+      <button type="button" class="cash-clear" id="cashClear" disabled>Effacer</button>
+    </div>
+    <div class="money-grid" id="moneyPad"></div>
+    <div class="given-row"><div class="money-list" id="givenList"></div></div>
+    <div class="change-card" id="changeCard">
+      <div class="ctop">
+        <span id="changeLabel">À rendre</span>
+        <strong id="changeOut">0,00 €</strong>
+      </div>
+      <div class="money-list" id="changeList"></div>
+    </div>
+  </div>
+  <div class="pay-actions">
+    <button type="button" class="btn primary" id="validateBtn">Valider l’encaissement</button>
+  </div>
+</section>
+
+<div class="modal-scrim" id="doneModal" hidden>
+  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="doneTitle">
+    <div class="done-ok"><svg aria-hidden="true"><use href="#ic-check"></use></svg> <span id="doneNo">Commande encaissée</span></div>
+    <h2 id="doneTitle">Rendre 0,00 €</h2>
+    <div class="money-list" id="doneList"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn danger" id="doneUndo">Annuler cet encaissement</button>
+      <button type="button" class="btn primary" id="doneClose">Terminé</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-scrim" id="idleModal" hidden>
-  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="idleTitle" aria-describedby="idleDesc">
+  <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="idleTitle">
     <h2 id="idleTitle">Commande toujours en cours ?</h2>
-    <p id="idleDesc">Aucun ajout depuis <b id="idleMinutes">5</b> minutes. Si le client est parti, remettez la commande à zéro.</p>
+    <p>Aucun appui depuis <b id="idleMinutes">5</b> minutes. Si le client est parti, remettez la commande à zéro.</p>
     <div class="amount"><span id="idleCount">0 article</span><b id="idleTotal">0,00 €</b></div>
     <div class="modal-actions">
       <button type="button" class="btn danger" id="idleClear">Remettre à zéro</button>
@@ -583,18 +627,18 @@ body.settings .panel{transform:none; visibility:visible}
     <h2 id="shareTitle">Bilan de la journée</h2>
     <p>Sélectionnez le texte pour le copier.</p>
     <textarea class="share-box" id="shareText" readonly></textarea>
-    <div class="modal-actions">
-      <button type="button" class="btn primary" id="shareClose">Fermer</button>
-    </div>
+    <div class="modal-actions"><button type="button" class="btn primary" id="shareClose">Fermer</button></div>
   </div>
 </div>
 
+<div class="toast" id="toast" hidden></div>
 <div class="scrim" id="scrim"></div>
+
 <aside class="panel" id="panel" aria-label="Réglages">
   <header>
     <h2>Réglages</h2>
     <button type="button" class="icon-btn" id="closeSettings" aria-label="Fermer les réglages">
-      <svg width="20" height="20" aria-hidden="true"><use href="#ic-close"></use></svg>
+      <svg aria-hidden="true"><use href="#ic-close"></use></svg>
     </button>
   </header>
 
@@ -621,10 +665,9 @@ body.settings .panel{transform:none; visibility:visible}
   <section class="set">
     <h3>Affichage du menu</h3>
     <div class="seg" id="viewSeg">
-      <button type="button" data-view="grouped" aria-pressed="true">Par catégorie</button>
-      <button type="button" data-view="all" aria-pressed="false">Tout d’un coup</button>
+      <button type="button" data-view="all" aria-pressed="true">Tout d’un coup</button>
+      <button type="button" data-view="cat" aria-pressed="false">Par catégorie</button>
     </div>
-    <p>En mode « par catégorie », les onglets du haut filtrent le menu.</p>
   </section>
 
   <section class="set">
@@ -633,7 +676,7 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" data-vibe="1" aria-pressed="true">Vibration</button>
       <button type="button" data-vibe="0" aria-pressed="false">Silencieux</button>
     </div>
-    <p>Une courte vibration à chaque ajout, pour être sûr de l’appui sans regarder l’écran.</p>
+    <p id="vibeNote"></p>
   </section>
 
   <section class="set">
@@ -644,7 +687,6 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" data-idle="5" aria-pressed="true">5 min</button>
       <button type="button" data-idle="10" aria-pressed="false">10 min</button>
     </div>
-    <p>Sans aucun appui pendant ce délai, la caisse demande si la commande en cours doit être remise à zéro.</p>
   </section>
 
   <section class="set">
@@ -652,8 +694,12 @@ body.settings .panel{transform:none; visibility:visible}
     <p><b id="dayCount2">0</b> <span id="dayWord2">commande</span> encaissée<span id="dayS"></span> · <b id="dayTotal2">0,00 €</b></p>
     <div class="tally" id="tally"></div>
     <button type="button" class="btn" id="shareBtn">Partager le bilan</button>
-    <button type="button" class="btn" id="undoBtn" disabled>Annuler le dernier encaissement</button>
     <button type="button" class="btn" id="dayReset">Remettre le bilan à zéro</button>
+  </section>
+
+  <section class="set">
+    <h3>Historique des commandes</h3>
+    <div class="hist" id="hist"></div>
   </section>
 
   <section class="set">
@@ -662,7 +708,6 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" data-lock="0" aria-pressed="true">Appui simple</button>
       <button type="button" data-lock="1" aria-pressed="false">Appui long</button>
     </div>
-    <p>« Appui long » évite d’ouvrir les réglages par erreur en plein service.</p>
   </section>
 
   <section class="set" id="offlineBox">
@@ -675,6 +720,7 @@ body.settings .panel{transform:none; visibility:visible}
 </aside>
 
 <script>
+/* ===================== Menu ===================== */
 const MENU = [
   { cat:"Plancha", c:"c1", icon:"ic-sausage", items:[
     { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8, icon:"ic-sausage" },
@@ -710,26 +756,54 @@ const MENU = [
     { id:"cafe", name:"Café", sub:"", price:1, icon:"ic-coffee" },
   ]},
 ];
-
 const ALL = {};
 MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = Object.assign({ c:c.c }, i); }));
+
+/* Billets et pièces aux couleurs réelles. Pas de centimes : tous les prix sont entiers. */
+const MONEY = [
+  { v:100,   label:"1 €",   type:"coin", bg:"#C8CBC6", ink:"#1E211D" },
+  { v:200,   label:"2 €",   type:"coin", bg:"#D3B25E", ink:"#2A2000" },
+  { v:500,   label:"5 €",   type:"note", bg:"#A8A59B", ink:"#171714" },
+  { v:1000,  label:"10 €",  type:"note", bg:"#D25A4E", ink:"#FFFFFF" },
+  { v:2000,  label:"20 €",  type:"note", bg:"#3F7FC6", ink:"#FFFFFF" },
+  { v:5000,  label:"50 €",  type:"note", bg:"#E28E33", ink:"#2A1800" },
+  { v:10000, label:"100 €", type:"note", bg:"#7FAE55", ink:"#122408" },
+];
+
 const euro = n => n.toFixed(2).replace(".", ",") + " €";
+const euroC = c => euro(c / 100);
 
 const store = {
   get(k, d){ try { const v = localStorage.getItem("caisse-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
   set(k, v){ try { localStorage.setItem("caisse-" + k, JSON.stringify(v)); } catch (e) {} }
 };
 
+/* ===================== État ===================== */
 let order = store.get("order", {});
-let day = store.get("day", { count:0, total:0, items:{} });
-if (!day.items) day.items = {};                    // reprise d'un bilan enregistré avant cette version
-let lastSale = store.get("lastSale", null);
+let sales = store.get("sales", null);
+if (!sales){                                   // reprise d'un bilan enregistré avant l'historique
+  const old = store.get("day", null);
+  sales = old && old.count ? [{ no:1, at:"—", total:old.total, items:old.items || {} }] : [];
+  store.set("sales", sales);
+}
+let activeCat = store.get("cat", null);        // null = tout le menu
+let lastCat = activeCat || MENU[0].cat;
 let vibe = store.get("vibe", 1);
 let lockSettings = store.get("lock", 0);
-let activeCat = store.get("cat", MENU[0].cat);   // null = toutes les catégories
-let lastCat = activeCat || MENU[0].cat;
+let idleMin = store.get("idle", 5);
+let givenCents = 0;
+let denomCount = {};
+let lastSale = null;
 
-/* ---------- Rendu du menu ---------- */
+const canVibrate = typeof navigator.vibrate === "function";
+const dayTotalC = () => sales.reduce((s, v) => s + Math.round(v.total * 100), 0);
+const nextNo = () => (sales.length ? Math.max.apply(null, sales.map(s => s.no)) : 0) + 1;
+const total = () => Object.keys(order).reduce((s, id) => s + ALL[id].price * order[id], 0);
+const totalC = () => Math.round(total() * 100);
+const count = () => Object.keys(order).reduce((s, id) => s + order[id], 0);
+function buzz(pattern){ if (vibe && canVibrate){ try { navigator.vibrate(pattern); } catch (e) {} } }
+
+/* ===================== Menu ===================== */
 const menuEl = document.getElementById("menu");
 const tabsEl = document.getElementById("tabs");
 
@@ -738,23 +812,26 @@ menuEl.innerHTML = MENU.map(c => `
     <h2><span>${c.cat}</span></h2>
     <div class="grid">
       ${c.items.map(i => `
-        <button type="button" class="item" data-add="${i.id}">
-          <span class="tile">
-            <svg width="24" height="24" aria-hidden="true"><use href="#${i.icon}"></use></svg>
-            <span class="q" data-badge="${i.id}">0</span>
-          </span>
-          <span class="name">${i.name}${i.sub ? `<span class="sub">${i.sub}</span>` : ""}</span>
-          <span class="price">${euro(i.price)}</span>
-        </button>`).join("")}
+        <div class="item" data-item="${i.id}">
+          <button type="button" class="plus" data-add="${i.id}" aria-label="Ajouter ${i.name}">
+            <span class="tile">
+              <svg aria-hidden="true"><use href="#${i.icon}"></use></svg>
+              <span class="q" data-badge="${i.id}">0</span>
+            </span>
+            <span class="name">${i.name}${i.sub ? `<span class="sub">${i.sub}</span>` : ""}</span>
+            <span class="price">${euro(i.price)}</span>
+          </button>
+          <button type="button" class="minus" data-add="${i.id}" data-n="-1" aria-label="Retirer un ${i.name}">−</button>
+        </div>`).join("")}
     </div>
   </section>`).join("");
 
 tabsEl.innerHTML = `
   <button type="button" class="tab c0" data-cat-set="__all">
-    <svg width="17" height="17" aria-hidden="true"><use href="#ic-all"></use></svg>Tout
+    <svg aria-hidden="true"><use href="#ic-all"></use></svg>Tout
   </button>` + MENU.map(c => `
   <button type="button" class="tab ${c.c}" data-cat-set="${c.cat}">
-    <svg width="17" height="17" aria-hidden="true"><use href="#${c.icon}"></use></svg>${c.cat}
+    <svg aria-hidden="true"><use href="#${c.icon}"></use></svg>${c.cat}
   </button>`).join("");
 
 function renderView(){
@@ -763,9 +840,7 @@ function renderView(){
   document.getElementById("viewIcon").setAttribute("href", showAll ? "#ic-list" : "#ic-all");
   document.getElementById("viewBtn").setAttribute("aria-label",
     showAll ? "Afficher le menu par catégorie" : "Afficher tout le menu");
-  document.querySelectorAll(".cat").forEach(s => {
-    s.hidden = !showAll && s.dataset.cat !== activeCat;
-  });
+  document.querySelectorAll(".cat").forEach(s => { s.hidden = !showAll && s.dataset.cat !== activeCat; });
   document.querySelectorAll("[data-cat-set]").forEach(b => {
     const on = b.dataset.catSet === "__all" ? showAll : b.dataset.catSet === activeCat;
     b.setAttribute("aria-pressed", String(on));
@@ -778,57 +853,18 @@ function renderView(){
   measureHead();
 }
 
-/* ---------- Commande ---------- */
+/* ===================== Commande ===================== */
 const linesEl = document.getElementById("lines");
-const totalOut = document.getElementById("totalOut");
-const barTotal = document.getElementById("barTotal");
-const countLabel = document.getElementById("countLabel");
 const cashInput = document.getElementById("cash");
-const changeBox = document.getElementById("changeBox");
-const changeOut = document.getElementById("changeOut");
-const cashBtn = document.getElementById("cashBtn");
+const payBtn = document.getElementById("payBtn");
 const clearBtn = document.getElementById("clearBtn");
 
-/* Monnaie reçue : on cumule les appuis, tout est compté en centimes. */
-const COINS = [10, 20, 50, 100, 200];              // 0,10 € à 2 €
-const NOTES = [500, 1000, 2000, 5000, 10000];      // 5 € à 100 €
-let givenCents = 0;
-let denomCount = {};
-
-const denomLabel = c => c % 100 === 0 ? (c / 100) + " €" : (c / 100).toFixed(2).replace(".", ",");
-const chipHtml = (c, cls) =>
-  `<button type="button" class="chip ${cls}" data-cash="${c}">${denomLabel(c)}<span class="x" data-dn="${c}"></span></button>`;
-document.getElementById("denoms").innerHTML =
-  COINS.map(c => chipHtml(c, "coin")).join("") + NOTES.map(c => chipHtml(c, "note")).join("");
-
-function addCash(cents){
-  givenCents += cents;
-  denomCount[cents] = (denomCount[cents] || 0) + 1;
-  renderCash();
-}
-function clearCash(){
-  givenCents = 0; denomCount = {}; renderCash();
-}
-function renderCash(syncInput = true){
-  if (syncInput) cashInput.value = givenCents ? (givenCents / 100).toFixed(2).replace(".", ",") : "";
-  document.getElementById("cashClear").disabled = !givenCents;
-  document.querySelectorAll("[data-dn]").forEach(x => {
-    const n = denomCount[x.dataset.dn] || 0;
-    x.textContent = n > 1 ? "×" + n : "";
-    x.closest(".chip").classList.toggle("used", n > 0);
-    x.closest(".chip").classList.toggle("multi", n > 1);
-  });
-  updateChange();
-}
-
 function add(id, n){
-  if (vibe && navigator.vibrate) navigator.vibrate(n > 0 ? 12 : [8]);
+  buzz(12);
   order[id] = (order[id] || 0) + n;
   if (order[id] <= 0) delete order[id];
   render();
 }
-const total = () => Object.keys(order).reduce((s, id) => s + ALL[id].price * order[id], 0);
-const count = () => Object.keys(order).reduce((s, id) => s + order[id], 0);
 
 function render(){
   const ids = Object.keys(order);
@@ -844,16 +880,18 @@ function render(){
         <button type="button" class="del" data-del="${id}" aria-label="Supprimer ${it.name}"><svg aria-hidden="true"><use href="#ic-trash"></use></svg></button>
       </span>
     </li>`;
-  }).join("") : `<li class="empty">Touchez un plat ou une boisson pour l’ajouter.</li>`;
+  }).join("") : `<li class="empty-note">Touchez un plat ou une boisson pour l’ajouter.</li>`;
 
   const t = total(), n = count();
-  totalOut.textContent = euro(t);
-  barTotal.textContent = euro(t);
-  countLabel.textContent = n + (n > 1 ? " articles" : " article");
-  document.getElementById("orderNo").textContent = "n° " + (day.count + 1);
-  cashBtn.disabled = n === 0;
+  document.getElementById("totalOut").textContent = euro(t);
+  document.getElementById("barTotal").textContent = euro(t);
+  document.getElementById("dueOut").textContent = euro(t);
+  document.getElementById("countLabel").textContent = n + (n > 1 ? " articles" : " article");
+  document.getElementById("orderNo").textContent = "n° " + nextNo();
+  document.getElementById("payNo").textContent = "n° " + nextNo();
+  payBtn.disabled = n === 0;
   clearBtn.disabled = n === 0;
-  document.body.classList.toggle("empty", n === 0);   // rien à encaisser : pas de barre
+  document.body.classList.toggle("empty", n === 0);
   disarm();
 
   document.querySelectorAll("[data-badge]").forEach(b => {
@@ -868,110 +906,69 @@ function render(){
   armIdle();
 }
 
+/* ===================== Monnaie ===================== */
+document.getElementById("moneyPad").innerHTML = MONEY.map(m => `
+  <button type="button" class="money-btn" data-cash="${m.v}" aria-label="${m.label} reçu">
+    <span class="${m.type}" style="background:${m.bg}; color:${m.ink}">${m.label}</span>
+    <span class="badge" data-dn="${m.v}"></span>
+  </button>`).join("");
+
+function moneyList(counts){
+  return MONEY.slice().sort((a, b) => b.v - a.v)
+    .filter(m => counts[m.v])
+    .map(m => `<span class="unit"><span class="${m.type}" style="background:${m.bg}; color:${m.ink}">${m.label}</span><b>×${counts[m.v]}</b></span>`)
+    .join("");
+}
+function split(cents){
+  const out = {};
+  MONEY.slice().sort((a, b) => b.v - a.v).forEach(m => {
+    const n = Math.floor(cents / m.v);
+    if (n){ out[m.v] = n; cents -= n * m.v; }
+  });
+  return out;
+}
+
+function addCash(cents){
+  buzz(12);
+  givenCents += cents;
+  denomCount[cents] = (denomCount[cents] || 0) + 1;
+  renderCash();
+}
+function clearCash(){ givenCents = 0; denomCount = {}; renderCash(); }
+function renderCash(syncInput = true){
+  if (syncInput) cashInput.value = givenCents ? (givenCents / 100).toFixed(2).replace(".", ",") : "";
+  document.getElementById("cashClear").disabled = !givenCents;
+  document.querySelectorAll("[data-dn]").forEach(x => {
+    const n = denomCount[x.dataset.dn] || 0;
+    x.textContent = String(n);
+    x.closest(".money-btn").classList.toggle("used", n > 0);
+  });
+  document.getElementById("givenList").innerHTML = moneyList(denomCount);
+  updateChange();
+}
+
 function updateChange(){
-  const t = Math.round(total() * 100);
-  const breakdown = document.getElementById("breakdown");
-  changeBox.classList.toggle("off", givenCents <= 0 || t <= 0);
-  if (changeBox.classList.contains("off")) return;
+  const t = totalC();
   const diff = givenCents - t;
-  document.getElementById("changeLabel").textContent = diff >= 0 ? "À rendre" : "Manque";
-  changeOut.textContent = euro(Math.abs(diff) / 100);
-  breakdown.innerHTML = diff > 0 ? change(diff) : "";
-  changeBox.style.background = diff >= 0 ? "" : "var(--danger-soft)";
-  changeBox.style.color = diff >= 0 ? "" : "var(--danger)";
+  const short = givenCents > 0 && diff < 0;
+  const card = document.getElementById("changeCard");
+  card.classList.toggle("short", short);
+  document.getElementById("changeLabel").textContent = short ? "Il manque" : "À rendre";
+  document.getElementById("changeOut").textContent = euroC(givenCents === 0 ? 0 : Math.abs(diff));
+  document.getElementById("changeList").innerHTML = (!short && diff > 0) ? moneyList(split(diff)) : "";
+  document.getElementById("validateBtn").disabled = t === 0;
 }
 
-/* Décomposition de la monnaie à rendre, du plus gros au plus petit. */
-function change(cents){
-  const parts = [];
-  NOTES.concat(COINS).sort((a, b) => b - a).forEach(v => {
-    const n = Math.floor(cents / v);
-    if (n){ parts.push(`<span class="pill"><b>${n}</b>×${denomLabel(v)}</span>`); cents -= n * v; }
-  });
-  return parts.join("");
+/* ===================== Écrans ===================== */
+function openSheet(){ document.body.classList.add("sheet"); }
+function closeSheet(){ document.body.classList.remove("sheet"); }
+function backToMenu(){ closeSheet(); scrollTo({ top:0, behavior:"smooth" }); }
+function openPay(){
+  if (!count()) return;
+  clearCash();
+  document.body.classList.add("pay");
 }
-
-function renderDay(){
-  const c = String(day.count), t = euro(day.total);
-  document.getElementById("dayCount").textContent = c;
-  document.getElementById("dayCount2").textContent = c;
-  document.getElementById("dayTotal").textContent = t;
-  document.getElementById("dayTotal2").textContent = t;
-  const plural = day.count > 1 ? "commandes" : "commande";
-  document.getElementById("dayWord").textContent = plural;
-  document.getElementById("dayWord2").textContent = plural;
-  document.getElementById("dayS").textContent = day.count > 1 ? "s" : "";
-  document.getElementById("undoBtn").disabled = !lastSale;
-  renderTally();
-}
-
-function soldLines(){
-  return Object.keys(day.items)
-    .filter(id => ALL[id] && day.items[id] > 0)
-    .map(id => ({ id, name: ALL[id].name, c: ALL[id].c, q: day.items[id], sum: ALL[id].price * day.items[id] }))
-    .sort((a, b) => b.sum - a.sum);
-}
-
-function renderTally(){
-  const rows = soldLines();
-  document.getElementById("tally").innerHTML = rows.length
-    ? rows.map(r => `<div class="trow ${r.c}"><span class="tq">${r.q}×</span><span class="tn">${r.name}</span><span class="tt">${euro(r.sum)}</span></div>`).join("")
-    : `<p class="tally-empty">Aucune vente encaissée pour l’instant.</p>`;
-}
-
-function reportText(){
-  const rows = soldLines();
-  const pad = rows.length ? Math.max(...rows.map(r => r.name.length)) : 0;
-  return ["Caisse — Léon en Rue Libre",
-          day.count + (day.count > 1 ? " commandes · " : " commande · ") + euro(day.total), ""]
-    .concat(rows.map(r => (r.q + "×").padStart(4) + "  " + r.name.padEnd(pad) + "  " + euro(r.sum).padStart(9)))
-    .join("\n");
-}
-
-document.getElementById("shareBtn").addEventListener("click", async () => {
-  const text = reportText();
-  try {
-    if (navigator.share){ await navigator.share({ title: "Bilan de la journée", text }); return; }
-    await navigator.clipboard.writeText(text);
-    toast("Bilan copié");
-  } catch (e) {
-    if (e && e.name === "AbortError") return;      // partage annulé par l'utilisateur
-    const box = document.getElementById("shareText");
-    box.value = text;
-    document.getElementById("shareModal").hidden = false;
-    box.select();
-  }
-});
-document.getElementById("shareClose").addEventListener("click", () => {
-  document.getElementById("shareModal").hidden = true;
-});
-
-const undoBtn = document.getElementById("undoBtn");
-undoBtn.addEventListener("click", () => {
-  if (!lastSale) return;
-  if (count()){ toast("Terminez d’abord la commande en cours"); return; }
-  arm(undoBtn, "Confirmer l’annulation ?", () => {
-    day.count = Math.max(0, day.count - 1);
-    day.total = Math.round((day.total - lastSale.total) * 100) / 100;
-    Object.keys(lastSale.order).forEach(id => {
-      day.items[id] = (day.items[id] || 0) - lastSale.order[id];
-      if (day.items[id] <= 0) delete day.items[id];
-    });
-    order = Object.assign({}, lastSale.order);
-    toast("Commande n° " + lastSale.no + " remise en cours");
-    lastSale = null; store.set("lastSale", null); store.set("day", day);
-    render();
-    closeSettings();
-  });
-});
-
-function resetOrder(){
-  order = {}; clearCash(); render();
-}
-function backToMenu(){
-  document.body.classList.remove("sheet");
-  scrollTo({ top:0, behavior:"smooth" });
-}
+function closePay(){ document.body.classList.remove("pay"); }
 
 const toastEl = document.getElementById("toast");
 let toastTimer = null;
@@ -979,14 +976,152 @@ function toast(msg){
   toastEl.textContent = msg;
   toastEl.hidden = false;
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { toastEl.hidden = true; }, 2200);
+  toastTimer = setTimeout(() => { toastEl.hidden = true; }, 2400);
 }
 
-/* ---------- Commande oubliée : rappel après un délai d'inactivité ---------- */
-const idleModal = document.getElementById("idleModal");
-let idleMin = store.get("idle", 5);
-let idleTimer = null;
+/* ===================== Encaissement ===================== */
+document.getElementById("validateBtn").addEventListener("click", () => {
+  const t = total();
+  if (!t) return;
+  const no = nextNo();
+  const at = new Date().toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" });
+  lastSale = { no, at, total:t, items:Object.assign({}, order) };
+  sales.push(lastSale);
+  store.set("sales", sales);
+  buzz([14, 40, 14]);
 
+  const diff = givenCents - Math.round(t * 100);
+  document.getElementById("doneNo").textContent = "Commande n° " + no + " · " + euro(t);
+  document.getElementById("doneTitle").textContent = givenCents === 0
+    ? "Encaissé" : diff > 0 ? "Rendre " + euroC(diff) : "Compte juste, rien à rendre";
+  document.getElementById("doneList").innerHTML = diff > 0 ? moneyList(split(diff)) : "";
+  document.getElementById("doneModal").hidden = false;
+
+  order = {}; clearCash(); render();
+  closePay();
+});
+
+document.getElementById("doneClose").addEventListener("click", () => {
+  document.getElementById("doneModal").hidden = true;
+  backToMenu();
+});
+document.getElementById("doneUndo").addEventListener("click", () => {
+  if (!lastSale) return;
+  const no = lastSale.no;
+  document.getElementById("doneModal").hidden = true;
+  if (restoreSale(no)) openSheet();
+});
+
+/* Reprend une vente : elle sort du bilan et redevient la commande en cours. */
+function restoreSale(no){
+  const i = sales.findIndex(s => s.no === no);
+  if (i < 0) return false;
+  if (count()){ toast("Terminez d’abord la commande en cours"); return false; }
+  order = Object.assign({}, sales[i].items);
+  sales.splice(i, 1);
+  store.set("sales", sales);
+  lastSale = null;
+  render();
+  toast("Commande n° " + no + " remise en cours");
+  return true;
+}
+function dropSale(no){
+  const i = sales.findIndex(s => s.no === no);
+  if (i < 0) return;
+  sales.splice(i, 1);
+  store.set("sales", sales);
+  if (lastSale && lastSale.no === no) lastSale = null;
+  render();
+}
+
+/* ===================== Bilan et historique ===================== */
+function renderDay(){
+  const c = String(sales.length), t = euroC(dayTotalC());
+  const plural = sales.length > 1 ? "commandes" : "commande";
+  document.getElementById("dayCount").textContent = c;
+  document.getElementById("dayCount2").textContent = c;
+  document.getElementById("dayTotal").textContent = t;
+  document.getElementById("dayTotal2").textContent = t;
+  document.getElementById("dayWord").textContent = plural;
+  document.getElementById("dayWord2").textContent = plural;
+  document.getElementById("dayS").textContent = sales.length > 1 ? "s" : "";
+  renderTally();
+  renderHist();
+}
+
+function soldLines(){
+  const agg = {};
+  sales.forEach(s => Object.keys(s.items).forEach(id => { agg[id] = (agg[id] || 0) + s.items[id]; }));
+  return Object.keys(agg).filter(id => ALL[id])
+    .map(id => ({ id, name:ALL[id].name, c:ALL[id].c, q:agg[id], sum:ALL[id].price * agg[id] }))
+    .sort((a, b) => b.sum - a.sum);
+}
+function renderTally(){
+  const rows = soldLines();
+  document.getElementById("tally").innerHTML = rows.length
+    ? rows.map(r => `<div class="trow ${r.c}"><span class="tq">${r.q}×</span><span class="tn">${r.name}</span><span class="tt">${euro(r.sum)}</span></div>`).join("")
+    : `<p class="muted-note">Aucune vente encaissée pour l’instant.</p>`;
+}
+function renderHist(){
+  const el = document.getElementById("hist");
+  if (!sales.length){ el.innerHTML = `<p class="muted-note">L’historique se remplit à chaque encaissement.</p>`; return; }
+  el.innerHTML = sales.slice().reverse().map(s => `
+    <div class="sale">
+      <div class="sale-top"><b>n° ${s.no}</b> <span class="muted-note">${s.at}</span> <span class="amt">${euro(s.total)}</span></div>
+      <div class="sale-items">${Object.keys(s.items).map(id => (ALL[id] ? s.items[id] + " × " + ALL[id].name : "")).filter(Boolean).join(" · ") || "—"}</div>
+      <div class="sale-btns">
+        <button type="button" class="btn ghost" data-edit="${s.no}">Modifier</button>
+        <button type="button" class="btn ghost" data-cancel="${s.no}">Annuler</button>
+      </div>
+    </div>`).join("");
+}
+
+function reportText(){
+  const rows = soldLines();
+  const pad = rows.length ? Math.max.apply(null, rows.map(r => r.name.length)) : 0;
+  return ["Caisse — Léon en Rue Libre",
+          sales.length + (sales.length > 1 ? " commandes · " : " commande · ") + euroC(dayTotalC()), ""]
+    .concat(rows.map(r => (r.q + "×").padStart(4) + "  " + r.name.padEnd(pad) + "  " + euro(r.sum).padStart(9)))
+    .join("\n");
+}
+
+document.getElementById("shareBtn").addEventListener("click", async () => {
+  const text = reportText();
+  try {
+    if (navigator.share){ await navigator.share({ title:"Bilan de la journée", text }); return; }
+    await navigator.clipboard.writeText(text);
+    toast("Bilan copié");
+  } catch (e) {
+    if (e && e.name === "AbortError") return;
+    const box = document.getElementById("shareText");
+    box.value = text;
+    document.getElementById("shareModal").hidden = false;
+    box.select();
+  }
+});
+document.getElementById("shareClose").addEventListener("click", () => { document.getElementById("shareModal").hidden = true; });
+
+/* ===================== Confirmation en deux temps ===================== */
+let armedBtn = null, armedTimer = null, armedLabel = "";
+function disarm(){
+  if (!armedBtn) return;
+  armedBtn.textContent = armedLabel;
+  armedBtn.classList.remove("armed");
+  clearTimeout(armedTimer);
+  armedBtn = null;
+}
+function arm(btn, label, action){
+  if (armedBtn === btn){ disarm(); action(); return; }
+  disarm();
+  armedBtn = btn; armedLabel = btn.textContent;
+  btn.textContent = label;
+  btn.classList.add("armed");
+  armedTimer = setTimeout(disarm, 4000);
+}
+
+/* ===================== Commande oubliée ===================== */
+const idleModal = document.getElementById("idleModal");
+let idleTimer = null;
 function armIdle(){
   clearTimeout(idleTimer);
   if (!idleMin || !count() || !idleModal.hidden) return;
@@ -1001,164 +1136,94 @@ function showIdle(){
   idleModal.hidden = false;
   document.getElementById("idleKeep").focus();
 }
-function hideIdle(){ idleModal.hidden = true; armIdle(); }
-
-document.getElementById("idleKeep").addEventListener("click", hideIdle);
+document.getElementById("idleKeep").addEventListener("click", () => { idleModal.hidden = true; armIdle(); });
 document.getElementById("idleClear").addEventListener("click", () => {
-  resetOrder();
+  order = {}; clearCash(); render();
   idleModal.hidden = true;
-  backToMenu();
+  closePay(); backToMenu();
 });
 addEventListener("pointerdown", () => { if (idleModal.hidden) armIdle(); });
-addEventListener("keydown", () => { if (idleModal.hidden) armIdle(); });
 
-document.getElementById("idleSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-idle]");
-  if (!b) return;
-  idleMin = parseInt(b.dataset.idle, 10);
-  store.set("idle", idleMin);
-  applyIdle();
-});
-function applyIdle(){
-  document.querySelectorAll("[data-idle]").forEach(b => {
-    b.setAttribute("aria-pressed", String(parseInt(b.dataset.idle, 10) === idleMin));
-  });
-  armIdle();
-}
-
-/* ---------- Confirmation en deux temps (pas de confirm() natif) ---------- */
-let armedBtn = null, armedTimer = null, armedLabel = "";
-function disarm(){
-  if (!armedBtn) return;
-  armedBtn.textContent = armedLabel;
-  armedBtn.classList.remove("armed");
-  clearTimeout(armedTimer);
-  armedBtn = null;
-}
-function arm(btn, label, action){
-  if (armedBtn === btn){ const done = action; disarm(); done(); return; }
-  disarm();
-  armedBtn = btn; armedLabel = btn.textContent;
-  btn.textContent = label;
-  btn.classList.add("armed");
-  armedTimer = setTimeout(disarm, 4000);
-}
-
-/* ---------- Événements ---------- */
+/* ===================== Événements ===================== */
 document.addEventListener("click", e => {
   const addBtn = e.target.closest("[data-add]");
   if (addBtn){ add(addBtn.dataset.add, parseInt(addBtn.dataset.n || "1", 10)); return; }
   const delBtn = e.target.closest("[data-del]");
   if (delBtn){ delete order[delBtn.dataset.del]; render(); return; }
-  const chip = e.target.closest("[data-cash]");
-  if (chip){ addCash(parseInt(chip.dataset.cash, 10)); return; }
+  const money = e.target.closest("[data-cash]");
+  if (money){ addCash(parseInt(money.dataset.cash, 10)); return; }
   const tab = e.target.closest("[data-cat-set]");
-  if (tab){
-    activeCat = tab.dataset.catSet === "__all" ? null : tab.dataset.catSet;
-    renderView();
-    return;
-  }
+  if (tab){ activeCat = tab.dataset.catSet === "__all" ? null : tab.dataset.catSet; renderView(); return; }
   if (e.target.closest("#viewBtn")){
     activeCat = activeCat === null ? (lastCat || MENU[0].cat) : null;
     renderView();
     return;
   }
   const vb = e.target.closest("[data-view]");
-  if (vb){
-    activeCat = vb.dataset.view === "all" ? null : (lastCat || MENU[0].cat);
-    renderView();
+  if (vb){ activeCat = vb.dataset.view === "all" ? null : (lastCat || MENU[0].cat); renderView(); return; }
+  const edit = e.target.closest("[data-edit]");
+  if (edit){ if (restoreSale(parseInt(edit.dataset.edit, 10))){ closeSettings(); openSheet(); } return; }
+  const cancel = e.target.closest("[data-cancel]");
+  if (cancel){
+    arm(cancel, "Confirmer ?", () => { dropSale(parseInt(cancel.dataset.cancel, 10)); toast("Encaissement annulé"); });
     return;
   }
-  if (!e.target.closest(".btn.armed")) disarm();
+  if (!e.target.closest(".armed")) disarm();
 });
 
 cashInput.addEventListener("input", () => {
   const v = parseFloat((cashInput.value || "").replace(",", "."));
   givenCents = isFinite(v) && v > 0 ? Math.round(v * 100) : 0;
-  denomCount = {};                 // saisie libre : le détail pièces/billets n'a plus de sens
+  denomCount = {};
   renderCash(false);
 });
 document.getElementById("cashClear").addEventListener("click", clearCash);
 
 clearBtn.addEventListener("click", () => {
   if (!count()) return;
-  arm(clearBtn, "Confirmer ?", () => { resetOrder(); backToMenu(); });
+  arm(clearBtn, "Confirmer ?", () => { order = {}; clearCash(); render(); backToMenu(); });
 });
+payBtn.addEventListener("click", openPay);
+document.getElementById("payBack").addEventListener("click", closePay);
+document.getElementById("payBackdrop").addEventListener("click", closePay);
+document.getElementById("openSheet").addEventListener("click", openSheet);
+document.getElementById("closeSheet").addEventListener("click", closeSheet);
 
-cashBtn.addEventListener("click", () => {
-  const t = total();
-  if (!t) return;
-  const no = day.count + 1;
-  lastSale = { order: Object.assign({}, order), total: t, no };
-  store.set("lastSale", lastSale);
-  day.count = no;
-  day.total = Math.round((day.total + t) * 100) / 100;
-  Object.keys(order).forEach(id => { day.items[id] = (day.items[id] || 0) + order[id]; });
-  store.set("day", day);
-  if (vibe && navigator.vibrate) navigator.vibrate([14, 40, 14]);
-  resetOrder();
-  toast("Encaissé · n° " + no + " · " + euro(t));
-  backToMenu();
-});
-
-const dayResetBtn = document.getElementById("dayReset");
-dayResetBtn.addEventListener("click", () => {
-  arm(dayResetBtn, "Confirmer la remise à zéro ?", () => {
-    day = { count:0, total:0, items:{} };
-    lastSale = null; store.set("lastSale", null); store.set("day", day); renderDay();
+document.getElementById("dayReset").addEventListener("click", e => {
+  arm(e.currentTarget, "Confirmer la remise à zéro ?", () => {
+    sales = []; lastSale = null;
+    store.set("sales", sales); store.set("day", null);
+    render();
   });
 });
 
-document.getElementById("openSheet").addEventListener("click", () => document.body.classList.add("sheet"));
-document.getElementById("closeSheet").addEventListener("click", () => document.body.classList.remove("sheet"));
-
-document.getElementById("vibeSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-vibe]");
-  if (!b) return;
-  vibe = parseInt(b.dataset.vibe, 10);
-  store.set("vibe", vibe);
-  applyToggles();
-  if (vibe && navigator.vibrate) navigator.vibrate(12);
-});
-document.getElementById("lockSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-lock]");
-  if (!b) return;
-  lockSettings = parseInt(b.dataset.lock, 10);
-  store.set("lock", lockSettings);
-  applyToggles();
-});
-function applyToggles(){
-  document.querySelectorAll("[data-vibe]").forEach(b =>
-    b.setAttribute("aria-pressed", String(parseInt(b.dataset.vibe, 10) === vibe)));
-  document.querySelectorAll("[data-lock]").forEach(b =>
-    b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
-}
-
-const openSettings = () => { document.body.classList.add("settings"); refreshOffline(); };
-const closeSettings = () => { disarm(); document.body.classList.remove("settings"); };
+/* ===================== Réglages ===================== */
+function openSettings(){ document.body.classList.add("settings"); refreshOffline(); }
+function closeSettings(){ disarm(); document.body.classList.remove("settings"); }
 const settingsBtn = document.getElementById("settingsBtn");
 let holdTimer = null;
 settingsBtn.addEventListener("click", () => { if (!lockSettings) openSettings(); });
 settingsBtn.addEventListener("pointerdown", () => {
   if (!lockSettings) return;
   clearTimeout(holdTimer);
-  holdTimer = setTimeout(() => {
-    if (navigator.vibrate && vibe) navigator.vibrate(18);
-    openSettings();
-  }, 600);
+  holdTimer = setTimeout(() => { buzz(18); openSettings(); }, 600);
 });
 ["pointerup", "pointerleave", "pointercancel"].forEach(ev =>
   settingsBtn.addEventListener(ev, () => clearTimeout(holdTimer)));
 document.getElementById("closeSettings").addEventListener("click", closeSettings);
 document.getElementById("scrim").addEventListener("click", closeSettings);
+
 document.addEventListener("keydown", e => {
-  if (e.key !== "Escape" || !idleModal.hidden) return;
+  if (e.key !== "Escape") return;
+  if (!idleModal.hidden) return;
+  const done = document.getElementById("doneModal");
+  if (!done.hidden){ done.hidden = true; return; }
   document.getElementById("shareModal").hidden = true;
+  if (document.body.classList.contains("pay")){ closePay(); return; }
   closeSettings();
-  document.body.classList.remove("sheet");
+  closeSheet();
 });
 
-/* ---------- Taille du texte ---------- */
 const SIZES = [16, 18, 21, 24, 28];
 let sizeIdx = store.get("size", 1);
 function applySize(){
@@ -1171,14 +1236,12 @@ function applySize(){
 document.getElementById("fontUp").addEventListener("click", () => { sizeIdx++; applySize(); });
 document.getElementById("fontDown").addEventListener("click", () => { sizeIdx--; applySize(); });
 
-/* ---------- Thème ---------- */
 let theme = store.get("theme", "auto");
 function applyTheme(){
   if (theme === "auto") document.documentElement.removeAttribute("data-theme");
   else document.documentElement.setAttribute("data-theme", theme);
-  document.querySelectorAll("[data-theme-set]").forEach(b => {
-    b.setAttribute("aria-pressed", String(b.dataset.themeSet === theme));
-  });
+  document.querySelectorAll("[data-theme-set]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.themeSet === theme)));
   store.set("theme", theme);
 }
 document.getElementById("themeSeg").addEventListener("click", e => {
@@ -1187,22 +1250,56 @@ document.getElementById("themeSeg").addEventListener("click", e => {
   theme = b.dataset.themeSet; applyTheme();
 });
 
-/* ---------- En-tête collant ---------- */
-const headEl = document.querySelector(".head");
-function measureHead(){
-  document.documentElement.style.setProperty("--headh", headEl.offsetHeight + "px");
+document.getElementById("vibeSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-vibe]");
+  if (!b) return;
+  vibe = parseInt(b.dataset.vibe, 10);
+  store.set("vibe", vibe);
+  applyToggles();
+  buzz(12);
+});
+document.getElementById("lockSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-lock]");
+  if (!b) return;
+  lockSettings = parseInt(b.dataset.lock, 10);
+  store.set("lock", lockSettings);
+  applyToggles();
+});
+document.getElementById("idleSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-idle]");
+  if (!b) return;
+  idleMin = parseInt(b.dataset.idle, 10);
+  store.set("idle", idleMin);
+  applyToggles();
+});
+function applyToggles(){
+  document.querySelectorAll("[data-vibe]").forEach(b => {
+    b.setAttribute("aria-pressed", String(parseInt(b.dataset.vibe, 10) === vibe));
+    b.disabled = !canVibrate;
+  });
+  document.querySelectorAll("[data-lock]").forEach(b =>
+    b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
+  document.querySelectorAll("[data-idle]").forEach(b =>
+    b.setAttribute("aria-pressed", String(parseInt(b.dataset.idle, 10) === idleMin)));
+  document.getElementById("vibeNote").textContent = canVibrate
+    ? "Une courte vibration à chaque ajout, pour être sûr de l’appui sans regarder l’écran."
+    : "Cet appareil ne permet pas la vibration depuis une page web — c’est le cas de tous les navigateurs sur iPhone.";
+  armIdle();
 }
+
+const headEl = document.querySelector(".head");
+function measureHead(){ document.documentElement.style.setProperty("--headh", headEl.offsetHeight + "px"); }
 addEventListener("resize", measureHead);
 
-/* ---------- Installation et fonctionnement hors ligne ---------- */
+/* ===================== Installation / hors ligne ===================== */
 const hasManifest = !!document.querySelector('link[rel="manifest"]');
 if (hasManifest && "serviceWorker" in navigator){
-  addEventListener("load", () => navigator.serviceWorker.register("sw.js")
-    .then(refreshOffline).catch(refreshOffline));
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").then(refreshOffline, refreshOffline));
 }
 const ua = navigator.userAgent;
 const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|Android/.test(ua);
+const iosChrome = isIOS && /CriOS/.test(ua);
+const iosOther = isIOS && /FxiOS|EdgiOS|OPiOS/.test(ua);
 const inFrame = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
 const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 
@@ -1227,20 +1324,22 @@ async function refreshOffline(){
     text.textContent = "Application installée : elle démarre et fonctionne sans réseau.";
   } else if (inFrame){
     text.textContent = "Cet aperçu est affiché dans une autre application, qui ne permet pas l’installation. "
-      + "Ouvrez l’adresse du site directement dans le navigateur du téléphone, puis revenez ici.";
+      + "Ouvrez l’adresse du site directement dans le navigateur du téléphone.";
   } else if (!hasManifest){
-    text.textContent = "Cette page fonctionne sans réseau une fois chargée, mais l’installation sur l’écran "
-      + "d’accueil demande la version hébergée du site.";
+    text.textContent = "Cette page fonctionne sans réseau une fois chargée, mais l’installation demande la version hébergée du site.";
   } else if (deferredPrompt){
     text.textContent = "Prête à être installée sur cet appareil.";
-  } else if (isIOS && isSafari){
+  } else if (iosChrome){
+    text.textContent = "Sur iPhone, aucun navigateur ne propose de bouton d’installation : cela passe toujours par le menu Partager.";
+    list = ["Dans Chrome : bouton ⋯ (ou Partager) → « Ajouter à l’écran d’accueil ».",
+            "Pour une vraie application plein écran, ouvrez la même adresse dans Safari → Partager → « Sur l’écran d’accueil »."];
+  } else if (isIOS && !iosOther){
     text.textContent = "Sur iPhone, l’installation passe par le menu Partager de Safari :";
     list = ["Touchez le bouton Partager — le carré avec une flèche vers le haut.",
-            "Faites défiler la liste et choisissez « Sur l’écran d’accueil ».",
-            "Validez avec « Ajouter » en haut à droite."];
-  } else if (isIOS){
-    text.textContent = "Sur iPhone, seul Safari peut installer une application. Ouvrez cette adresse dans Safari, "
-      + "puis Partager → « Sur l’écran d’accueil ».";
+            "Faites défiler et choisissez « Sur l’écran d’accueil ».",
+            "Validez avec « Ajouter »."];
+  } else if (iosOther){
+    text.textContent = "Ce navigateur iPhone n’installe pas d’application. Ouvrez cette adresse dans Safari, puis Partager → « Sur l’écran d’accueil ».";
   } else {
     text.textContent = "Si aucun bouton n’apparaît, passez par le menu du navigateur :";
     list = ["Ouvrez le menu ⋮ (ou ⋯) du navigateur.",
@@ -1249,7 +1348,7 @@ async function refreshOffline(){
   steps.innerHTML = list.map(l => `<li>${l}</li>`).join("");
   steps.hidden = !list.length;
 
-  let sw = "non pris en charge par ce navigateur";
+  let sw = "non pris en charge";
   if ("serviceWorker" in navigator){
     try { sw = (await navigator.serviceWorker.getRegistration()) ? "actif" : "non enregistré"; }
     catch (e) { sw = "bloqué"; }
@@ -1258,17 +1357,19 @@ async function refreshOffline(){
     "adresse : " + (location.host || "fichier local") + (location.protocol === "https:" ? " · https ✓" : " · " + location.protocol.replace(":", "") + " ✗"),
     "manifeste : " + (hasManifest ? "déclaré" : "absent"),
     "hors-ligne : " + sw,
+    "vibration : " + (canVibrate ? "disponible" : "non disponible"),
     "affichage : " + (installed ? "application installée" : inFrame ? "aperçu intégré" : "navigateur")
   ].join("\n");
 }
 
+/* ===================== Démarrage ===================== */
 applySize();
 applyTheme();
-refreshOffline();
-applyIdle();
 applyToggles();
 renderView();
+renderCash();
 render();
+refreshOffline();
 </script>
 </body>
 </html>
