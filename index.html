@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Caisse Léon en Rue Libre</title>
+<title>Caisse</title>
 <meta name="description" content="Caisse du stand : menu, quantités, total et rendu de monnaie.">
 <meta name="theme-color" content="#0E6B4C">
 <meta name="color-scheme" content="light dark">
@@ -648,8 +648,7 @@ body.settings .panel{transform:none; visibility:visible}
 <div class="head">
   <div class="top">
     <div class="brand">
-      <b>Caisse — Léon en Rue Libre</b>
-      <span>Festival · plancha &amp; bar</span>
+      <b>Caisse</b>
     </div>
     <button type="button" class="chip-station" id="stationBtn" aria-label="Changer de caisse">
       <svg aria-hidden="true"><use href="#ic-all" id="stationIcon"></use></svg>
@@ -943,7 +942,6 @@ body.settings .panel{transform:none; visibility:visible}
     <h3>Gestion</h3>
     <button type="button" class="btn nav" data-page="menu">Modifier le menu <span>›</span></button>
     <button type="button" class="btn nav" data-page="stock">Stock <span>›</span></button>
-    <button type="button" class="btn nav" data-page="bilan">Bilan de la journée <span>›</span></button>
   </section>
 
   <section class="set">
@@ -990,6 +988,15 @@ body.settings .panel{transform:none; visibility:visible}
       <b id="idleValue">2 min</b>
     </div>
     <p id="idleNote"></p>
+  </section>
+
+  <section class="set">
+    <h3>Données</h3>
+    <p><b>Tout reste sur ce téléphone.</b> Commandes, historique, menu et réglages sont
+       enregistrés dans le navigateur de l’appareil. Rien n’est envoyé sur Internet :
+       aucun serveur, aucune base de données, aucun compte.</p>
+    <p>Seul le chargement de la page utilise le réseau. Effacer les données du navigateur
+       ou désinstaller l’application efface aussi le bilan de la journée.</p>
   </section>
 
   <section class="set" id="offlineBox">
@@ -1122,7 +1129,7 @@ if (idleSec === null){                                  // reprise de l'ancien r
 }
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
-const VERSION = "2026-08-20 · 17";                  // repère de version, affiché dans les réglages
+const VERSION = "2026-08-20 · 18";                  // repère de version, affiché dans les réglages
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
@@ -1741,7 +1748,7 @@ function renderHist(){
 function reportText(){
   const rows = soldLines();
   const pad = rows.length ? Math.max.apply(null, rows.map(r => r.name.length)) : 0;
-  return ["Caisse — Léon en Rue Libre",
+  return ["Caisse",
           sales.length + (sales.length > 1 ? " commandes · " : " commande · ") + euroC(dayTotalC()),
           "espèces " + euroC(dayByPay("cash")) + " · carte " + euroC(dayByPay("card")), ""]
     .concat(rows.map(r => (r.q + "×").padStart(4) + "  " + r.name.padEnd(pad) + "  " + euro(r.sum).padStart(9)))

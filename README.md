@@ -1,6 +1,6 @@
-# Caisse — Léon en Rue Libre
+# Caisse
 
-Petite caisse web pour le stand du festival : on touche les articles du menu, on ajuste
+Petite caisse web pour le stand du festival Léon en Rue Libre : on touche les articles du menu, on ajuste
 les quantités, le total s'affiche en grand, puis un écran d'encaissement calcule la
 monnaie à rendre — en billets et en pièces.
 
@@ -54,8 +54,13 @@ monnaie à rendre — en billets et en pièces.
   affichage du menu, retour tactile, paiement par défaut, consigne, rappel de commande
   oubliée. Le menu, le stock et le bilan ont chacun leur page, pour garder les réglages
   lisibles.
-- Tout est calculé sur l'appareil ; la commande en cours, l'historique et les réglages
-  survivent à un rechargement.
+- **Tout reste sur l'appareil.** Commandes, historique, menu et réglages sont enregistrés
+  dans le stockage local du navigateur. Aucun serveur, aucune base de données, aucun
+  compte : le réseau ne sert qu'à charger la page. Effacer les données du navigateur ou
+  désinstaller l'application efface tout, bilan compris. C'est rappelé dans les réglages,
+  section « Données ».
+- Le bilan de la journée reste calculé et sa page existe, mais son entrée est retirée des
+  réglages pour le moment (une ligne de HTML à remettre pour la rétablir).
 
 ## Utiliser hors ligne
 
