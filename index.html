@@ -6,6 +6,7 @@
 <title>Caisse Léon en Rue Libre</title>
 <meta name="description" content="Caisse du stand : menu, quantités, total et rendu de monnaie.">
 <meta name="theme-color" content="#0E6B4C">
+<meta name="color-scheme" content="light dark">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,6 +18,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <style>
 :root{
+  color-scheme:light dark;
   --bg:#EFF2EE; --surface:#FFFFFF; --surface-2:#E5EAE3; --line:#CFD8CD;
   --ink:#131A16; --muted:#55635B;
   --accent:#0E6B4C; --accent-ink:#FFFFFF; --accent-soft:#DCEDE4;
@@ -30,6 +32,8 @@
   --mono:"IBM Plex Mono","SFMono-Regular",Consolas,monospace;
 }
 /* Une couleur par catégorie — thème clair */
+/* « only light » demande au navigateur de ne pas assombrir la page de force. */
+:root[data-theme="light"]{color-scheme:only light}
 .c0{--c:var(--accent); --c-soft:var(--accent-soft)}
 .c1{--c:#B0432A; --c-soft:#F8E4DD}
 .c2{--c:#8E3568; --c-soft:#F8E2EF}
@@ -37,6 +41,7 @@
 .c4{--c:#6B45A8; --c-soft:#EBE5F9}
 .c5{--c:#14688C; --c-soft:#DEEEF6}
 .c6{--c:#4F5C68; --c-soft:#E6E9EC}
+.c7{--c:#5F7014; --c-soft:#EAF0D8}
 
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -56,8 +61,10 @@
   :root:not([data-theme="light"]) .c4{--c:#C2ACFF; --c-soft:#2D2549}
   :root:not([data-theme="light"]) .c5{--c:#6BCBF5; --c-soft:#153341}
   :root:not([data-theme="light"]) .c6{--c:#B7C4D1; --c-soft:#272E35}
+  :root:not([data-theme="light"]) .c7{--c:#C3D96B; --c-soft:#2A3213}
 }
 :root[data-theme="dark"]{
+  color-scheme:dark;
   --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#333F38;
   --ink:#E9F0EA; --muted:#A3B2A8;
   --accent:#33BE89; --accent-ink:#05231A; --accent-soft:#1B2E26;
@@ -72,6 +79,7 @@
 :root[data-theme="dark"] .c4{--c:#C2ACFF; --c-soft:#2D2549}
 :root[data-theme="dark"] .c5{--c:#6BCBF5; --c-soft:#153341}
 :root[data-theme="dark"] .c6{--c:#B7C4D1; --c-soft:#272E35}
+:root[data-theme="dark"] .c7{--c:#C3D96B; --c-soft:#2A3213}
 
 *{box-sizing:border-box}
 html{font-size:18px; -webkit-text-size-adjust:100%}
@@ -91,13 +99,22 @@ svg{flex:none}
 .head{position:sticky; top:0; z-index:30; background:var(--surface); border-bottom:1px solid var(--line)}
 .top{display:flex; align-items:center; gap:.6rem; padding:.55rem clamp(.7rem,2.5vw,1.4rem)}
 .brand{display:flex; flex-direction:column; margin-right:auto; min-width:0}
-.brand b{font-family:var(--display); font-weight:800; font-size:min(1.1rem,4.6vw); letter-spacing:-.01em; line-height:1.15}
+.brand b{font-family:var(--display); font-weight:800; font-size:min(1.05rem,4.2vw); letter-spacing:-.01em; line-height:1.15}
 .brand span{font-size:min(.7rem,3vw); letter-spacing:.13em; text-transform:uppercase; color:var(--muted); font-weight:600}
+/* Sur téléphone, la pastille de caisse dit déjà l'essentiel : on gagne la place du sous-titre. */
+@media (max-width:560px){ .brand span{display:none} }
 .icon-btn{
   background:var(--surface-2); border:1px solid var(--line); border-radius:11px; flex:none;
   width:min(2.9rem,13vw); height:min(2.9rem,13vw); display:inline-flex; align-items:center; justify-content:center;
 }
 .icon-btn svg{width:min(1.35rem,6vw); height:min(1.35rem,6vw)}
+.chip-station{
+  flex:none; display:inline-flex; align-items:center; gap:.35rem; min-width:0;
+  background:var(--accent-soft); border:1px solid var(--accent); color:var(--ink);
+  border-radius:999px; padding:.35rem .7rem; font-weight:700; font-size:min(.85rem,3.6vw);
+  height:min(2.9rem,13vw); white-space:nowrap;
+}
+.chip-station svg{width:min(1.1rem,5vw); height:min(1.1rem,5vw); color:var(--accent)}
 .tabs{display:flex; gap:.4rem; overflow-x:auto; scrollbar-width:none; padding:0 clamp(.7rem,2.5vw,1.4rem) .55rem}
 .tabs::-webkit-scrollbar{display:none}
 .tab{
@@ -594,6 +611,10 @@ body.settings .panel{transform:none; visibility:visible}
       <b>Caisse — Léon en Rue Libre</b>
       <span>Festival · plancha &amp; bar</span>
     </div>
+    <button type="button" class="chip-station" id="stationBtn" aria-label="Changer de caisse">
+      <svg aria-hidden="true"><use href="#ic-all" id="stationIcon"></use></svg>
+      <span id="stationLabel">Tout</span>
+    </button>
     <button type="button" class="icon-btn" id="viewBtn" aria-label="Afficher le menu par catégorie">
       <svg aria-hidden="true"><use href="#ic-list" id="viewIcon"></use></svg>
     </button>
@@ -743,11 +764,12 @@ body.settings .panel{transform:none; visibility:visible}
 <div class="modal-scrim" id="stationModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stationTitle">
     <h2 id="stationTitle">Quelle caisse tenez-vous ?</h2>
-    <p>Le menu n’affichera que ce qui se vend à ce poste. Modifiable à tout moment dans les réglages.</p>
+    <p>Le menu n’affichera que ce qui se vend à ce poste. Changeable à tout moment depuis l’en-tête.</p>
+    <button type="button" class="btn ghost" id="stationCancel" hidden>Annuler</button>
     <div class="station-pick" id="stationPick">
-      <button type="button" class="btn" data-station="plancha">
+      <button type="button" class="btn" data-station="resto">
         <svg aria-hidden="true"><use href="#ic-sausage"></use></svg>
-        <span>Caisse plancha<br><small>Chipolatas, poulet, frites, pâtisserie</small></span>
+        <span>Caisse resto<br><small>Plancha, frites, dessert</small></span>
       </button>
       <button type="button" class="btn" data-station="bar">
         <svg aria-hidden="true"><use href="#ic-mug"></use></svg>
@@ -816,7 +838,7 @@ body.settings .panel{transform:none; visibility:visible}
   <section class="set">
     <h3>Poste de caisse</h3>
     <div class="seg" id="stationSeg">
-      <button type="button" data-station-set="plancha" aria-pressed="false">Plancha</button>
+      <button type="button" data-station-set="resto" aria-pressed="false">Resto</button>
       <button type="button" data-station-set="bar" aria-pressed="false">Bar</button>
       <button type="button" data-station-set="tout" aria-pressed="true">Les deux</button>
     </div>
@@ -901,22 +923,24 @@ const store = {
 };
 
 const DEFAULT_MENU = [
-  { cat:"Plancha", c:"c1", st:"plancha", icon:"ic-sausage", items:[
+  { cat:"Plancha", c:"c1", st:"resto", icon:"ic-sausage", items:[
     { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8, icon:"ic-sausage" },
     { id:"poulet", name:"Poulet mariné + frites", sub:"Marinated chicken and chips", price:9, icon:"ic-chicken" },
     { id:"frites", name:"Frites maison", sub:"House fries", price:4, icon:"ic-fries" },
   ]},
-  { cat:"Tapas & dessert", c:"c2", st:"bar", icon:"ic-plate", items:[
+  { cat:"Dessert", c:"c7", st:"resto", icon:"ic-cake", items:[
+    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3, icon:"ic-cake" },
+  ]},
+  { cat:"Tapas", c:"c2", st:"bar", icon:"ic-plate", items:[
     { id:"tapas", name:"Assiette tapas local", sub:"Jambon, fromage brebis/vache (G)", price:8, icon:"ic-plate" },
-    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3, icon:"ic-cake", st:"plancha" },
   ]},
   { cat:"Consigne", c:"c6", st:"bar", icon:"ic-glass", items:[
-    { id:"consVerre", name:"Consigne verre", sub:"À la première boisson", price:1, icon:"ic-glass" },
-    { id:"consPichet", name:"Consigne pichet", sub:"Au premier pichet", price:1, icon:"ic-pitcher" },
+    { id:"consVerre", name:"Consigne verre", sub:"Un par verre demandé", price:1, icon:"ic-glass" },
+    { id:"consPichet", name:"Consigne pichet", sub:"Pichet de bière ou d’eau", price:2, icon:"ic-pitcher" },
   ]},
   { cat:"Bières", c:"c3", st:"bar", icon:"ic-mug", items:[
     { id:"pression", drink:true, name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
-    { id:"pichet", drink:true, name:"Pichet de bière", sub:"1 litre", price:12, icon:"ic-pitcher" },
+    { id:"pichet", drink:true, pichet:true, name:"Pichet de bière", sub:"1 litre", price:12, icon:"ic-pitcher" },
     { id:"biobout", drink:true, name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5, icon:"ic-bottle" },
   ]},
   { cat:"Vins & sangria", c:"c4", st:"bar", icon:"ic-wine", items:[
@@ -933,12 +957,14 @@ const DEFAULT_MENU = [
     { id:"cafe", drink:true, name:"Café", sub:"", price:1, icon:"ic-coffee" },
     { id:"ginger", drink:true, name:"Ginger beer", sub:"", price:2, icon:"ic-bottle" },
     { id:"eau15", drink:true, name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
+    { id:"pichetEau", drink:true, pichet:true, name:"Pichet d’eau", sub:"1 litre", price:0, icon:"ic-pitcher" },
   ]},
 ];
 /* Le menu est modifiable depuis les réglages ; le tableau ci-dessus sert de base. */
 const clone = o => JSON.parse(JSON.stringify(o));
+const MENU_VERSION = 2;                       // change de version = menu enregistré obsolète
 function loadMenu(){
-  const saved = store.get("menu", null);
+  const saved = store.get("menuV", 0) === MENU_VERSION ? store.get("menu", null) : null;
   if (!saved || !Array.isArray(saved) || !saved.length) return clone(DEFAULT_MENU);
   // on repart des catégories d'origine pour garder couleur, icône et poste
   return saved.map(c => {
@@ -978,7 +1004,8 @@ if (!sales){                                   // reprise d'un bilan enregistré
   sales = old && old.count ? [{ no:1, at:"—", total:old.total, items:old.items || {} }] : [];
   store.set("sales", sales);
 }
-let station = store.get("station", null);      // "plancha", "bar", "tout" — null = jamais choisi
+let station = store.get("station", null);      // "resto", "bar", "tout" — null = jamais choisi
+if (station === "plancha") station = "resto";  // ancien nom du poste
 let stock = store.get("stock", {});            // { id: true } = épuisé
 let activeCat = store.get("cat", null);        // null = tout le menu
 let lastCat = activeCat || MENU[0].cat;
@@ -1212,10 +1239,14 @@ let consigneAsked = false;
 let consWanted = { verre:1, pichet:1 };
 let afterConsigne = null;
 
+/* Un verre par boisson servie, pichets et bouteilles compris : on peut demander
+   des verres pour tout. Le nombre reste ajustable dans le rappel. */
 const drinkUnits = () => Object.keys(order)
-  .filter(id => ALL[id].drink && id !== "pichet")
+  .filter(id => ALL[id].drink)
   .reduce((n, id) => n + order[id], 0);
-const pichetUnits = () => order.pichet || 0;
+const pichetUnits = () => Object.keys(order)
+  .filter(id => ALL[id].pichet)
+  .reduce((n, id) => n + order[id], 0);
 const hasConsigne = () => !!(order.consVerre || order.consPichet);
 
 /* Rappel avant de passer à la suite : le verre est consigné à la première boisson. */
@@ -1382,6 +1413,7 @@ function closeItem(){ document.getElementById("itemModal").hidden = true; editin
 
 function saveMenu(){
   store.set("menu", MENU);
+  store.set("menuV", MENU_VERSION);
   buildMenu();
   renderEditor(); renderStock(); renderView(); render();
 }
@@ -1437,9 +1469,17 @@ document.getElementById("menuReset").addEventListener("click", e => {
 });
 
 /* ===================== Poste de caisse et stock ===================== */
+const STATIONS = {
+  resto: { label:"Resto", icon:"#ic-sausage" },
+  bar:   { label:"Bar",   icon:"#ic-mug" },
+  tout:  { label:"Tout",  icon:"#ic-all" }
+};
 function applyStation(){
   document.querySelectorAll("[data-station-set]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.stationSet === station)));
+  const info = STATIONS[station] || STATIONS.tout;
+  document.getElementById("stationLabel").textContent = info.label;
+  document.getElementById("stationIcon").setAttribute("href", info.icon);
   store.set("station", station);
   renderView();
   renderStock();      // la liste de stock suit le poste choisi
@@ -1449,6 +1489,13 @@ document.getElementById("stationSeg").addEventListener("click", e => {
   if (!b) return;
   station = b.dataset.stationSet;
   applyStation();
+});
+document.getElementById("stationBtn").addEventListener("click", () => {
+  document.getElementById("stationCancel").hidden = !station;
+  document.getElementById("stationModal").hidden = false;
+});
+document.getElementById("stationCancel").addEventListener("click", () => {
+  document.getElementById("stationModal").hidden = true;
 });
 document.getElementById("stationPick").addEventListener("click", e => {
   const b = e.target.closest("[data-station]");
@@ -1677,6 +1724,8 @@ document.getElementById("scrim").addEventListener("click", closeSettings);
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (!idleModal.hidden) return;
+  const stm = document.getElementById("stationModal");
+  if (!stm.hidden && station){ stm.hidden = true; return; }
   const item = document.getElementById("itemModal");
   if (!item.hidden){ closeItem(); return; }
   const cons = document.getElementById("consigneModal");
