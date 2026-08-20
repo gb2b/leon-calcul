@@ -1023,7 +1023,7 @@ const DEFAULT_MENU = [
   ]},
   { cat:"Consigne", c:"c6", st:"bar", icon:"ic-glass", items:[
     { id:"consVerre", name:"Consigne verre", sub:"Un par verre demandé", price:1, icon:"ic-glass" },
-    { id:"consPichet", name:"Consigne pichet", sub:"Pichet de bière ou d’eau", price:5, icon:"ic-pitcher" },
+    { id:"consPichet", name:"Consigne pichet", sub:"Un par pichet servi", price:5, icon:"ic-pitcher" },
   ]},
   { cat:"Bières", c:"c3", st:"bar", icon:"ic-mug", items:[
     { id:"pression", drink:true, name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
@@ -1044,19 +1044,20 @@ const DEFAULT_MENU = [
     { id:"cafe", drink:true, name:"Café", sub:"", price:1, icon:"ic-coffee" },
     { id:"ginger", drink:true, name:"Ginger beer", sub:"", price:2, icon:"ic-bottle" },
     { id:"eau15", drink:true, name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
-    { id:"pichetEau", drink:true, pichet:true, name:"Pichet d’eau", sub:"1 litre", price:0, icon:"ic-pitcher" },
   ]},
 ];
 /* Le menu est modifiable depuis les réglages ; le tableau ci-dessus sert de base. */
 const clone = o => JSON.parse(JSON.stringify(o));
-const MENU_VERSION = 3;                       // change de version = menu enregistré obsolète
+const MENU_VERSION = 3;
+const RETIRÉS = ["pichetEau"];                // articles supprimés du menu d'origine                       // change de version = menu enregistré obsolète
 function loadMenu(){
   const saved = store.get("menuV", 0) === MENU_VERSION ? store.get("menu", null) : null;
   if (!saved || !Array.isArray(saved) || !saved.length) return clone(DEFAULT_MENU);
   // on repart des catégories d'origine pour garder couleur, icône et poste
   return saved.map(c => {
     const base = DEFAULT_MENU.find(d => d.cat === c.cat) || {};
-    return Object.assign({}, base, c, { items:c.items.map(i => Object.assign({}, i)) });
+    const items = c.items.filter(i => RETIRÉS.indexOf(i.id) < 0).map(i => Object.assign({}, i));
+    return Object.assign({}, base, c, { items });
   });
 }
 let MENU = loadMenu();
@@ -1121,7 +1122,7 @@ if (idleSec === null){                                  // reprise de l'ancien r
 }
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
-const VERSION = "2026-08-20 · 16";                  // repère de version, affiché dans les réglages
+const VERSION = "2026-08-20 · 17";                  // repère de version, affiché dans les réglages
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
