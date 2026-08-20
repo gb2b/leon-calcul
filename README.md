@@ -6,8 +6,16 @@ monnaie à rendre — en billets et en pièces.
 
 ## Ce que ça fait
 
-- Menu complet (plancha, tapas & dessert, bières, vins & sangria, sans alcool), une
-  icône et une couleur par catégorie, en clair comme en sombre.
+- Deux postes de caisse : au premier lancement on choisit « plancha », « bar » ou
+  « les deux », et le menu n'affiche que ce qui se vend à ce poste (modifiable dans
+  les réglages).
+- Gestion du stock : un article marqué épuisé reste affiché, barré, et ne peut plus
+  être ajouté ; s'il était dans la commande en cours, il en est retiré.
+- Catégorie « Consigne » : verre 1 € et pichet 1 €, à ajouter à la première boisson.
+- Menu complet (plancha, tapas & dessert, consigne, bières, vins & sangria, sans
+  alcool), une icône et une couleur par catégorie, en clair comme en sombre.
+- Les boissons à 1 € (Coca, Oasis, ice tea, eau pétillante, sirop) sont regroupées
+  sous un seul bouton « Soft » ; café, ginger beer et eau 1,5 L restent séparés.
 - Affichage de tout le menu d'un coup (par défaut) ou filtré par catégorie.
 - Ajout par simple appui ; un bouton « − » apparaît sur la carte pour retirer un article
   sans passer par le récapitulatif.

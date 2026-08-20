@@ -36,6 +36,7 @@
 .c3{--c:#8A6110; --c-soft:#F6ECD6}
 .c4{--c:#6B45A8; --c-soft:#EBE5F9}
 .c5{--c:#14688C; --c-soft:#DEEEF6}
+.c6{--c:#4F5C68; --c-soft:#E6E9EC}
 
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -54,6 +55,7 @@
   :root:not([data-theme="light"]) .c3{--c:#F2C25C; --c-soft:#3D2F12}
   :root:not([data-theme="light"]) .c4{--c:#C2ACFF; --c-soft:#2D2549}
   :root:not([data-theme="light"]) .c5{--c:#6BCBF5; --c-soft:#153341}
+  :root:not([data-theme="light"]) .c6{--c:#B7C4D1; --c-soft:#272E35}
 }
 :root[data-theme="dark"]{
   --bg:#0F1412; --surface:#18201C; --surface-2:#212B25; --line:#333F38;
@@ -69,6 +71,7 @@
 :root[data-theme="dark"] .c3{--c:#F2C25C; --c-soft:#3D2F12}
 :root[data-theme="dark"] .c4{--c:#C2ACFF; --c-soft:#2D2549}
 :root[data-theme="dark"] .c5{--c:#6BCBF5; --c-soft:#153341}
+:root[data-theme="dark"] .c6{--c:#B7C4D1; --c-soft:#272E35}
 
 *{box-sizing:border-box}
 html{font-size:18px; -webkit-text-size-adjust:100%}
@@ -156,6 +159,16 @@ svg{flex:none}
 .item.on .tile svg{display:none}
 .item.on .tile .q{display:block}
 .item.on .minus{display:flex}
+.item.out{opacity:.5}
+.item.out .plus{pointer-events:none}
+.item.out .price{text-decoration:line-through}
+.out-tag{
+  display:none; font-size:min(.68rem,2.9vw); letter-spacing:.1em; text-transform:uppercase;
+  font-weight:700; color:var(--danger); border:1px solid var(--danger); border-radius:999px;
+  padding:.1rem .4rem; margin-top:.25rem; width:max-content;
+}
+.item.out .out-tag{display:block}
+.item.out .minus{display:none}
 
 /* ---------- Récapitulatif ---------- */
 .ticket{
@@ -403,6 +416,21 @@ body.settings .panel{transform:none; visibility:visible}
 .sale-btns{display:flex; gap:.4rem}
 .sale-btns .btn{min-height:2.4rem; font-size:.82rem; border-radius:9px}
 .muted-note{color:var(--muted); font-size:.85rem; margin:0}
+.stock{display:flex; flex-direction:column; gap:.3rem; max-height:24rem; overflow-y:auto}
+.stock-cat{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--c,var(--muted)); font-weight:700; margin-top:.4rem}
+.stock-row{display:flex; align-items:center; gap:.5rem}
+.stock-row .sn{flex:1; min-width:0; font-size:.88rem; line-height:1.2}
+.stock-row .sb{
+  flex:none; border:1px solid var(--line); background:var(--surface-2); border-radius:999px;
+  padding:.3rem .7rem; font-size:.75rem; font-weight:700; white-space:nowrap; color:var(--muted);
+}
+.stock-row.gone .sn{opacity:.55; text-decoration:line-through}
+.stock-row.gone .sb{background:var(--danger-soft); border-color:var(--danger); color:var(--danger)}
+.station-pick{display:flex; flex-direction:column; gap:.5rem}
+.station-pick .btn{min-height:3.4rem; justify-content:flex-start; padding:0 1rem; gap:.6rem}
+.station-pick .btn svg{width:1.4rem; height:1.4rem; color:var(--accent)}
+.station-pick .btn span{text-align:left; line-height:1.25}
+.station-pick .btn small{color:var(--muted); font-weight:500; font-size:.8rem}
 .steps{margin:0; padding-left:1.3rem; font-size:min(.85rem,3.6vw); color:var(--muted); display:flex; flex-direction:column; gap:.3rem}
 .diag{font-family:var(--mono); font-size:.72rem; color:var(--muted); white-space:pre-line; opacity:.85}
 .toast{
@@ -610,6 +638,27 @@ body.settings .panel{transform:none; visibility:visible}
   </div>
 </div>
 
+<div class="modal-scrim" id="stationModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stationTitle">
+    <h2 id="stationTitle">Quelle caisse tenez-vous ?</h2>
+    <p>Le menu n’affichera que ce qui se vend à ce poste. Modifiable à tout moment dans les réglages.</p>
+    <div class="station-pick" id="stationPick">
+      <button type="button" class="btn" data-station="plancha">
+        <svg aria-hidden="true"><use href="#ic-sausage"></use></svg>
+        <span>Caisse plancha<br><small>Chipolatas, poulet, frites, pâtisserie</small></span>
+      </button>
+      <button type="button" class="btn" data-station="bar">
+        <svg aria-hidden="true"><use href="#ic-mug"></use></svg>
+        <span>Caisse bar<br><small>Boissons, tapas, consignes</small></span>
+      </button>
+      <button type="button" class="btn" data-station="tout">
+        <svg aria-hidden="true"><use href="#ic-all"></use></svg>
+        <span>Les deux<br><small>Tout le menu</small></span>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-scrim" id="idleModal" hidden>
   <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="idleTitle">
     <h2 id="idleTitle">Commande toujours en cours ?</h2>
@@ -660,6 +709,22 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" data-theme-set="dark" aria-pressed="false">Sombre</button>
     </div>
     <p>« Auto » suit le réglage du téléphone.</p>
+  </section>
+
+  <section class="set">
+    <h3>Poste de caisse</h3>
+    <div class="seg" id="stationSeg">
+      <button type="button" data-station-set="plancha" aria-pressed="false">Plancha</button>
+      <button type="button" data-station-set="bar" aria-pressed="false">Bar</button>
+      <button type="button" data-station-set="tout" aria-pressed="true">Les deux</button>
+    </div>
+    <p>Seuls les articles vendus à ce poste apparaissent dans le menu.</p>
+  </section>
+
+  <section class="set">
+    <h3>Stock</h3>
+    <p>Marquez un article épuisé : il reste affiché, barré, et ne peut plus être ajouté.</p>
+    <div class="stock" id="stockList"></div>
   </section>
 
   <section class="set">
@@ -722,21 +787,25 @@ body.settings .panel{transform:none; visibility:visible}
 <script>
 /* ===================== Menu ===================== */
 const MENU = [
-  { cat:"Plancha", c:"c1", icon:"ic-sausage", items:[
+  { cat:"Plancha", c:"c1", st:"plancha", icon:"ic-sausage", items:[
     { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8, icon:"ic-sausage" },
     { id:"poulet", name:"Poulet mariné + frites", sub:"Marinated chicken and chips", price:9, icon:"ic-chicken" },
     { id:"frites", name:"Frites maison", sub:"House fries", price:4, icon:"ic-fries" },
   ]},
-  { cat:"Tapas & dessert", c:"c2", icon:"ic-plate", items:[
+  { cat:"Tapas & dessert", c:"c2", st:"bar", icon:"ic-plate", items:[
     { id:"tapas", name:"Assiette tapas local", sub:"Jambon, fromage brebis/vache (G)", price:8, icon:"ic-plate" },
-    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3, icon:"ic-cake" },
+    { id:"pastis", name:"Pâtisserie PASTIS", sub:"Nature, choco ou citron (G, N)", price:3, icon:"ic-cake", st:"plancha" },
   ]},
-  { cat:"Bières", c:"c3", icon:"ic-mug", items:[
+  { cat:"Consigne", c:"c6", st:"bar", icon:"ic-glass", items:[
+    { id:"consVerre", name:"Consigne verre", sub:"À la première boisson", price:1, icon:"ic-glass" },
+    { id:"consPichet", name:"Consigne pichet", sub:"Au premier pichet", price:1, icon:"ic-pitcher" },
+  ]},
+  { cat:"Bières", c:"c3", st:"bar", icon:"ic-mug", items:[
     { id:"pression", name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
     { id:"pichet", name:"Pichet de bière", sub:"1 litre", price:12, icon:"ic-pitcher" },
     { id:"biobout", name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5, icon:"ic-bottle" },
   ]},
-  { cat:"Vins & sangria", c:"c4", icon:"ic-wine", items:[
+  { cat:"Vins & sangria", c:"c4", st:"bar", icon:"ic-wine", items:[
     { id:"punch", name:"Punch La Fabrique", sub:"15 cL", price:4, icon:"ic-cocktail" },
     { id:"sangriaV", name:"Sangria — verre", sub:"15 cL · rouge ou blanche", price:4, icon:"ic-wine" },
     { id:"sangriaB", name:"Sangria — bouteille", sub:"Rouge ou blanche", price:10, icon:"ic-bottle" },
@@ -745,19 +814,15 @@ const MENU = [
     { id:"champC", name:"Champagne — coupe", sub:"", price:6, icon:"ic-flute" },
     { id:"champB", name:"Champagne — bouteille", sub:"", price:35, icon:"ic-champbottle" },
   ]},
-  { cat:"Sans alcool", c:"c5", icon:"ic-glass", items:[
+  { cat:"Sans alcool", c:"c5", st:"bar", icon:"ic-glass", items:[
+    { id:"soft", name:"Soft", sub:"Coca, Oasis, ice tea, eau pétillante, sirop", price:1, icon:"ic-can" },
+    { id:"cafe", name:"Café", sub:"", price:1, icon:"ic-coffee" },
     { id:"ginger", name:"Ginger beer", sub:"", price:2, icon:"ic-bottle" },
     { id:"eau15", name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
-    { id:"coca", name:"Coca", sub:"", price:1, icon:"ic-can" },
-    { id:"oasis", name:"Oasis", sub:"", price:1, icon:"ic-can" },
-    { id:"icetea", name:"Ice tea pêche", sub:"", price:1, icon:"ic-straw" },
-    { id:"petillante", name:"Eau pétillante", sub:"", price:1, icon:"ic-bubbles" },
-    { id:"sirop", name:"Sirop à l’eau", sub:"", price:1, icon:"ic-glass" },
-    { id:"cafe", name:"Café", sub:"", price:1, icon:"ic-coffee" },
   ]},
 ];
 const ALL = {};
-MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = Object.assign({ c:c.c }, i); }));
+MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = Object.assign({ c:c.c, st:c.st }, i); }));
 
 /* Billets et pièces aux couleurs réelles. Pas de centimes : tous les prix sont entiers. */
 const MONEY = [
@@ -780,12 +845,15 @@ const store = {
 
 /* ===================== État ===================== */
 let order = store.get("order", {});
+Object.keys(order).forEach(id => { if (!ALL[id]) delete order[id]; });   // articles retirés du menu
 let sales = store.get("sales", null);
 if (!sales){                                   // reprise d'un bilan enregistré avant l'historique
   const old = store.get("day", null);
   sales = old && old.count ? [{ no:1, at:"—", total:old.total, items:old.items || {} }] : [];
   store.set("sales", sales);
 }
+let station = store.get("station", null);      // "plancha", "bar", "tout" — null = jamais choisi
+let stock = store.get("stock", {});            // { id: true } = épuisé
 let activeCat = store.get("cat", null);        // null = tout le menu
 let lastCat = activeCat || MENU[0].cat;
 let vibe = store.get("vibe", 1);
@@ -818,7 +886,7 @@ menuEl.innerHTML = MENU.map(c => `
               <svg aria-hidden="true"><use href="#${i.icon}"></use></svg>
               <span class="q" data-badge="${i.id}">0</span>
             </span>
-            <span class="name">${i.name}${i.sub ? `<span class="sub">${i.sub}</span>` : ""}</span>
+            <span class="name">${i.name}${i.sub ? `<span class="sub">${i.sub}</span>` : ""}<span class="out-tag">Épuisé</span></span>
             <span class="price">${euro(i.price)}</span>
           </button>
           <button type="button" class="minus" data-add="${i.id}" data-n="-1" aria-label="Retirer un ${i.name}">−</button>
@@ -834,20 +902,40 @@ tabsEl.innerHTML = `
     <svg aria-hidden="true"><use href="#${c.icon}"></use></svg>${c.cat}
   </button>`).join("");
 
+const atStation = it => station === "tout" || !station || it.st === station;
+
 function renderView(){
   const showAll = activeCat === null;
-  tabsEl.hidden = showAll;
-  document.getElementById("viewIcon").setAttribute("href", showAll ? "#ic-list" : "#ic-all");
-  document.getElementById("viewBtn").setAttribute("aria-label",
-    showAll ? "Afficher le menu par catégorie" : "Afficher tout le menu");
-  document.querySelectorAll(".cat").forEach(s => { s.hidden = !showAll && s.dataset.cat !== activeCat; });
+  // Poste de caisse : on masque ce qui ne se vend pas ici, et les catégories vidées.
+  document.querySelectorAll("[data-item]").forEach(el => {
+    el.hidden = !atStation(ALL[el.dataset.item]);
+  });
+  document.querySelectorAll(".cat").forEach(sec => {
+    sec.dataset.empty = String(![...sec.querySelectorAll("[data-item]")].some(el => !el.hidden));
+  });
   document.querySelectorAll("[data-cat-set]").forEach(b => {
-    const on = b.dataset.catSet === "__all" ? showAll : b.dataset.catSet === activeCat;
+    const sec = document.querySelector(`.cat[data-cat="${CSS.escape(b.dataset.catSet)}"]`);
+    if (sec) b.hidden = sec.dataset.empty === "true";
+  });
+  if (activeCat){
+    const sec = document.querySelector(`.cat[data-cat="${CSS.escape(activeCat)}"]`);
+    if (!sec || sec.dataset.empty === "true") activeCat = null;
+  }
+  tabsEl.hidden = activeCat === null;
+  document.getElementById("viewBtn").setAttribute("aria-label",
+    activeCat === null ? "Afficher le menu par catégorie" : "Afficher tout le menu");
+  const all = activeCat === null;
+  document.querySelectorAll(".cat").forEach(s => {
+    s.hidden = s.dataset.empty === "true" || (!all && s.dataset.cat !== activeCat);
+  });
+  document.querySelectorAll("[data-cat-set]").forEach(b => {
+    const on = b.dataset.catSet === "__all" ? all : b.dataset.catSet === activeCat;
     b.setAttribute("aria-pressed", String(on));
   });
   document.querySelectorAll("[data-view]").forEach(b => {
-    b.setAttribute("aria-pressed", String((b.dataset.view === "all") === showAll));
+    b.setAttribute("aria-pressed", String((b.dataset.view === "all") === all));
   });
+  document.getElementById("viewIcon").setAttribute("href", all ? "#ic-list" : "#ic-all");
   if (activeCat) lastCat = activeCat;
   store.set("cat", activeCat);
   measureHead();
@@ -895,9 +983,11 @@ function render(){
   disarm();
 
   document.querySelectorAll("[data-badge]").forEach(b => {
-    const q = order[b.dataset.badge] || 0;
+    const id = b.dataset.badge, q = order[id] || 0;
     b.textContent = q;
-    b.closest(".item").classList.toggle("on", q > 0);
+    const card = b.closest(".item");
+    card.classList.toggle("on", q > 0);
+    card.classList.toggle("out", !!stock[id]);
   });
 
   updateChange();
@@ -1034,6 +1124,50 @@ function dropSale(no){
   render();
 }
 
+/* ===================== Poste de caisse et stock ===================== */
+function applyStation(){
+  document.querySelectorAll("[data-station-set]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.stationSet === station)));
+  store.set("station", station);
+  renderView();
+  renderStock();      // la liste de stock suit le poste choisi
+}
+document.getElementById("stationSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-station-set]");
+  if (!b) return;
+  station = b.dataset.stationSet;
+  applyStation();
+});
+document.getElementById("stationPick").addEventListener("click", e => {
+  const b = e.target.closest("[data-station]");
+  if (!b) return;
+  station = b.dataset.station;
+  document.getElementById("stationModal").hidden = true;
+  applyStation();
+});
+
+function renderStock(){
+  document.getElementById("stockList").innerHTML = MENU.map(c => {
+    const rows = c.items.filter(i => atStation(ALL[i.id]));
+    if (!rows.length) return "";
+    return `<div class="stock-cat ${c.c}">${c.cat}</div>` + rows.map(i => `
+      <div class="stock-row ${stock[i.id] ? "gone" : ""}">
+        <span class="sn">${i.name}</span>
+        <button type="button" class="sb" data-stock="${i.id}">${stock[i.id] ? "Épuisé" : "En stock"}</button>
+      </div>`).join("");
+  }).join("");
+}
+function toggleStock(id){
+  if (stock[id]) delete stock[id];
+  else {
+    stock[id] = true;
+    if (order[id]){ delete order[id]; toast(ALL[id].name + " retiré de la commande"); }
+  }
+  store.set("stock", stock);
+  renderStock();
+  render();
+}
+
 /* ===================== Bilan et historique ===================== */
 function renderDay(){
   const c = String(sales.length), t = euroC(dayTotalC());
@@ -1163,6 +1297,8 @@ document.addEventListener("click", e => {
   if (vb){ activeCat = vb.dataset.view === "all" ? null : (lastCat || MENU[0].cat); renderView(); return; }
   const edit = e.target.closest("[data-edit]");
   if (edit){ if (restoreSale(parseInt(edit.dataset.edit, 10))){ closeSettings(); openSheet(); } return; }
+  const st = e.target.closest("[data-stock]");
+  if (st){ toggleStock(st.dataset.stock); return; }
   const cancel = e.target.closest("[data-cancel]");
   if (cancel){
     arm(cancel, "Confirmer ?", () => { dropSale(parseInt(cancel.dataset.cancel, 10)); toast("Encaissement annulé"); });
@@ -1198,7 +1334,7 @@ document.getElementById("dayReset").addEventListener("click", e => {
 });
 
 /* ===================== Réglages ===================== */
-function openSettings(){ document.body.classList.add("settings"); refreshOffline(); }
+function openSettings(){ document.body.classList.add("settings"); renderStock(); refreshOffline(); }
 function closeSettings(){ disarm(); document.body.classList.remove("settings"); }
 const settingsBtn = document.getElementById("settingsBtn");
 let holdTimer = null;
@@ -1366,7 +1502,9 @@ async function refreshOffline(){
 applySize();
 applyTheme();
 applyToggles();
-renderView();
+applyStation();
+if (!station) document.getElementById("stationModal").hidden = false;   // premier lancement
+renderStock();
 renderCash();
 render();
 refreshOffline();
