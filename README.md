@@ -27,10 +27,13 @@ monnaie à rendre — en billets et en pièces.
 - Ajout par simple appui ; un bouton « − » apparaît sur la carte pour retirer un article
   sans passer par le récapitulatif.
 - Récapitulatif : total figé en haut, articles au milieu, actions figées en bas.
-- Écran d'encaissement séparé : on appuie sur les billets et les pièces que le client
-  donne (1 € à 100 €, aux couleurs réelles des coupures), le montant s'additionne, et
-  « à rendre » s'affiche avec le détail des coupures à rendre. Un champ libre reste
-  disponible pour n'importe quel montant.
+- Écran d'encaissement séparé, en espèces ou par carte bleue. En espèces, on appuie sur
+  les billets et les pièces que le client donne (1 € à 100 €, aux couleurs réelles des
+  coupures), le montant s'additionne et « à rendre » s'affiche avec le détail des
+  coupures ; un champ libre accepte n'importe quel montant. En carte, le clavier
+  disparaît : montant exact, rien à rendre.
+- Le bilan et le texte partagé séparent la recette en espèces et la recette par carte,
+  et l'historique marque « CB » les commandes payées par carte.
 - Confirmation après validation, avec la monnaie à rendre en gros et un bouton pour
   annuler tout de suite l'encaissement en cas d'erreur.
 - Bilan de la journée : nombre de commandes, recette, détail par article, partage du

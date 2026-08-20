@@ -314,6 +314,18 @@ body.pay .pay-screen{visibility:visible; transform:none}
 .due span{font-size:min(.78rem,3vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700; white-space:nowrap}
 .due strong{font-family:var(--mono); font-weight:700; font-size:min(2.2rem,10vw); line-height:1; font-variant-numeric:tabular-nums}
 .pay-body{flex:1; min-height:0; overflow-y:auto; padding:.7rem .9rem 1rem; display:flex; flex-direction:column; gap:.6rem}
+.pay-body #cashPart{display:flex; flex-direction:column; gap:.6rem; flex:1; min-height:0}
+.pay-seg{flex:none}
+.card-note{
+  display:flex; align-items:center; gap:.6rem; background:var(--accent-soft); color:var(--ink);
+  border:1px solid var(--accent); border-radius:12px; padding:.7rem .8rem; font-weight:600;
+  font-size:min(.92rem,3.9vw);
+}
+.card-note svg{width:1.4rem; height:1.4rem; color:var(--accent); flex:none}
+.sale-top .tag{
+  font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; font-weight:700;
+  border:1px solid var(--line); border-radius:999px; padding:.05rem .4rem; color:var(--muted);
+}
 .pay-label{font-size:min(.76rem,3.2vw); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .received{
   display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
@@ -671,6 +683,15 @@ body.settings .panel{transform:none; visibility:visible}
     <strong id="dueOut">0,00 €</strong>
   </div>
   <div class="pay-body">
+    <div class="seg pay-seg" id="payModeSeg">
+      <button type="button" data-pay="cash" aria-pressed="true">Espèces</button>
+      <button type="button" data-pay="card" aria-pressed="false">Carte bleue</button>
+    </div>
+    <div class="card-note" id="cardNote" hidden>
+      <svg aria-hidden="true"><use href="#ic-check"></use></svg>
+      <span>Montant exact encaissé sur le terminal. Rien à rendre.</span>
+    </div>
+    <div id="cashPart">
     <span class="pay-label">Ce que le client donne</span>
     <div class="received">
       <input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Montant reçu en euros">
@@ -684,6 +705,7 @@ body.settings .panel{transform:none; visibility:visible}
         <strong id="changeOut">0,00 €</strong>
       </div>
       <div class="money-list" id="changeList"></div>
+    </div>
     </div>
   </div>
   <div class="pay-actions">
@@ -897,6 +919,7 @@ body.settings .panel{transform:none; visibility:visible}
   <section class="set">
     <h3>Bilan de la journée</h3>
     <p><b id="dayCount2">0</b> <span id="dayWord2">commande</span> encaissée<span id="dayS"></span> · <b id="dayTotal2">0,00 €</b></p>
+    <p id="daySplit"></p>
     <div class="tally" id="tally"></div>
     <button type="button" class="btn" id="shareBtn">Partager le bilan</button>
     <button type="button" class="btn" id="dayReset">Remettre le bilan à zéro</button>
@@ -1023,6 +1046,7 @@ let lockSettings = store.get("lock", 0);
 let idleMin = store.get("idle", 5);
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
+let payMode = "cash";        // cash | card
 let givenCents = 0;
 let denomCount = {};
 let lastSale = null;
@@ -1333,8 +1357,22 @@ function closeSheet(){ document.body.classList.remove("sheet"); }
 function backToMenu(){ closeSheet(); scrollTo({ top:0, behavior:"smooth" }); }
 function openPay(){
   if (!count()) return;
-  askConsigne(() => { clearCash(); document.body.classList.add("pay"); });
+  askConsigne(() => { setPayMode("cash"); clearCash(); document.body.classList.add("pay"); });
 }
+function setPayMode(mode){
+  payMode = mode;
+  document.querySelectorAll("[data-pay]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.pay === payMode)));
+  document.getElementById("cashPart").hidden = payMode === "card";
+  document.getElementById("cardNote").hidden = payMode !== "card";
+  if (payMode === "card") clearCash();
+  document.getElementById("validateBtn").textContent =
+    payMode === "card" ? "Valider le paiement par carte" : "Valider l’encaissement";
+}
+document.getElementById("payModeSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-pay]");
+  if (b) setPayMode(b.dataset.pay);
+});
 function closePay(){ document.body.classList.remove("pay"); }
 
 const toastEl = document.getElementById("toast");
@@ -1354,16 +1392,19 @@ document.getElementById("validateBtn").addEventListener("click", () => {
   const at = new Date().toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" });
   const snap = {};
   Object.keys(order).forEach(id => { snap[id] = { n:ALL[id].name, p:ALL[id].price }; });
-  lastSale = { no, at, total:t, items:Object.assign({}, order), snap };
+  lastSale = { no, at, total:t, items:Object.assign({}, order), snap, pay:payMode };
   sales.push(lastSale);
   store.set("sales", sales);
   buzz([14, 40, 14]);
 
   const diff = givenCents - Math.round(t * 100);
-  document.getElementById("doneNo").textContent = "Commande n° " + no + " · " + euro(t);
-  document.getElementById("doneTitle").textContent = givenCents === 0
-    ? "Encaissé" : diff > 0 ? "Rendre " + euroC(diff) : "Compte juste, rien à rendre";
-  document.getElementById("doneList").innerHTML = diff > 0 ? moneyList(split(diff)) : "";
+  const carte = payMode === "card";
+  document.getElementById("doneNo").textContent =
+    "Commande n° " + no + " · " + euro(t) + (carte ? " · carte bleue" : "");
+  document.getElementById("doneTitle").textContent = carte
+    ? "Payé par carte"
+    : givenCents === 0 ? "Encaissé" : diff > 0 ? "Rendre " + euroC(diff) : "Compte juste, rien à rendre";
+  document.getElementById("doneList").innerHTML = (!carte && diff > 0) ? moneyList(split(diff)) : "";
   document.getElementById("doneModal").hidden = false;
 
   order = {}; clearCash(); consigneAsked = false; render();
@@ -1560,6 +1601,9 @@ function toggleStock(id){
 }
 
 /* ===================== Bilan et historique ===================== */
+const dayByPay = mode => sales.filter(s => (s.pay || "cash") === mode)
+  .reduce((n, s) => n + Math.round(s.total * 100), 0);
+
 function renderDay(){
   const c = String(sales.length), t = euroC(dayTotalC());
   const plural = sales.length > 1 ? "commandes" : "commande";
@@ -1570,6 +1614,9 @@ function renderDay(){
   document.getElementById("dayWord").textContent = plural;
   document.getElementById("dayWord2").textContent = plural;
   document.getElementById("dayS").textContent = sales.length > 1 ? "s" : "";
+  const esp = dayByPay("cash"), cb = dayByPay("card");
+  document.getElementById("daySplit").textContent = sales.length
+    ? "Espèces " + euroC(esp) + " · Carte " + euroC(cb) : "";
   renderTally();
   renderHist();
 }
@@ -1598,7 +1645,7 @@ function renderHist(){
   if (!sales.length){ el.innerHTML = `<p class="muted-note">L’historique se remplit à chaque encaissement.</p>`; return; }
   el.innerHTML = sales.slice().reverse().map(s => `
     <div class="sale">
-      <div class="sale-top"><b>n° ${s.no}</b> <span class="muted-note">${s.at}</span> <span class="amt">${euro(s.total)}</span></div>
+      <div class="sale-top"><b>n° ${s.no}</b> <span class="muted-note">${s.at}</span>${s.pay === "card" ? ` <span class="tag">CB</span>` : ""} <span class="amt">${euro(s.total)}</span></div>
       <div class="sale-items">${Object.keys(s.items).map(id => {
         const nom = ALL[id] ? ALL[id].name : (s.snap && s.snap[id] ? s.snap[id].n : null);
         return nom ? s.items[id] + " × " + nom : "";
@@ -1614,7 +1661,8 @@ function reportText(){
   const rows = soldLines();
   const pad = rows.length ? Math.max.apply(null, rows.map(r => r.name.length)) : 0;
   return ["Caisse — Léon en Rue Libre",
-          sales.length + (sales.length > 1 ? " commandes · " : " commande · ") + euroC(dayTotalC()), ""]
+          sales.length + (sales.length > 1 ? " commandes · " : " commande · ") + euroC(dayTotalC()),
+          "espèces " + euroC(dayByPay("cash")) + " · carte " + euroC(dayByPay("card")), ""]
     .concat(rows.map(r => (r.q + "×").padStart(4) + "  " + r.name.padEnd(pad) + "  " + euro(r.sum).padStart(9)))
     .join("\n");
 }
