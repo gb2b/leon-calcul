@@ -78,12 +78,6 @@ l'active et recharge. Rien ne se recharge sans accord, et la commande en cours c
 bilan de la journée sont conservés. Un bouton « Rechercher une mise à jour » permet de
 forcer la vérification.
 
-**Ouverture de SumUp (essai, désactivé par défaut).** Réglages → « SumUp » permet de
-coller une clé affiliée et l'identifiant d'application qui lui est associé chez SumUp
-(portail SumUp → For Developers → Toolkit → Affiliate Keys) ; un bouton « Ouvrir SumUp » apparaît alors sur l'écran carte et
-ouvre l'application avec le montant déjà rempli — lien `intent://` sur Android,
-`sumupmerchant://` sur iOS. SumUp destine ce lien à des applications natives : il peut
-rester sans effet depuis un site, auquel cas un message le signale.
 
 **Vibration :** `navigator.vibrate` n'existe sur aucun navigateur iPhone. Le réglage se
 désactive tout seul et l'indique quand l'appareil ne la prend pas en charge.
