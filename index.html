@@ -367,6 +367,20 @@ body.pay .pay-screen{visibility:visible; transform:none}
 .modal .amount b{font-family:var(--mono); font-size:min(1.6rem,7vw); font-variant-numeric:tabular-nums}
 .modal-actions{display:flex; gap:.5rem; flex-wrap:wrap}
 .share-box{width:100%; min-height:9rem; font-family:var(--mono); font-size:.8rem; padding:.6rem; border:1px solid var(--line); border-radius:10px; background:var(--surface-2); color:var(--ink)}
+.cons-row{
+  display:flex; align-items:center; gap:.6rem; border:1px solid var(--line);
+  border-radius:12px; padding:.5rem .7rem; background:var(--surface-2);
+}
+.cons-name{display:flex; flex-direction:column; font-weight:600; min-width:0; flex:1}
+.cons-name small{font-weight:400; font-size:.78rem; color:var(--muted)}
+.cons-dot{display:none}
+.cons-step{display:flex; align-items:center; gap:.35rem; flex:none}
+.cons-step button{
+  width:2.4rem; height:2.4rem; border-radius:9px; border:1px solid var(--line);
+  background:var(--surface); font-weight:700; font-size:1.2rem; line-height:1;
+  display:inline-flex; align-items:center; justify-content:center;
+}
+.cons-step b{font-family:var(--mono); font-weight:700; min-width:1.8rem; text-align:center; font-size:1.1rem}
 .done-ok{display:flex; align-items:center; gap:.5rem; color:var(--accent); font-weight:700; font-size:min(.92rem,3.9vw)}
 .done-ok svg{width:1.4rem; height:1.4rem}
 
@@ -639,6 +653,33 @@ body.settings .panel{transform:none; visibility:visible}
   </div>
 </div>
 
+<div class="modal-scrim" id="consigneModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="consTitle">
+    <h2 id="consTitle">Consigne ?</h2>
+    <p id="consWhy">La commande contient des boissons.</p>
+    <div class="cons-row" id="consVerreRow">
+      <span class="cons-name"><span class="cons-dot"></span>Consigne verre<small>1,00 € l’unité</small></span>
+      <span class="cons-step">
+        <button type="button" data-cons="verre" data-n="-1" aria-label="Une consigne verre de moins">−</button>
+        <b id="consVerreN">1</b>
+        <button type="button" data-cons="verre" data-n="1" aria-label="Une consigne verre de plus">+</button>
+      </span>
+    </div>
+    <div class="cons-row" id="consPichetRow">
+      <span class="cons-name"><span class="cons-dot"></span>Consigne pichet<small>1,00 € l’unité</small></span>
+      <span class="cons-step">
+        <button type="button" data-cons="pichet" data-n="-1" aria-label="Une consigne pichet de moins">−</button>
+        <b id="consPichetN">1</b>
+        <button type="button" data-cons="pichet" data-n="1" aria-label="Une consigne pichet de plus">+</button>
+      </span>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn" id="consSkip">Sans consigne</button>
+      <button type="button" class="btn primary" id="consAdd">Ajouter</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-scrim" id="stationModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="stationTitle">
     <h2 id="stationTitle">Quelle caisse tenez-vous ?</h2>
@@ -802,24 +843,24 @@ const MENU = [
     { id:"consPichet", name:"Consigne pichet", sub:"Au premier pichet", price:1, icon:"ic-pitcher" },
   ]},
   { cat:"Bières", c:"c3", st:"bar", icon:"ic-mug", items:[
-    { id:"pression", name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
-    { id:"pichet", name:"Pichet de bière", sub:"1 litre", price:12, icon:"ic-pitcher" },
-    { id:"biobout", name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5, icon:"ic-bottle" },
+    { id:"pression", drink:true, name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
+    { id:"pichet", drink:true, name:"Pichet de bière", sub:"1 litre", price:12, icon:"ic-pitcher" },
+    { id:"biobout", drink:true, name:"Bière bio bouteille", sub:"33 cL · blanche, ambrée, brune, IPA", price:5, icon:"ic-bottle" },
   ]},
   { cat:"Vins & sangria", c:"c4", st:"bar", icon:"ic-wine", items:[
-    { id:"punch", name:"Punch La Fabrique", sub:"15 cL", price:4, icon:"ic-cocktail" },
-    { id:"sangriaV", name:"Sangria verre", sub:"15 cL · rouge ou blanche", price:4, icon:"ic-wine" },
-    { id:"sangriaB", name:"Sangria bouteille", sub:"Rouge ou blanche", price:10, icon:"ic-bottle" },
-    { id:"vinV", name:"Vin au verre", sub:"12 cL · Côtes de Gascogne", price:3, icon:"ic-wine" },
-    { id:"vinB", name:"Vin bouteille", sub:"Blanc, rosé ou rouge", price:12, icon:"ic-bottle" },
-    { id:"champC", name:"Champagne coupe", sub:"", price:6, icon:"ic-flute" },
-    { id:"champB", name:"Champagne bouteille", sub:"", price:35, icon:"ic-champbottle" },
+    { id:"punch", drink:true, name:"Punch La Fabrique", sub:"15 cL", price:4, icon:"ic-cocktail" },
+    { id:"sangriaV", drink:true, name:"Sangria verre", sub:"15 cL · rouge ou blanche", price:4, icon:"ic-wine" },
+    { id:"sangriaB", drink:true, name:"Sangria bouteille", sub:"Rouge ou blanche", price:10, icon:"ic-bottle" },
+    { id:"vinV", drink:true, name:"Vin au verre", sub:"12 cL · Côtes de Gascogne", price:3, icon:"ic-wine" },
+    { id:"vinB", drink:true, name:"Vin bouteille", sub:"Blanc, rosé ou rouge", price:12, icon:"ic-bottle" },
+    { id:"champC", drink:true, name:"Champagne coupe", sub:"", price:6, icon:"ic-flute" },
+    { id:"champB", drink:true, name:"Champagne bouteille", sub:"", price:35, icon:"ic-champbottle" },
   ]},
   { cat:"Sans alcool", c:"c5", st:"bar", icon:"ic-glass", items:[
-    { id:"soft", name:"Soft", sub:"Coca, Oasis, ice tea, eau pétillante, sirop", price:1, icon:"ic-can" },
-    { id:"cafe", name:"Café", sub:"", price:1, icon:"ic-coffee" },
-    { id:"ginger", name:"Ginger beer", sub:"", price:2, icon:"ic-bottle" },
-    { id:"eau15", name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
+    { id:"soft", drink:true, name:"Soft", sub:"Coca, Oasis, ice tea, eau pétillante, sirop", price:1, icon:"ic-can" },
+    { id:"cafe", drink:true, name:"Café", sub:"", price:1, icon:"ic-coffee" },
+    { id:"ginger", drink:true, name:"Ginger beer", sub:"", price:2, icon:"ic-bottle" },
+    { id:"eau15", drink:true, name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
   ]},
 ];
 const ALL = {};
@@ -905,7 +946,21 @@ tabsEl.innerHTML = `
 
 const atStation = it => station === "tout" || !station || it.st === station;
 
+const secOrder = Array.prototype.slice.call(menuEl.children);
+const tabOrder = Array.prototype.slice.call(tabsEl.children);
+/* Au bar, la consigne passe en tête : c'est ce qu'on ajoute en premier. */
+function orderSections(){
+  const first = x => x.dataset.cat === "Consigne" || x.dataset.catSet === "Consigne";
+  const secs = station === "bar" ? secOrder.filter(first).concat(secOrder.filter(x => !first(x))) : secOrder;
+  secs.forEach(x => menuEl.appendChild(x));
+  const tabs = station === "bar"
+    ? [tabOrder[0]].concat(tabOrder.slice(1).filter(first), tabOrder.slice(1).filter(x => !first(x)))
+    : tabOrder;
+  tabs.forEach(x => tabsEl.appendChild(x));
+}
+
 function renderView(){
+  orderSections();
   const showAll = activeCat === null;
   // Poste de caisse : on masque ce qui ne se vend pas ici, et les catégories vidées.
   document.querySelectorAll("[data-item]").forEach(el => {
@@ -1050,14 +1105,70 @@ function updateChange(){
   document.getElementById("validateBtn").disabled = t === 0;
 }
 
+/* ===================== Rappel de consigne ===================== */
+let consigneAsked = false;
+let consWanted = { verre:1, pichet:1 };
+let afterConsigne = null;
+
+const drinkUnits = () => Object.keys(order)
+  .filter(id => ALL[id].drink && id !== "pichet")
+  .reduce((n, id) => n + order[id], 0);
+const pichetUnits = () => order.pichet || 0;
+const hasConsigne = () => !!(order.consVerre || order.consPichet);
+
+/* Rappel avant de passer à la suite : le verre est consigné à la première boisson. */
+function askConsigne(next){
+  const verres = drinkUnits(), pichets = pichetUnits();
+  const possible = ALL.consVerre && atStation(ALL.consVerre) && !stock.consVerre;
+  if (consigneAsked || hasConsigne() || !possible || (!verres && !pichets)){ next(); return; }
+
+  consigneAsked = true;
+  afterConsigne = next;
+  consWanted = { verre:Math.min(verres, 20), pichet:Math.min(pichets, 20) };
+  const parts = [];
+  if (verres) parts.push(verres + (verres > 1 ? " boissons" : " boisson"));
+  if (pichets) parts.push(pichets + (pichets > 1 ? " pichets" : " pichet"));
+  document.getElementById("consWhy").textContent =
+    parts.join(" et ") + " dans la commande. Si le client n’a pas encore son verre, ajoutez la consigne.";
+  document.getElementById("consVerreRow").hidden = !verres;
+  document.getElementById("consPichetRow").hidden = !pichets || !!stock.consPichet;
+  renderConsigne();
+  document.getElementById("consigneModal").hidden = false;
+}
+function renderConsigne(){
+  document.getElementById("consVerreN").textContent = consWanted.verre;
+  document.getElementById("consPichetN").textContent = consWanted.pichet;
+  document.getElementById("consAdd").disabled = !consWanted.verre && !consWanted.pichet;
+}
+function closeConsigne(add){
+  document.getElementById("consigneModal").hidden = true;
+  if (add){
+    if (!document.getElementById("consVerreRow").hidden && consWanted.verre)
+      order.consVerre = (order.consVerre || 0) + consWanted.verre;
+    if (!document.getElementById("consPichetRow").hidden && consWanted.pichet)
+      order.consPichet = (order.consPichet || 0) + consWanted.pichet;
+    render();
+  }
+  const next = afterConsigne; afterConsigne = null;
+  if (next) next();
+}
+document.getElementById("consAdd").addEventListener("click", () => closeConsigne(true));
+document.getElementById("consSkip").addEventListener("click", () => closeConsigne(false));
+document.getElementById("consigneModal").addEventListener("click", e => {
+  const b = e.target.closest("[data-cons]");
+  if (!b) return;
+  const k = b.dataset.cons;
+  consWanted[k] = Math.max(0, Math.min(20, consWanted[k] + parseInt(b.dataset.n, 10)));
+  renderConsigne();
+});
+
 /* ===================== Écrans ===================== */
-function openSheet(){ document.body.classList.add("sheet"); }
+function openSheet(){ askConsigne(() => document.body.classList.add("sheet")); }
 function closeSheet(){ document.body.classList.remove("sheet"); }
 function backToMenu(){ closeSheet(); scrollTo({ top:0, behavior:"smooth" }); }
 function openPay(){
   if (!count()) return;
-  clearCash();
-  document.body.classList.add("pay");
+  askConsigne(() => { clearCash(); document.body.classList.add("pay"); });
 }
 function closePay(){ document.body.classList.remove("pay"); }
 
@@ -1088,7 +1199,7 @@ document.getElementById("validateBtn").addEventListener("click", () => {
   document.getElementById("doneList").innerHTML = diff > 0 ? moneyList(split(diff)) : "";
   document.getElementById("doneModal").hidden = false;
 
-  order = {}; clearCash(); render();
+  order = {}; clearCash(); consigneAsked = false; render();
   closePay();
 });
 
@@ -1273,7 +1384,7 @@ function showIdle(){
 }
 document.getElementById("idleKeep").addEventListener("click", () => { idleModal.hidden = true; armIdle(); });
 document.getElementById("idleClear").addEventListener("click", () => {
-  order = {}; clearCash(); render();
+  order = {}; clearCash(); consigneAsked = false; render();
   idleModal.hidden = true;
   closePay(); backToMenu();
 });
@@ -1318,7 +1429,7 @@ document.getElementById("cashClear").addEventListener("click", clearCash);
 
 clearBtn.addEventListener("click", () => {
   if (!count()) return;
-  arm(clearBtn, "Confirmer ?", () => { order = {}; clearCash(); render(); backToMenu(); });
+  arm(clearBtn, "Confirmer ?", () => { order = {}; clearCash(); consigneAsked = false; render(); backToMenu(); });
 });
 payBtn.addEventListener("click", openPay);
 document.getElementById("payBack").addEventListener("click", closePay);
@@ -1353,6 +1464,8 @@ document.getElementById("scrim").addEventListener("click", closeSettings);
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (!idleModal.hidden) return;
+  const cons = document.getElementById("consigneModal");
+  if (!cons.hidden){ closeConsigne(false); return; }
   const done = document.getElementById("doneModal");
   if (!done.hidden){ done.hidden = true; return; }
   document.getElementById("shareModal").hidden = true;

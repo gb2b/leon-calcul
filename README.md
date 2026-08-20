@@ -11,7 +11,11 @@ monnaie à rendre — en billets et en pièces.
   les réglages).
 - Gestion du stock : un article marqué épuisé reste affiché, barré, et ne peut plus
   être ajouté ; s'il était dans la commande en cours, il en est retiré.
-- Catégorie « Consigne » : verre 1 € et pichet 1 €, à ajouter à la première boisson.
+- Catégorie « Consigne » : verre 1 € et pichet 1 €. Au poste bar elle passe en tête du
+  menu, et un rappel s'affiche au moment de voir la commande ou d'encaisser si elle
+  contient des boissons sans consigne — avec le nombre de verres pré-rempli, ajustable,
+  et un bouton « Sans consigne » pour un client qui a déjà le sien. Une seule fois par
+  commande.
 - Menu complet (plancha, tapas & dessert, consigne, bières, vins & sangria, sans
   alcool), une icône et une couleur par catégorie, en clair comme en sombre.
 - Les boissons à 1 € (Coca, Oasis, ice tea, eau pétillante, sirop) sont regroupées
