@@ -69,8 +69,14 @@ l'application en cache dès la première visite.
 
 Réglages → « Installer sur l'écran d'accueil » détecte l'appareil, donne les étapes et
 affiche un diagnostic : version de l'application, navigateur, adresse, https, manifeste,
-service worker, vibration. L'application installée cherche une nouvelle version à chaque
-ouverture et se recharge quand elle en trouve une.
+service worker, vibration.
+
+**Mises à jour.** L'application installée cherche une nouvelle version à l'ouverture et
+quand elle revient au premier plan (au plus une fois toutes les cinq minutes). Quand une
+version est prête, une fenêtre la propose : « Plus tard » ne change rien, « Mettre à jour »
+l'active et recharge. Rien ne se recharge sans accord, et la commande en cours comme le
+bilan de la journée sont conservés. Un bouton « Rechercher une mise à jour » permet de
+forcer la vérification.
 
 **Ouverture de SumUp (essai, désactivé par défaut).** Réglages → « SumUp » permet de
 coller une clé affiliée ; un bouton « Ouvrir SumUp » apparaît alors sur l'écran carte et

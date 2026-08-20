@@ -726,6 +726,17 @@ body.settings .panel{transform:none; visibility:visible}
   </div>
 </div>
 
+<div class="modal-scrim" id="updateModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="updTitle">
+    <h2 id="updTitle">Nouvelle version disponible</h2>
+    <p>La mise à jour prend une seconde. La commande en cours et le bilan de la journée sont conservés.</p>
+    <div class="modal-actions">
+      <button type="button" class="btn" id="updLater">Plus tard</button>
+      <button type="button" class="btn primary" id="updNow">Mettre à jour</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-scrim" id="itemModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="itemTitle">
     <h2 id="itemTitle">Modifier l’article</h2>
@@ -969,6 +980,7 @@ body.settings .panel{transform:none; visibility:visible}
     <h3>Installer sur l’écran d’accueil</h3>
     <p id="offlineText"></p>
     <button type="button" class="btn" id="installBtn" hidden>Installer l’application</button>
+    <button type="button" class="btn" id="checkUpdate">Rechercher une mise à jour</button>
     <ol class="steps" id="installSteps" hidden></ol>
     <p class="diag" id="diag"></p>
   </section>
@@ -1891,6 +1903,8 @@ document.getElementById("scrim").addEventListener("click", closeSettings);
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (!idleModal.hidden) return;
+  const upd = document.getElementById("updateModal");
+  if (!upd.hidden){ upd.hidden = true; return; }
   const stm = document.getElementById("stationModal");
   if (!stm.hidden && station){ stm.hidden = true; return; }
   const item = document.getElementById("itemModal");
@@ -2020,17 +2034,71 @@ addEventListener("resize", measureHead);
 
 /* ===================== Installation / hors ligne ===================== */
 const hasManifest = !!document.querySelector('link[rel="manifest"]');
+let swReg = null, swWaiting = null, updateAccepté = false;
+
+function proposerMaj(worker){
+  if (!worker || swWaiting === worker) return;
+  swWaiting = worker;
+  document.getElementById("updateModal").hidden = false;
+}
+function surveiller(reg){
+  swReg = reg;
+  if (reg.waiting && navigator.serviceWorker.controller) proposerMaj(reg.waiting);
+  reg.addEventListener("updatefound", () => {
+    const nouveau = reg.installing;
+    if (!nouveau) return;
+    nouveau.addEventListener("statechange", () => {
+      // « installed » avec un contrôleur en place = mise à jour prête, pas première installation
+      if (nouveau.state === "installed" && navigator.serviceWorker.controller) proposerMaj(nouveau);
+    });
+  });
+}
+function chercherMaj(manuel){
+  if (!swReg){ if (manuel) toast("Mise à jour indisponible ici"); return; }
+  swReg.update().then(() => {
+    // update() rend la main avant la fin de l'installation : on laisse le temps
+    // à la nouvelle version de se signaler avant d'annoncer « déjà à jour ».
+    if (!manuel) return;
+    setTimeout(() => {
+      if (swWaiting || swReg.waiting || swReg.installing) return;
+      toast("Application déjà à jour");
+    }, 1200);
+  }, () => { if (manuel) toast("Vérification impossible — pas de réseau ?"); });
+}
+
+document.getElementById("updNow").addEventListener("click", () => {
+  document.getElementById("updateModal").hidden = true;
+  updateAccepté = true;
+  if (swWaiting) swWaiting.postMessage({ type:"SKIP_WAITING" });
+  setTimeout(() => { if (updateAccepté) location.reload(); }, 1200);   // filet de sécurité
+});
+document.getElementById("updLater").addEventListener("click", () => {
+  document.getElementById("updateModal").hidden = true;
+});
+document.getElementById("checkUpdate").addEventListener("click", () => chercherMaj(true));
+
 if (hasManifest && "serviceWorker" in navigator){
   addEventListener("load", () => navigator.serviceWorker.register("sw.js").then(reg => {
-    reg.update();                                   // cherche une nouvelle version à chaque ouverture
+    surveiller(reg);
+    reg.update();
     refreshOffline();
   }, refreshOffline));
-  // une nouvelle version prend la main : on recharge une fois pour l'appliquer
+
   let rechargé = false;
   navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (rechargé) return;
+    if (rechargé || !updateAccepté) return;          // jamais de rechargement non demandé
     rechargé = true;
     location.reload();
+  });
+
+  // nouvelle vérification quand l'application revient au premier plan, sans insister
+  let dernierTest = 0;
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) return;
+    const t = performance.now();
+    if (t - dernierTest < 300000) return;            // au plus une fois toutes les 5 minutes
+    dernierTest = t;
+    chercherMaj(false);
   });
 }
 const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;

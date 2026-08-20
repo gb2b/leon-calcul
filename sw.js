@@ -6,8 +6,12 @@ self.addEventListener("install", e => {
   e.waitUntil(
     caches.open(CACHE)
       .then(c => Promise.all(SHELL.map(u => c.add(u).catch(() => {}))))
-      .then(() => self.skipWaiting())
   );
+  // pas de skipWaiting() ici : la page demande d'abord à l'utilisateur
+});
+
+self.addEventListener("message", e => {
+  if (e.data && e.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("activate", e => {
