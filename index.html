@@ -876,6 +876,16 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set">
+    <h3>Consigne</h3>
+    <div class="seg wrap4" id="consSeg">
+      <button type="button" data-cons-mode="auto" aria-pressed="true">Automatique</button>
+      <button type="button" data-cons-mode="ask" aria-pressed="false">Proposée</button>
+      <button type="button" data-cons-mode="manual" aria-pressed="false">À la demande</button>
+    </div>
+    <p id="consModeNote"></p>
+  </section>
+
+  <section class="set">
     <h3>Commande oubliée</h3>
     <div class="seg" id="idleSeg">
       <button type="button" data-idle="0" aria-pressed="false">Jamais</button>
@@ -936,7 +946,7 @@ const DEFAULT_MENU = [
   ]},
   { cat:"Consigne", c:"c6", st:"bar", icon:"ic-glass", items:[
     { id:"consVerre", name:"Consigne verre", sub:"Un par verre demandé", price:1, icon:"ic-glass" },
-    { id:"consPichet", name:"Consigne pichet", sub:"Pichet de bière ou d’eau", price:2, icon:"ic-pitcher" },
+    { id:"consPichet", name:"Consigne pichet", sub:"Pichet de bière ou d’eau", price:5, icon:"ic-pitcher" },
   ]},
   { cat:"Bières", c:"c3", st:"bar", icon:"ic-mug", items:[
     { id:"pression", drink:true, name:"Bière pression", sub:"Le verre", price:3, icon:"ic-mug" },
@@ -962,7 +972,7 @@ const DEFAULT_MENU = [
 ];
 /* Le menu est modifiable depuis les réglages ; le tableau ci-dessus sert de base. */
 const clone = o => JSON.parse(JSON.stringify(o));
-const MENU_VERSION = 2;                       // change de version = menu enregistré obsolète
+const MENU_VERSION = 3;                       // change de version = menu enregistré obsolète
 function loadMenu(){
   const saved = store.get("menuV", 0) === MENU_VERSION ? store.get("menu", null) : null;
   if (!saved || !Array.isArray(saved) || !saved.length) return clone(DEFAULT_MENU);
@@ -1012,6 +1022,7 @@ let lastCat = activeCat || MENU[0].cat;
 let vibe = store.get("vibe", 1);
 let lockSettings = store.get("lock", 0);
 let idleMin = store.get("idle", 5);
+let consMode = store.get("consMode", "auto");   // auto | ask | manual
 let givenCents = 0;
 let denomCount = {};
 let lastSale = null;
@@ -1132,10 +1143,19 @@ const cashInput = document.getElementById("cash");
 const payBtn = document.getElementById("payBtn");
 const clearBtn = document.getElementById("clearBtn");
 
-function add(id, n){
-  buzz(12);
+function bump(id, n){
   order[id] = (order[id] || 0) + n;
   if (order[id] <= 0) delete order[id];
+}
+function add(id, n){
+  buzz(12);
+  bump(id, n);
+  // Mode automatique : chaque boisson servie emporte son verre, chaque pichet sa consigne.
+  const it = ALL[id];
+  if (consMode === "auto" && it && it.drink){
+    if (ALL.consVerre && atStation(ALL.consVerre) && !stock.consVerre) bump("consVerre", n);
+    if (it.pichet && ALL.consPichet && atStation(ALL.consPichet) && !stock.consPichet) bump("consPichet", n);
+  }
   render();
 }
 
@@ -1253,11 +1273,14 @@ const hasConsigne = () => !!(order.consVerre || order.consPichet);
 function askConsigne(next){
   const verres = drinkUnits(), pichets = pichetUnits();
   const possible = ALL.consVerre && atStation(ALL.consVerre) && !stock.consVerre;
-  if (consigneAsked || hasConsigne() || !possible || (!verres && !pichets)){ next(); return; }
+  if (consMode === "auto" || consigneAsked || hasConsigne() || !possible || (!verres && !pichets)){ next(); return; }
 
   consigneAsked = true;
   afterConsigne = next;
-  consWanted = { verre:Math.min(verres, 20), pichet:Math.min(pichets, 20) };
+  // « À la demande » : rien de pré-rempli, il faut ajouter volontairement.
+  consWanted = consMode === "manual"
+    ? { verre:0, pichet:0 }
+    : { verre:Math.min(verres, 20), pichet:Math.min(pichets, 20) };
   const parts = [];
   if (verres) parts.push(verres + (verres > 1 ? " boissons" : " boisson"));
   if (pichets) parts.push(pichets + (pichets > 1 ? " pichets" : " pichet"));
@@ -1779,6 +1802,13 @@ document.getElementById("lockSeg").addEventListener("click", e => {
   store.set("lock", lockSettings);
   applyToggles();
 });
+document.getElementById("consSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-cons-mode]");
+  if (!b) return;
+  consMode = b.dataset.consMode;
+  store.set("consMode", consMode);
+  applyToggles();
+});
 document.getElementById("idleSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-idle]");
   if (!b) return;
@@ -1795,6 +1825,13 @@ function applyToggles(){
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
   document.querySelectorAll("[data-idle]").forEach(b =>
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.idle, 10) === idleMin)));
+  document.querySelectorAll("[data-cons-mode]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.consMode === consMode)));
+  document.getElementById("consModeNote").textContent = {
+    auto:   "Chaque boisson ajoute son verre consigné, sans rien demander. À retirer sur la carte quand le client a déjà son verre.",
+    ask:    "Une fenêtre propose la consigne au moment de voir la commande, avec un verre par boisson déjà compté.",
+    manual: "La fenêtre s’ouvre à zéro : il faut ajouter la consigne volontairement."
+  }[consMode];
   document.getElementById("vibeNote").textContent = canVibrate
     ? "Une courte vibration à chaque ajout, pour être sûr de l’appui sans regarder l’écran."
     : "Cet appareil ne permet pas la vibration depuis une page web — c’est le cas de tous les navigateurs sur iPhone.";
