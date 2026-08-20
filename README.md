@@ -42,13 +42,16 @@ monnaie à rendre — en billets et en pièces.
   bilan (partage natif, presse-papiers ou texte à copier).
 - Historique des commandes encaissées : chacune peut être annulée ou reprise pour
   modification.
-- Rappel « commande oubliée » après un délai sans appui (réglable, désactivable).
+- Rappel « commande oubliée » après un délai réglable au curseur : jamais, 30 s, 1 min,
+  1 min 30, 2 min, 5 min ou 10 min.
 - Éditeur de menu dans les réglages : changer un prix, un nom, une description ou une
   icône, déplacer un article de catégorie, en ajouter, en supprimer, et rétablir le menu
   d'origine. Le menu modifié est enregistré sur l'appareil ; les commandes déjà
   encaissées gardent leurs montants même si l'article disparaît.
-- Réglages à part : taille du texte (5 paliers), thème auto/clair/sombre, affichage du
-  menu, retour tactile, ouverture des réglages par appui long.
+- Réglages à part : taille du texte (5 paliers), thème auto/clair/sombre, poste de caisse,
+  affichage du menu, retour tactile, paiement par défaut, consigne, rappel de commande
+  oubliée. Le menu, le stock et le bilan ont chacun leur page, pour garder les réglages
+  lisibles.
 - Tout est calculé sur l'appareil ; la commande en cours, l'historique et les réglages
   survivent à un rechargement.
 

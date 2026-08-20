@@ -86,7 +86,7 @@ html{font-size:18px; -webkit-text-size-adjust:100%}
 body{
   margin:0; min-height:100vh; background:var(--bg); color:var(--ink);
   font-family:var(--body); font-size:1rem; line-height:1.45;
-  padding-bottom:6.5rem;
+  padding-bottom:8rem;
 }
 body.empty{padding-bottom:1rem}
 button{font:inherit; color:inherit; cursor:pointer; font-family:var(--body); touch-action:manipulation}
@@ -264,7 +264,7 @@ svg{flex:none}
 .bar{
   position:fixed; left:0; right:0; bottom:0; z-index:40;
   background:var(--surface); border-top:1px solid var(--line);
-  padding:.55rem clamp(.7rem,2.5vw,1.4rem) calc(.55rem + env(safe-area-inset-bottom));
+  padding:.6rem clamp(.7rem,2.5vw,1.4rem) calc(.7rem + max(env(safe-area-inset-bottom), .15rem));
   display:flex; align-items:center; gap:.7rem; box-shadow:0 -6px 20px rgba(0,0,0,.12);
 }
 body.empty .bar{display:none}
@@ -380,6 +380,34 @@ body.pay .pay-screen{visibility:visible; transform:none}
 .pay-actions{
   padding:.7rem .9rem calc(.7rem + env(safe-area-inset-bottom)); border-top:1px solid var(--line);
   background:var(--surface); display:flex; gap:.5rem; flex:none;
+}
+
+/* ---------- Pages de gestion ---------- */
+.sub-page{
+  position:fixed; inset:0; z-index:67; background:var(--bg);
+  display:flex; flex-direction:column;
+}
+@media (min-width:980px){
+  .sub-page{
+    inset:auto; top:50%; left:50%; width:min(34rem,94vw); max-height:92vh;
+    transform:translate(-50%,-50%); border-radius:18px; border:1px solid var(--line);
+    box-shadow:0 24px 60px rgba(0,0,0,.4); overflow:hidden;
+  }
+}
+.sub-body{flex:1; min-height:0; overflow-y:auto; padding:.9rem 1rem calc(1.4rem + env(safe-area-inset-bottom))}
+.page{display:flex; flex-direction:column; gap:.7rem}
+.page-actions{display:flex; flex-direction:column; gap:.5rem}
+.page-h3{
+  margin:.6rem 0 0; font-size:min(.74rem,3.2vw); letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); font-weight:700;
+}
+.btn.nav{justify-content:space-between; padding:0 .9rem; font-weight:600}
+.btn.nav span{color:var(--muted); font-size:1.3rem; line-height:1}
+.slider-row{display:flex; align-items:center; gap:.8rem}
+.slider-row input[type="range"]{flex:1; min-width:0; accent-color:var(--accent); height:2.2rem}
+.slider-row b{
+  font-family:var(--mono); font-weight:700; font-size:min(1.05rem,4.4vw);
+  min-width:5.2rem; text-align:right; font-variant-numeric:tabular-nums;
 }
 
 /* ---------- Modales ---------- */
@@ -670,6 +698,38 @@ body.settings .panel{transform:none; visibility:visible}
   <button type="button" class="btn primary" id="openSheet">Voir la commande</button>
 </div>
 
+<div class="pay-backdrop" id="subBackdrop" hidden></div>
+<section class="sub-page" id="subPage" hidden aria-label="Gestion">
+  <div class="pay-head">
+    <button type="button" class="icon-btn" id="subBack" aria-label="Retour aux réglages">
+      <svg aria-hidden="true"><use href="#ic-back"></use></svg>
+    </button>
+    <h2 id="subTitle">Menu</h2>
+  </div>
+  <div class="sub-body">
+    <div class="page" id="pageMenu" hidden>
+      <p class="muted-note">Prix, noms, articles. Les commandes déjà encaissées gardent leurs montants.</p>
+      <div class="editor" id="editor"></div>
+      <button type="button" class="btn" id="menuReset">Rétablir le menu d’origine</button>
+    </div>
+    <div class="page" id="pageStock" hidden>
+      <p class="muted-note">Un article épuisé reste affiché, barré, et ne peut plus être ajouté.</p>
+      <div class="stock" id="stockList"></div>
+    </div>
+    <div class="page" id="pageBilan" hidden>
+      <p><b id="dayCount2">0</b> <span id="dayWord2">commande</span> encaissée<span id="dayS"></span> · <b id="dayTotal2">0,00 €</b></p>
+      <p class="muted-note" id="daySplit"></p>
+      <div class="tally" id="tally"></div>
+      <div class="page-actions">
+        <button type="button" class="btn" id="shareBtn">Partager le bilan</button>
+        <button type="button" class="btn" id="dayReset">Remettre le bilan à zéro</button>
+      </div>
+      <h3 class="page-h3">Historique des commandes</h3>
+      <div class="hist" id="hist"></div>
+    </div>
+  </div>
+</section>
+
 <div class="pay-backdrop" id="payBackdrop"></div>
 <section class="pay-screen" id="payScreen" aria-label="Encaissement">
   <div class="pay-head">
@@ -819,7 +879,7 @@ body.settings .panel{transform:none; visibility:visible}
 <div class="modal-scrim" id="idleModal" hidden>
   <div class="modal" role="alertdialog" aria-modal="true" aria-labelledby="idleTitle">
     <h2 id="idleTitle">Commande toujours en cours ?</h2>
-    <p>Aucun appui depuis <b id="idleMinutes">5</b> minutes. Si le client est parti, remettez la commande à zéro.</p>
+    <p>Aucun appui depuis <b id="idleMinutes">2 min</b>. Si le client est parti, remettez la commande à zéro.</p>
     <div class="amount"><span id="idleCount">0 article</span><b id="idleTotal">0,00 €</b></div>
     <div class="modal-actions">
       <button type="button" class="btn danger" id="idleClear">Remettre à zéro</button>
@@ -880,16 +940,10 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set">
-    <h3>Modifier le menu</h3>
-    <p>Prix, noms, articles. Les commandes déjà encaissées gardent leurs montants.</p>
-    <div class="editor" id="editor"></div>
-    <button type="button" class="btn" id="menuReset">Rétablir le menu d’origine</button>
-  </section>
-
-  <section class="set">
-    <h3>Stock</h3>
-    <p>Marquez un article épuisé : il reste affiché, barré, et ne peut plus être ajouté.</p>
-    <div class="stock" id="stockList"></div>
+    <h3>Gestion</h3>
+    <button type="button" class="btn nav" data-page="menu">Modifier le menu <span>›</span></button>
+    <button type="button" class="btn nav" data-page="stock">Stock <span>›</span></button>
+    <button type="button" class="btn nav" data-page="bilan">Bilan de la journée <span>›</span></button>
   </section>
 
   <section class="set">
@@ -921,43 +975,21 @@ body.settings .panel{transform:none; visibility:visible}
 
   <section class="set">
     <h3>Consigne</h3>
-    <div class="seg" id="consSeg">
+    <div class="seg wrap4" id="consSeg">
       <button type="button" data-cons-mode="ask" aria-pressed="true">Proposée</button>
       <button type="button" data-cons-mode="manual" aria-pressed="false">À la demande</button>
+      <button type="button" data-cons-mode="off" aria-pressed="false">Aucune</button>
     </div>
     <p id="consModeNote"></p>
   </section>
 
   <section class="set">
     <h3>Commande oubliée</h3>
-    <div class="seg" id="idleSeg">
-      <button type="button" data-idle="0" aria-pressed="false">Jamais</button>
-      <button type="button" data-idle="3" aria-pressed="false">3 min</button>
-      <button type="button" data-idle="5" aria-pressed="true">5 min</button>
-      <button type="button" data-idle="10" aria-pressed="false">10 min</button>
+    <div class="slider-row">
+      <input type="range" id="idleRange" min="0" max="6" step="1" value="4" aria-label="Délai avant le rappel">
+      <b id="idleValue">2 min</b>
     </div>
-  </section>
-
-  <section class="set">
-    <h3>Bilan de la journée</h3>
-    <p><b id="dayCount2">0</b> <span id="dayWord2">commande</span> encaissée<span id="dayS"></span> · <b id="dayTotal2">0,00 €</b></p>
-    <p id="daySplit"></p>
-    <div class="tally" id="tally"></div>
-    <button type="button" class="btn" id="shareBtn">Partager le bilan</button>
-    <button type="button" class="btn" id="dayReset">Remettre le bilan à zéro</button>
-  </section>
-
-  <section class="set">
-    <h3>Historique des commandes</h3>
-    <div class="hist" id="hist"></div>
-  </section>
-
-  <section class="set">
-    <h3>Ouverture des réglages</h3>
-    <div class="seg" id="lockSeg">
-      <button type="button" data-lock="0" aria-pressed="true">Appui simple</button>
-      <button type="button" data-lock="1" aria-pressed="false">Appui long</button>
-    </div>
+    <p id="idleNote"></p>
   </section>
 
   <section class="set" id="offlineBox">
@@ -1077,11 +1109,19 @@ let stock = store.get("stock", {});            // { id: true } = épuisé
 let activeCat = store.get("cat", null);        // null = tout le menu
 let lastCat = activeCat || MENU[0].cat;
 let vibe = store.get("vibe", 1);
-let lockSettings = store.get("lock", 0);
-let idleMin = store.get("idle", 5);
+const IDLE_STEPS = [0, 30, 60, 90, 120, 300, 600];      // secondes
+const idleLabel = s => !s ? "Jamais"
+  : s < 60 ? s + " s"
+  : s % 60 === 0 ? (s / 60) + " min"
+  : Math.floor(s / 60) + " min " + (s % 60);
+let idleSec = store.get("idleSec", null);
+if (idleSec === null){                                  // reprise de l'ancien réglage en minutes
+  const min = store.get("idle", 2);
+  idleSec = IDLE_STEPS.indexOf(min * 60) >= 0 ? min * 60 : 120;
+}
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
-const VERSION = "2026-08-20 · 14";                  // repère de version, affiché dans les réglages
+const VERSION = "2026-08-20 · 15";                  // repère de version, affiché dans les réglages
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
@@ -1330,7 +1370,7 @@ function askConsigne(next){
   const verres = drinkUnits(), pichets = pichetUnits();
   const dejaV = order.consVerre || 0, dejaP = order.consPichet || 0;
   const possible = ALL.consVerre && atStation(ALL.consVerre) && !stock.consVerre;
-  if (consigneAsked || !possible || (!verres && !pichets)){ next(); return; }
+  if (consMode === "off" || consigneAsked || !possible || (!verres && !pichets)){ next(); return; }
 
   consigneAsked = true;
   afterConsigne = next;
@@ -1748,13 +1788,13 @@ const idleModal = document.getElementById("idleModal");
 let idleTimer = null;
 function armIdle(){
   clearTimeout(idleTimer);
-  if (!idleMin || !count() || !idleModal.hidden) return;
-  idleTimer = setTimeout(showIdle, idleMin * 60000);
+  if (!idleSec || !count() || !idleModal.hidden) return;
+  idleTimer = setTimeout(showIdle, idleSec * 1000);
 }
 function showIdle(){
   if (!count()) return;
   const n = count();
-  document.getElementById("idleMinutes").textContent = idleMin;
+  document.getElementById("idleMinutes").textContent = idleLabel(idleSec);
   document.getElementById("idleCount").textContent = n + (n > 1 ? " articles" : " article");
   document.getElementById("idleTotal").textContent = euro(total());
   idleModal.hidden = false;
@@ -1791,6 +1831,8 @@ document.addEventListener("click", e => {
   if (ie){ openItem({ id:ie.dataset.itemEdit }); return; }
   const inew = e.target.closest("[data-item-new]");
   if (inew){ openItem({ newIn:inew.dataset.itemNew }); return; }
+  const pg = e.target.closest("[data-page]");
+  if (pg){ ouvrirPage(pg.dataset.page); return; }
   const st = e.target.closest("[data-stock]");
   if (st){ toggleStock(st.dataset.stock); return; }
   const cancel = e.target.closest("[data-cancel]");
@@ -1827,25 +1869,38 @@ document.getElementById("dayReset").addEventListener("click", e => {
   });
 });
 
+/* ===================== Pages de gestion ===================== */
+const PAGES = { menu:"Modifier le menu", stock:"Stock", bilan:"Bilan de la journée" };
+function ouvrirPage(nom){
+  document.getElementById("subTitle").textContent = PAGES[nom] || "";
+  ["menu", "stock", "bilan"].forEach(k => {
+    document.getElementById("page" + k[0].toUpperCase() + k.slice(1)).hidden = k !== nom;
+  });
+  if (nom === "menu") renderEditor();
+  if (nom === "stock") renderStock();
+  if (nom === "bilan") renderDay();
+  document.getElementById("subPage").hidden = false;
+  document.getElementById("subBackdrop").hidden = false;
+}
+function fermerPage(){
+  disarm();
+  document.getElementById("subPage").hidden = true;
+  document.getElementById("subBackdrop").hidden = true;
+}
+document.getElementById("subBack").addEventListener("click", fermerPage);
+document.getElementById("subBackdrop").addEventListener("click", fermerPage);
+
 /* ===================== Réglages ===================== */
-function openSettings(){ document.body.classList.add("settings"); renderStock(); renderEditor(); refreshOffline(); }
+function openSettings(){ document.body.classList.add("settings"); refreshOffline(); }
 function closeSettings(){ disarm(); document.body.classList.remove("settings"); }
-const settingsBtn = document.getElementById("settingsBtn");
-let holdTimer = null;
-settingsBtn.addEventListener("click", () => { if (!lockSettings) openSettings(); });
-settingsBtn.addEventListener("pointerdown", () => {
-  if (!lockSettings) return;
-  clearTimeout(holdTimer);
-  holdTimer = setTimeout(() => { buzz(18); openSettings(); }, 600);
-});
-["pointerup", "pointerleave", "pointercancel"].forEach(ev =>
-  settingsBtn.addEventListener(ev, () => clearTimeout(holdTimer)));
+document.getElementById("settingsBtn").addEventListener("click", openSettings);
 document.getElementById("closeSettings").addEventListener("click", closeSettings);
 document.getElementById("scrim").addEventListener("click", closeSettings);
 
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (!idleModal.hidden) return;
+  if (!document.getElementById("subPage").hidden){ fermerPage(); return; }
   const upd = document.getElementById("updateModal");
   if (!upd.hidden){ upd.hidden = true; return; }
   const stm = document.getElementById("stationModal");
@@ -1896,13 +1951,6 @@ document.getElementById("vibeSeg").addEventListener("click", e => {
   applyToggles();
   buzz(12);
 });
-document.getElementById("lockSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-lock]");
-  if (!b) return;
-  lockSettings = parseInt(b.dataset.lock, 10);
-  store.set("lock", lockSettings);
-  applyToggles();
-});
 document.getElementById("payDefSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-pay-def]");
   if (!b) return;
@@ -1917,11 +1965,10 @@ document.getElementById("consSeg").addEventListener("click", e => {
   store.set("consMode", consMode);
   applyToggles();
 });
-document.getElementById("idleSeg").addEventListener("click", e => {
-  const b = e.target.closest("[data-idle]");
-  if (!b) return;
-  idleMin = parseInt(b.dataset.idle, 10);
-  store.set("idle", idleMin);
+const idleRange = document.getElementById("idleRange");
+idleRange.addEventListener("input", () => {
+  idleSec = IDLE_STEPS[parseInt(idleRange.value, 10)] || 0;
+  store.set("idleSec", idleSec);
   applyToggles();
 });
 function applyToggles(){
@@ -1929,10 +1976,12 @@ function applyToggles(){
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.vibe, 10) === vibe));
     b.disabled = !canVibrate;
   });
-  document.querySelectorAll("[data-lock]").forEach(b =>
-    b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
-  document.querySelectorAll("[data-idle]").forEach(b =>
-    b.setAttribute("aria-pressed", String(parseInt(b.dataset.idle, 10) === idleMin)));
+  const i = IDLE_STEPS.indexOf(idleSec);
+  idleRange.value = String(i < 0 ? 4 : i);
+  document.getElementById("idleValue").textContent = idleLabel(idleSec);
+  document.getElementById("idleNote").textContent = idleSec
+    ? "Sans aucun appui pendant ce délai, la caisse demande si la commande en cours doit être remise à zéro."
+    : "Aucun rappel : la commande en cours reste telle quelle.";
   document.querySelectorAll("[data-pay-def]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.payDef === payDefault)));
   document.getElementById("payDefNote").textContent = {
@@ -1942,9 +1991,11 @@ function applyToggles(){
   }[payDefault];
   document.querySelectorAll("[data-cons-mode]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.consMode === consMode)));
-  document.getElementById("consModeNote").textContent = consMode === "ask"
-    ? "La fenêtre s’ouvre avec un verre par boisson déjà compté — pour le début de soirée."
-    : "La fenêtre s’ouvre à zéro : il faut ajouter la consigne volontairement.";
+  document.getElementById("consModeNote").textContent = {
+    ask:    "La fenêtre s’ouvre avec un verre par boisson déjà compté — pour le début de soirée.",
+    manual: "La fenêtre s’ouvre à zéro : il faut ajouter la consigne volontairement.",
+    off:    "Plus aucune fenêtre. La consigne reste ajoutable depuis le menu."
+  }[consMode];
   const warn = document.getElementById("darkWarn");
   warn.hidden = !(theme === "light" && (isSamsung || isAndroid));
   warn.textContent = isSamsung
