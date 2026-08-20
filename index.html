@@ -1121,7 +1121,7 @@ if (idleSec === null){                                  // reprise de l'ancien r
 }
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
-const VERSION = "2026-08-20 · 15";                  // repère de version, affiché dans les réglages
+const VERSION = "2026-08-20 · 16";                  // repère de version, affiché dans les réglages
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
@@ -1637,7 +1637,6 @@ function applyStation(){
   document.getElementById("stationIcon").setAttribute("href", info.icon);
   store.set("station", station);
   renderView();
-  renderStock();      // la liste de stock suit le poste choisi
 }
 document.getElementById("stationSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-station-set]");
@@ -1662,9 +1661,8 @@ document.getElementById("stationPick").addEventListener("click", e => {
 
 function renderStock(){
   document.getElementById("stockList").innerHTML = MENU.map(c => {
-    const rows = c.items.filter(i => atStation(ALL[i.id]));
-    if (!rows.length) return "";
-    return `<div class="stock-cat ${c.c}">${c.cat}</div>` + rows.map(i => `
+    if (!c.items.length) return "";
+    return `<div class="stock-cat ${c.c}">${c.cat}</div>` + c.items.map(i => `
       <div class="stock-row ${stock[i.id] ? "gone" : ""}">
         <span class="sn">${i.name}</span>
         <button type="button" class="sb" data-stock="${i.id}">${stock[i.id] ? "Épuisé" : "En stock"}</button>

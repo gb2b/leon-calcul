@@ -11,7 +11,9 @@ monnaie à rendre — en billets et en pièces.
   l'en-tête indique le poste courant et permet d'en changer en deux appuis.
   Resto : plancha, frites, dessert. Bar : tapas, boissons, consignes.
 - Gestion du stock : un article marqué épuisé reste affiché, barré, et ne peut plus
-  être ajouté ; s'il était dans la commande en cours, il en est retiré.
+  être ajouté ; s'il était dans la commande en cours, il en est retiré. Les pages de
+  gestion (menu, stock, bilan) portent toujours sur l'ensemble du menu : le poste de
+  caisse ne filtre que l'écran de vente.
 - Catégorie « Consigne » : verre 1 € et pichet 5 €. Au poste bar elle passe en tête du
   menu. Trois façons de la gérer, réglables en cours de soirée :
   **Automatique** (par défaut) — chaque boisson ajoutée pose son verre consigné, et
