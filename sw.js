@@ -1,5 +1,5 @@
 /* Service worker de la caisse : l'application reste utilisable sans réseau. */
-const CACHE = "caisse-v1";
+const CACHE = "caisse-v2";   // changer de nom purge l'ancien cache
 const SHELL = ["./", "./index.html", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {

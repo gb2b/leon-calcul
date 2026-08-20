@@ -691,6 +691,7 @@ body.settings .panel{transform:none; visibility:visible}
       <svg aria-hidden="true"><use href="#ic-check"></use></svg>
       <span>Montant exact encaissé sur le terminal. Rien à rendre.</span>
     </div>
+    <button type="button" class="btn" id="sumupBtn" hidden>Ouvrir SumUp</button>
     <div id="cashPart">
     <span class="pay-label">Ce que le client donne</span>
     <div class="received">
@@ -855,6 +856,7 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" data-theme-set="dark" aria-pressed="false">Sombre</button>
     </div>
     <p>« Auto » suit le réglage du téléphone.</p>
+    <p id="darkWarn" hidden></p>
   </section>
 
   <section class="set">
@@ -948,6 +950,21 @@ body.settings .panel{transform:none; visibility:visible}
     </div>
   </section>
 
+  <section class="set">
+    <h3>SumUp (essai)</h3>
+    <div class="seg" id="sumupSeg">
+      <button type="button" data-sumup="0" aria-pressed="true">Désactivé</button>
+      <button type="button" data-sumup="1" aria-pressed="false">Activé</button>
+    </div>
+    <div class="field" id="sumupFields" hidden>
+      <label for="sumupKey">Clé affiliée SumUp</label>
+      <input type="text" id="sumupKey" autocomplete="off" placeholder="collez la clé de me.sumup.com/developers">
+    </div>
+    <p>Un bouton « Ouvrir SumUp » apparaît alors sur l’écran carte, avec le montant déjà rempli.
+       À tester avant le festival : SumUp prévoit ce lien pour des applications installées, pas
+       pour un site, et il peut ne pas s’ouvrir.</p>
+  </section>
+
   <section class="set" id="offlineBox">
     <h3>Installer sur l’écran d’accueil</h3>
     <p id="offlineText"></p>
@@ -1038,6 +1055,18 @@ const euroC = c => euro(c / 100);
 
 
 /* ===================== État ===================== */
+const ua = navigator.userAgent;
+const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/.test(ua);
+const isSamsung = /SamsungBrowser/.test(ua);
+const navName = isSamsung ? "Samsung Internet"
+  : /CriOS|Chrome/.test(ua) ? "Chrome"
+  : /FxiOS|Firefox/.test(ua) ? "Firefox"
+  : /EdgiOS|Edg/.test(ua) ? "Edge"
+  : /Safari/.test(ua) ? "Safari" : "autre";
+const iosChrome = isIOS && /CriOS/.test(ua);
+const iosOther = isIOS && /FxiOS|EdgiOS|OPiOS/.test(ua);
+const inFrame = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
 let order = store.get("order", {});
 Object.keys(order).forEach(id => { if (!ALL[id]) delete order[id]; });   // articles retirés du menu
 let sales = store.get("sales", null);
@@ -1056,6 +1085,9 @@ let lockSettings = store.get("lock", 0);
 let idleMin = store.get("idle", 5);
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
+const VERSION = "2026-08-20 · 12";                  // repère de version, affiché dans les réglages
+let sumupOn = store.get("sumupOn", 0);
+let sumupKey = store.get("sumupKey", "");
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
@@ -1384,6 +1416,9 @@ function setPayMode(mode){
   if (payMode === "card") clearCash();
   document.getElementById("validateBtn").textContent =
     payMode === "card" ? "Valider le paiement par carte" : "Valider l’encaissement";
+  const sb = document.getElementById("sumupBtn");
+  sb.hidden = !(sumupOn && payMode === "card");
+  sb.textContent = "Ouvrir SumUp · " + euro(total());
 }
 document.getElementById("payModeSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-pay]");
@@ -1399,6 +1434,42 @@ function toast(msg){
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => { toastEl.hidden = true; }, 2400);
 }
+
+/* ===================== SumUp (optionnel) =====================
+   Lien officiel « app-to-app » de SumUp. Prévu pour des applications natives :
+   depuis une page web il peut rester sans effet, d'où le repli explicite. */
+function sumupUrl(){
+  const t = total().toFixed(2);
+  // encodage %20 et non « + » : les schémas d'application ne décodent pas toujours le plus
+  const p = [];
+  const add = (k, v) => p.push(k + "=" + encodeURIComponent(v));
+  if (sumupKey) add("affiliate-key", sumupKey);
+  add("app-id", location.host || "caisse");
+  add("total", t);
+  add("amount", t);                                  // ancien nom, avant SumUp 1.88
+  add("currency", "EUR");
+  add("title", "Commande n° " + nextNo());
+  return { query:p.join("&") };
+}
+function openSumUp(){
+  const { query } = sumupUrl();
+  const direct = "sumupmerchant://pay/1.0?" + query;
+  const url = isAndroid
+    ? "intent://pay/1.0?" + query + "#Intent;scheme=sumupmerchant;S.browser_fallback_url="
+      + encodeURIComponent(location.href) + ";end"
+    : direct;
+  let parti = false;
+  const marque = () => { parti = true; };
+  addEventListener("pagehide", marque, { once:true });
+  addEventListener("blur", marque, { once:true });
+  document.addEventListener("visibilitychange", marque, { once:true });
+  try { location.href = url; } catch (e) { marque(); }
+  setTimeout(() => {
+    removeEventListener("blur", marque);
+    if (!parti && !document.hidden) toast("SumUp ne s’est pas ouvert — ouvrez-le à la main");
+  }, 1500);
+}
+document.getElementById("sumupBtn").addEventListener("click", openSumUp);
 
 /* ===================== Encaissement ===================== */
 document.getElementById("validateBtn").addEventListener("click", () => {
@@ -1857,7 +1928,7 @@ function applyTheme(){
 document.getElementById("themeSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-theme-set]");
   if (!b) return;
-  theme = b.dataset.themeSet; applyTheme();
+  theme = b.dataset.themeSet; applyTheme(); applyToggles();
 });
 
 document.getElementById("vibeSeg").addEventListener("click", e => {
@@ -1874,6 +1945,17 @@ document.getElementById("lockSeg").addEventListener("click", e => {
   lockSettings = parseInt(b.dataset.lock, 10);
   store.set("lock", lockSettings);
   applyToggles();
+});
+document.getElementById("sumupSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-sumup]");
+  if (!b) return;
+  sumupOn = parseInt(b.dataset.sumup, 10);
+  store.set("sumupOn", sumupOn);
+  applyToggles();
+});
+document.getElementById("sumupKey").addEventListener("input", e => {
+  sumupKey = e.target.value.trim();
+  store.set("sumupKey", sumupKey);
 });
 document.getElementById("payDefSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-pay-def]");
@@ -1905,6 +1987,10 @@ function applyToggles(){
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
   document.querySelectorAll("[data-idle]").forEach(b =>
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.idle, 10) === idleMin)));
+  document.querySelectorAll("[data-sumup]").forEach(b =>
+    b.setAttribute("aria-pressed", String(parseInt(b.dataset.sumup, 10) === sumupOn)));
+  document.getElementById("sumupFields").hidden = !sumupOn;
+  document.getElementById("sumupKey").value = sumupKey;
   document.querySelectorAll("[data-pay-def]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.payDef === payDefault)));
   document.getElementById("payDefNote").textContent = {
@@ -1917,6 +2003,11 @@ function applyToggles(){
   document.getElementById("consModeNote").textContent = consMode === "ask"
     ? "La fenêtre s’ouvre avec un verre par boisson déjà compté — pour le début de soirée."
     : "La fenêtre s’ouvre à zéro : il faut ajouter la consigne volontairement.";
+  const warn = document.getElementById("darkWarn");
+  warn.hidden = !(theme === "light" && (isSamsung || isAndroid));
+  warn.textContent = isSamsung
+    ? "Si la page reste sombre : Samsung Internet → Paramètres → Mode sombre → désactiver « Appliquer aux sites web » (ou Menu ⋮ → Mode sombre)."
+    : "Si la page reste sombre : Chrome → Paramètres → Thème, et vérifier que le « thème sombre automatique des pages » est désactivé.";
   document.getElementById("vibeNote").textContent = canVibrate
     ? "Une courte vibration à chaque ajout, pour être sûr de l’appui sans regarder l’écran."
     : "Cet appareil ne permet pas la vibration depuis une page web — c’est le cas de tous les navigateurs sur iPhone.";
@@ -1930,13 +2021,18 @@ addEventListener("resize", measureHead);
 /* ===================== Installation / hors ligne ===================== */
 const hasManifest = !!document.querySelector('link[rel="manifest"]');
 if (hasManifest && "serviceWorker" in navigator){
-  addEventListener("load", () => navigator.serviceWorker.register("sw.js").then(refreshOffline, refreshOffline));
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js").then(reg => {
+    reg.update();                                   // cherche une nouvelle version à chaque ouverture
+    refreshOffline();
+  }, refreshOffline));
+  // une nouvelle version prend la main : on recharge une fois pour l'appliquer
+  let rechargé = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (rechargé) return;
+    rechargé = true;
+    location.reload();
+  });
 }
-const ua = navigator.userAgent;
-const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-const iosChrome = isIOS && /CriOS/.test(ua);
-const iosOther = isIOS && /FxiOS|EdgiOS|OPiOS/.test(ua);
-const inFrame = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
 const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 
 let deferredPrompt = null;
@@ -1990,6 +2086,8 @@ async function refreshOffline(){
     catch (e) { sw = "bloqué"; }
   }
   document.getElementById("diag").textContent = [
+    "version : " + VERSION,
+    "navigateur : " + navName,
     "adresse : " + (location.host || "fichier local") + (location.protocol === "https:" ? " · https ✓" : " · " + location.protocol.replace(":", "") + " ✗"),
     "manifeste : " + (hasManifest ? "déclaré" : "absent"),
     "hors-ligne : " + sw,

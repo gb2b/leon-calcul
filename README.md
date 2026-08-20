@@ -68,7 +68,15 @@ l'application en cache dès la première visite.
   un raccourci ouvert par Safari.
 
 Réglages → « Installer sur l'écran d'accueil » détecte l'appareil, donne les étapes et
-affiche un diagnostic : adresse, https, manifeste, service worker, vibration.
+affiche un diagnostic : version de l'application, navigateur, adresse, https, manifeste,
+service worker, vibration. L'application installée cherche une nouvelle version à chaque
+ouverture et se recharge quand elle en trouve une.
+
+**Ouverture de SumUp (essai, désactivé par défaut).** Réglages → « SumUp » permet de
+coller une clé affiliée ; un bouton « Ouvrir SumUp » apparaît alors sur l'écran carte et
+ouvre l'application avec le montant déjà rempli — lien `intent://` sur Android,
+`sumupmerchant://` sur iOS. SumUp destine ce lien à des applications natives : il peut
+rester sans effet depuis un site, auquel cas un message le signale.
 
 **Vibration :** `navigator.vibrate` n'existe sur aucun navigateur iPhone. Le réglage se
 désactive tout seul et l'indique quand l'appareil ne la prend pas en charge.
