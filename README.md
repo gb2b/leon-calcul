@@ -32,6 +32,8 @@ monnaie à rendre — en billets et en pièces.
   coupures), le montant s'additionne et « à rendre » s'affiche avec le détail des
   coupures ; un champ libre accepte n'importe quel montant. En carte, le clavier
   disparaît : montant exact, rien à rendre.
+- Le moyen de paiement par défaut se règle dans les réglages : espèces, carte, ou
+  « carte seulement » pour un poste sans monnaie — la bascule disparaît alors.
 - Le bilan et le texte partagé séparent la recette en espèces et la recette par carte,
   et l'historique marque « CB » les commandes payées par carte.
 - Confirmation après validation, avec la monnaie à rendre en gros et un bouton pour

@@ -898,6 +898,16 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set">
+    <h3>Paiement</h3>
+    <div class="seg wrap4" id="payDefSeg">
+      <button type="button" data-pay-def="cash" aria-pressed="true">Espèces</button>
+      <button type="button" data-pay-def="card" aria-pressed="false">Carte</button>
+      <button type="button" data-pay-def="cardonly" aria-pressed="false">Carte seulement</button>
+    </div>
+    <p id="payDefNote"></p>
+  </section>
+
+  <section class="set">
     <h3>Consigne</h3>
     <div class="seg" id="consSeg">
       <button type="button" data-cons-mode="ask" aria-pressed="true">Proposée</button>
@@ -1046,6 +1056,7 @@ let lockSettings = store.get("lock", 0);
 let idleMin = store.get("idle", 5);
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
+let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
 let denomCount = {};
@@ -1357,10 +1368,15 @@ function closeSheet(){ document.body.classList.remove("sheet"); }
 function backToMenu(){ closeSheet(); scrollTo({ top:0, behavior:"smooth" }); }
 function openPay(){
   if (!count()) return;
-  askConsigne(() => { setPayMode("cash"); clearCash(); document.body.classList.add("pay"); });
+  askConsigne(() => {
+    setPayMode(payDefault === "cash" ? "cash" : "card");
+    clearCash();
+    document.body.classList.add("pay");
+  });
 }
 function setPayMode(mode){
-  payMode = mode;
+  payMode = payDefault === "cardonly" ? "card" : mode;
+  document.getElementById("payModeSeg").hidden = payDefault === "cardonly";
   document.querySelectorAll("[data-pay]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.pay === payMode)));
   document.getElementById("cashPart").hidden = payMode === "card";
@@ -1859,6 +1875,13 @@ document.getElementById("lockSeg").addEventListener("click", e => {
   store.set("lock", lockSettings);
   applyToggles();
 });
+document.getElementById("payDefSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-pay-def]");
+  if (!b) return;
+  payDefault = b.dataset.payDef;
+  store.set("payDefault", payDefault);
+  applyToggles();
+});
 document.getElementById("consSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-cons-mode]");
   if (!b) return;
@@ -1882,6 +1905,13 @@ function applyToggles(){
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
   document.querySelectorAll("[data-idle]").forEach(b =>
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.idle, 10) === idleMin)));
+  document.querySelectorAll("[data-pay-def]").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.payDef === payDefault)));
+  document.getElementById("payDefNote").textContent = {
+    cash:     "L’écran d’encaissement s’ouvre sur les espèces ; la carte reste à un appui.",
+    card:     "L’écran s’ouvre sur la carte bleue ; les espèces restent à un appui.",
+    cardonly: "Poste sans monnaie : seul le paiement par carte est proposé."
+  }[payDefault];
   document.querySelectorAll("[data-cons-mode]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.consMode === consMode)));
   document.getElementById("consModeNote").textContent = consMode === "ask"
