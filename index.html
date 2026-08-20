@@ -243,6 +243,24 @@ svg{flex:none}
 .stepper .n{font-family:var(--mono); font-weight:700; min-width:2.2rem; text-align:center}
 .stepper .del{margin-left:auto; color:var(--danger)}
 .stepper .del svg{width:min(1.2rem,5vw); height:min(1.2rem,5vw)}
+.quick{padding:.1rem .8rem 1rem; display:flex; flex-direction:column; gap:.4rem}
+.quick-label{font-size:min(.72rem,3vw); letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.quick-row{display:flex; gap:.5rem}
+.chip-add{
+  position:relative; flex:1 1 0; min-width:0; display:flex; align-items:center; gap:.4rem;
+  border:1px dashed var(--c); background:var(--c-soft); color:var(--ink);
+  border-radius:11px; padding:.5rem .6rem; font-weight:600; font-size:min(.9rem,3.8vw);
+  min-height:2.9rem;
+}
+.chip-add svg{width:1.15rem; height:1.15rem; color:var(--c); flex:none}
+.chip-add .qname{flex:1; min-width:0; text-align:left}
+.chip-add .qprice{font-family:var(--mono); font-weight:700; white-space:nowrap}
+.chip-add .qn{
+  position:absolute; top:-.45rem; right:-.35rem; min-width:1.4rem; height:1.4rem; padding:0 .35rem;
+  border-radius:999px; background:var(--c); color:var(--cat-ink); font-family:var(--mono);
+  font-weight:700; font-size:.75rem; display:none; align-items:center; justify-content:center;
+}
+.chip-add.has .qn{display:flex}
 .actions{display:flex; gap:.5rem; padding:.7rem 1rem; background:var(--surface); border-top:1px solid var(--line)}
 .btn{
   flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
@@ -678,6 +696,21 @@ body.settings .panel{transform:none; visibility:visible}
       </div>
       <h2>Commande <b id="orderNo">n° 1</b> <em id="countLabel">0 article</em></h2>
       <ul class="lines" id="lines"></ul>
+      <div class="quick c6" id="quickCons" hidden>
+        <span class="quick-label">Ajouter une consigne</span>
+        <div class="quick-row">
+          <button type="button" class="chip-add" data-add="consVerre">
+            <svg aria-hidden="true"><use href="#ic-glass"></use></svg>
+            <span class="qname">Verre</span><b class="qprice">1,00 €</b>
+            <span class="qn" data-qn="consVerre"></span>
+          </button>
+          <button type="button" class="chip-add" data-add="consPichet">
+            <svg aria-hidden="true"><use href="#ic-pitcher"></use></svg>
+            <span class="qname">Pichet</span><b class="qprice">5,00 €</b>
+            <span class="qn" data-qn="consPichet"></span>
+          </button>
+        </div>
+      </div>
     </div>
     <div class="actions">
       <button type="button" class="btn" id="clearBtn">Annuler</button>
@@ -1129,7 +1162,7 @@ if (idleSec === null){                                  // reprise de l'ancien r
 }
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
-const VERSION = "2026-08-20 · 18";                  // repère de version, affiché dans les réglages
+const VERSION = "2026-08-20 · 19";                  // repère de version, affiché dans les réglages
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
@@ -1298,10 +1331,30 @@ function render(){
     card.classList.toggle("out", !!stock[id]);
   });
 
+  renderQuick();
   updateChange();
   store.set("order", order);
   renderDay();
   armIdle();
+}
+
+/* Les deux consignes restent à portée en fin de commande : au bar, c'est
+   l'ajout le plus fréquent une fois les boissons saisies. */
+function renderQuick(){
+  const dispo = id => ALL[id] && atStation(ALL[id]) && !stock[id];
+  const bloc = document.getElementById("quickCons");
+  bloc.hidden = !dispo("consVerre") && !dispo("consPichet");
+  if (bloc.hidden) return;
+  [["consVerre", "Verre"], ["consPichet", "Pichet"]].forEach(([id, court]) => {
+    const btn = document.querySelector(`.chip-add[data-add="${id}"]`);
+    btn.hidden = !dispo(id);
+    if (btn.hidden) return;
+    btn.querySelector(".qname").textContent = court;
+    btn.querySelector(".qprice").textContent = euro(ALL[id].price);
+    const q = order[id] || 0;
+    btn.querySelector(".qn").textContent = q;
+    btn.classList.toggle("has", q > 0);
+  });
 }
 
 /* ===================== Monnaie ===================== */
