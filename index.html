@@ -8,6 +8,10 @@
 <meta name="theme-color" content="#0E6B4C">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Caisse">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Mono:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
@@ -194,7 +198,7 @@ svg{flex:none}
   font-family:var(--mono); font-weight:700; font-size:min(2.6rem, 12vw); line-height:1;
   letter-spacing:-.02em; font-variant-numeric:tabular-nums; white-space:nowrap; text-align:right;
 }
-.pay{padding:.7rem 1rem; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:.45rem}
+.pay{padding:.6rem 1rem .7rem; border-top:1px solid var(--line); background:var(--surface); display:flex; flex-direction:column; gap:.45rem; flex:none}
 .pay-row{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap}
 .pay-row label{font-size:.76rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .pay input{
@@ -214,8 +218,8 @@ svg{flex:none}
 .denoms{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:.35rem}
 .chip{
   position:relative; background:var(--surface-2); border:1px solid var(--line); border-radius:10px;
-  padding:.5rem .2rem; font-family:var(--mono); font-weight:700; font-size:min(.9rem, 3.6vw);
-  min-height:2.6rem; display:flex; align-items:center; justify-content:center; white-space:nowrap;
+  padding:.45rem .2rem; font-family:var(--mono); font-weight:700; font-size:min(.9rem, 3.6vw);
+  min-height:min(2.6rem, 11vw); display:flex; align-items:center; justify-content:center; white-space:nowrap;
 }
 
 .chip.note{background:var(--accent-soft); border-color:var(--accent-soft)}
@@ -226,18 +230,26 @@ svg{flex:none}
   display:none; align-items:center; justify-content:center;
 }
 .chip.multi .x{display:flex}
+.change.off{visibility:hidden}
 .change{
-  margin:.6rem 1rem 0; flex:none;
-  background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.55rem .8rem;
-  display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem;
+  margin:.55rem 1rem 0; flex:none; min-height:calc(4.35em + .5rem);
+  background:var(--amber); color:var(--amber-ink); border-radius:10px; padding:.5rem .7rem .55rem;
 }
+.change-top{display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:center; gap:.6rem}
+.pills{display:flex; flex-wrap:wrap; gap:.3rem; margin-top:.35rem}
+.pills:empty{display:none}
+.pill{
+  background:rgba(0,0,0,.16); border-radius:999px; padding:.2rem .5rem;
+  font-family:var(--mono); font-weight:700; font-size:min(.95rem, 4vw); white-space:nowrap;
+}
+.pill b{font-size:1.1em}
 .change span{font-size:min(.76rem, 3.2vw); letter-spacing:.1em; text-transform:uppercase; font-weight:700}
 .change strong{
   font-family:var(--mono); font-weight:700; font-size:min(1.8rem, 8.5vw); line-height:1;
   white-space:nowrap; font-variant-numeric:tabular-nums;
 }
 .actions{display:flex; gap:.5rem; padding:.7rem 1rem; background:var(--surface)}
-.ticket .scroller{border-bottom:1px solid var(--line)}
+
 .btn{
   flex:1; border-radius:11px; border:1px solid var(--line); background:var(--surface-2);
   min-height:3rem; font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:.45rem;
@@ -267,10 +279,12 @@ svg{flex:none}
   display:flex; align-items:center; gap:.7rem;
   box-shadow:0 -6px 20px rgba(0,0,0,.12);
 }
+body.empty .bar{display:none}
+body.empty{padding-bottom:1.2rem}
 .bar .b-total{display:flex; flex-direction:column; line-height:1.1}
 .bar .b-total span{font-size:.66rem; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700}
 .bar .b-total strong{font-family:var(--mono); font-size:min(1.8rem, 7.5vw); font-variant-numeric:tabular-nums}
-.bar .btn{flex:0 1 auto; min-width:0; padding:0 .9rem; font-size:min(1rem, 4.2vw)}
+.bar .btn{flex:0 1 auto; min-width:0; margin-left:auto; padding:0 .9rem; font-size:min(1rem, 4.2vw)}
 @media (min-width:980px){ .bar{display:none} }
 @media (max-width:979px){
   .ticket{
@@ -321,7 +335,8 @@ body.settings .panel{transform:none; visibility:visible}
 .sample b{font-weight:600}
 .sample span{font-family:var(--mono); font-weight:700; color:var(--accent)}
 .set .btn{min-height:2.8rem}
-.ok{color:var(--accent); font-weight:600; font-size:.85rem}
+.steps{margin:0; padding-left:1.3rem; font-size:.85rem; color:var(--muted); display:flex; flex-direction:column; gap:.3rem}
+.diag{font-family:var(--mono); font-size:.72rem; color:var(--muted); white-space:pre-line; opacity:.8}
 /* Le survol n'existe que pour une souris : sur écran tactile il restait
    collé sur la carte touchée pendant le défilement. */
 @media (hover:hover) and (pointer:fine){
@@ -370,9 +385,6 @@ body.settings .panel{transform:none; visibility:visible}
 .tally-empty{color:var(--muted); font-size:.85rem}
 .share-box{width:100%; min-height:9rem; font-family:var(--mono); font-size:.8rem; padding:.6rem;
   border:1px solid var(--line); border-radius:10px; background:var(--surface-2); color:var(--ink)}
-.breakdown{display:block; font-family:var(--body); font-size:.76rem; font-weight:600; opacity:.85; margin-top:.15rem}
-.change{flex-wrap:wrap}
-.change .col{display:flex; flex-direction:column; min-width:0}
 .ticket h2 b{font-family:var(--mono); font-weight:700; color:var(--accent)}
 
 /* ---------- Confirmation d'encaissement ---------- */
@@ -518,21 +530,21 @@ body.settings .panel{transform:none; visibility:visible}
       </div>
       <h2>Commande <b id="orderNo">n° 1</b> <em id="countLabel">0 article</em></h2>
       <ul class="lines" id="lines"></ul>
-      <div class="pay">
+    </div>
+    <div class="pay">
       <div class="cash-head">
         <label for="cash">Reçu</label>
         <input id="cash" type="text" inputmode="decimal" autocomplete="off" placeholder="0,00" aria-label="Montant reçu en euros">
         <button type="button" class="cash-clear" id="cashClear" disabled>Effacer</button>
       </div>
       <div class="denoms" id="denoms" role="group" aria-label="Pièces et billets reçus"></div>
-      </div>
     </div>
-    <div class="change" id="changeBox" hidden>
-      <div class="col">
+    <div class="change off" id="changeBox">
+      <div class="change-top">
         <span id="changeLabel">À rendre</span>
-        <span class="breakdown" id="breakdown"></span>
+        <strong id="changeOut">0,00 €</strong>
       </div>
-      <strong id="changeOut">0,00 €</strong>
+      <div class="pills" id="breakdown"></div>
     </div>
     <div class="actions">
       <button type="button" class="btn" id="clearBtn">Annuler</button>
@@ -654,10 +666,11 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set" id="offlineBox">
-    <h3>Hors ligne</h3>
-    <p id="offlineText">Une fois la page ouverte, tout fonctionne sans réseau : rien n’est envoyé, tout est calculé sur l’appareil.</p>
+    <h3>Installer sur l’écran d’accueil</h3>
+    <p id="offlineText"></p>
     <button type="button" class="btn" id="installBtn" hidden>Installer l’application</button>
-    <p id="installHint" hidden>iPhone : bouton Partager, puis « Sur l’écran d’accueil ». Android : menu ⋮, puis « Installer l’application ».</p>
+    <ol class="steps" id="installSteps" hidden></ol>
+    <p class="diag" id="diag"></p>
   </section>
 </aside>
 
@@ -840,6 +853,7 @@ function render(){
   document.getElementById("orderNo").textContent = "n° " + (day.count + 1);
   cashBtn.disabled = n === 0;
   clearBtn.disabled = n === 0;
+  document.body.classList.toggle("empty", n === 0);   // rien à encaisser : pas de barre
   disarm();
 
   document.querySelectorAll("[data-badge]").forEach(b => {
@@ -857,12 +871,12 @@ function render(){
 function updateChange(){
   const t = Math.round(total() * 100);
   const breakdown = document.getElementById("breakdown");
-  if (givenCents <= 0 || t <= 0){ changeBox.hidden = true; return; }
-  changeBox.hidden = false;
+  changeBox.classList.toggle("off", givenCents <= 0 || t <= 0);
+  if (changeBox.classList.contains("off")) return;
   const diff = givenCents - t;
   document.getElementById("changeLabel").textContent = diff >= 0 ? "À rendre" : "Manque";
   changeOut.textContent = euro(Math.abs(diff) / 100);
-  breakdown.textContent = diff > 0 ? change(diff) : "";
+  breakdown.innerHTML = diff > 0 ? change(diff) : "";
   changeBox.style.background = diff >= 0 ? "" : "var(--danger-soft)";
   changeBox.style.color = diff >= 0 ? "" : "var(--danger)";
 }
@@ -872,9 +886,9 @@ function change(cents){
   const parts = [];
   NOTES.concat(COINS).sort((a, b) => b - a).forEach(v => {
     const n = Math.floor(cents / v);
-    if (n){ parts.push(n + " × " + denomLabel(v)); cents -= n * v; }
+    if (n){ parts.push(`<span class="pill"><b>${n}</b>×${denomLabel(v)}</span>`); cents -= n * v; }
   });
-  return parts.join(" · ");
+  return parts.join("");
 }
 
 function renderDay(){
@@ -1120,7 +1134,7 @@ function applyToggles(){
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.lock, 10) === lockSettings)));
 }
 
-const openSettings = () => document.body.classList.add("settings");
+const openSettings = () => { document.body.classList.add("settings"); refreshOffline(); };
 const closeSettings = () => { disarm(); document.body.classList.remove("settings"); };
 const settingsBtn = document.getElementById("settingsBtn");
 let holdTimer = null;
@@ -1180,27 +1194,77 @@ function measureHead(){
 }
 addEventListener("resize", measureHead);
 
-/* ---------- Hors ligne (PWA quand le manifeste est servi) ---------- */
-if (document.querySelector('link[rel="manifest"]') && "serviceWorker" in navigator){
-  addEventListener("load", () => navigator.serviceWorker.register("sw.js").catch(() => {}));
-  document.getElementById("installHint").hidden = false;
-  document.getElementById("offlineText").textContent =
-    "Installez l’application sur l’écran d’accueil : elle s’ouvre et fonctionne ensuite sans réseau.";
+/* ---------- Installation et fonctionnement hors ligne ---------- */
+const hasManifest = !!document.querySelector('link[rel="manifest"]');
+if (hasManifest && "serviceWorker" in navigator){
+  addEventListener("load", () => navigator.serviceWorker.register("sw.js")
+    .then(refreshOffline).catch(refreshOffline));
 }
+const ua = navigator.userAgent;
+const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+const isSafari = /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS|Android/.test(ua);
+const inFrame = (() => { try { return window.top !== window.self; } catch (e) { return true; } })();
+const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+
 let deferredPrompt = null;
 const installBtn = document.getElementById("installBtn");
 addEventListener("beforeinstallprompt", e => {
-  e.preventDefault(); deferredPrompt = e; installBtn.hidden = false;
+  e.preventDefault(); deferredPrompt = e; installBtn.hidden = false; refreshOffline();
 });
+addEventListener("appinstalled", () => { deferredPrompt = null; installBtn.hidden = true; refreshOffline(); });
 installBtn.addEventListener("click", async () => {
   if (!deferredPrompt) return;
   deferredPrompt.prompt();
   await deferredPrompt.userChoice;
-  deferredPrompt = null; installBtn.hidden = true;
+  deferredPrompt = null; installBtn.hidden = true; refreshOffline();
 });
+
+async function refreshOffline(){
+  const text = document.getElementById("offlineText");
+  const steps = document.getElementById("installSteps");
+  let list = [];
+  if (installed){
+    text.textContent = "Application installée : elle démarre et fonctionne sans réseau.";
+  } else if (inFrame){
+    text.textContent = "Cet aperçu est affiché dans une autre application, qui ne permet pas l’installation. "
+      + "Ouvrez l’adresse du site directement dans le navigateur du téléphone, puis revenez ici.";
+  } else if (!hasManifest){
+    text.textContent = "Cette page fonctionne sans réseau une fois chargée, mais l’installation sur l’écran "
+      + "d’accueil demande la version hébergée du site.";
+  } else if (deferredPrompt){
+    text.textContent = "Prête à être installée sur cet appareil.";
+  } else if (isIOS && isSafari){
+    text.textContent = "Sur iPhone, l’installation passe par le menu Partager de Safari :";
+    list = ["Touchez le bouton Partager — le carré avec une flèche vers le haut.",
+            "Faites défiler la liste et choisissez « Sur l’écran d’accueil ».",
+            "Validez avec « Ajouter » en haut à droite."];
+  } else if (isIOS){
+    text.textContent = "Sur iPhone, seul Safari peut installer une application. Ouvrez cette adresse dans Safari, "
+      + "puis Partager → « Sur l’écran d’accueil ».";
+  } else {
+    text.textContent = "Si aucun bouton n’apparaît, passez par le menu du navigateur :";
+    list = ["Ouvrez le menu ⋮ (ou ⋯) du navigateur.",
+            "Choisissez « Installer l’application » ou « Ajouter à l’écran d’accueil »."];
+  }
+  steps.innerHTML = list.map(l => `<li>${l}</li>`).join("");
+  steps.hidden = !list.length;
+
+  let sw = "non pris en charge par ce navigateur";
+  if ("serviceWorker" in navigator){
+    try { sw = (await navigator.serviceWorker.getRegistration()) ? "actif" : "non enregistré"; }
+    catch (e) { sw = "bloqué"; }
+  }
+  document.getElementById("diag").textContent = [
+    "adresse : " + (location.host || "fichier local") + (location.protocol === "https:" ? " · https ✓" : " · " + location.protocol.replace(":", "") + " ✗"),
+    "manifeste : " + (hasManifest ? "déclaré" : "absent"),
+    "hors-ligne : " + sw,
+    "affichage : " + (installed ? "application installée" : inFrame ? "aperçu intégré" : "navigateur")
+  ].join("\n");
+}
 
 applySize();
 applyTheme();
+refreshOffline();
 applyIdle();
 applyToggles();
 renderView();

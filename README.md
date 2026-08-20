@@ -34,7 +34,10 @@ les quantités, le total s'affiche en grand et l'application calcule la monnaie 
 clé USB) et ouvrez-le. Il n'a besoin de rien d'autre ; sans réseau, les polices Google
 sont simplement remplacées par celles du téléphone.
 
-**Option 2 — application installée (recommandée).** Publiez le dossier sur un hébergement
+**Option 2 — application installée (recommandée).** Réglages → « Installer sur l'écran
+d'accueil » indique la marche à suivre pour l'appareil utilisé, et affiche un diagnostic
+(adresse, https, manifeste, service worker) si l'installation ne se propose pas.
+ Publiez le dossier sur un hébergement
 HTTPS — par exemple GitHub Pages : *Settings → Pages → Deploy from a branch*, branche
 `main`, dossier `/ (root)`. Ouvrez ensuite l'adresse sur le téléphone :
 
