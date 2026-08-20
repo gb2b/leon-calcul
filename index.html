@@ -967,9 +967,16 @@ body.settings .panel{transform:none; visibility:visible}
       <button type="button" data-sumup="0" aria-pressed="true">Désactivé</button>
       <button type="button" data-sumup="1" aria-pressed="false">Activé</button>
     </div>
-    <div class="field" id="sumupFields" hidden>
-      <label for="sumupKey">Clé affiliée SumUp</label>
-      <input type="text" id="sumupKey" autocomplete="off" placeholder="collez la clé de me.sumup.com/developers">
+    <div id="sumupFields" hidden>
+      <div class="field">
+        <label for="sumupKey">Clé affiliée SumUp</label>
+        <input type="text" id="sumupKey" autocomplete="off" placeholder="collez la clé du portail SumUp">
+      </div>
+      <div class="field" style="margin-top:.55rem">
+        <label for="sumupApp">Identifiant d’application</label>
+        <input type="text" id="sumupApp" autocomplete="off" placeholder="gb2b.github.io">
+        <p class="muted-note">Doit être identique à l’« Application identifier » enregistré chez SumUp.</p>
+      </div>
     </div>
     <p>Un bouton « Ouvrir SumUp » apparaît alors sur l’écran carte, avec le montant déjà rempli.
        À tester avant le festival : SumUp prévoit ce lien pour des applications installées, pas
@@ -1100,6 +1107,7 @@ if (consMode === "auto") consMode = "ask";      // ancien mode automatique, reti
 const VERSION = "2026-08-20 · 12";                  // repère de version, affiché dans les réglages
 let sumupOn = store.get("sumupOn", 0);
 let sumupKey = store.get("sumupKey", "");
+let sumupApp = store.get("sumupApp", "");
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;
@@ -1456,7 +1464,7 @@ function sumupUrl(){
   const p = [];
   const add = (k, v) => p.push(k + "=" + encodeURIComponent(v));
   if (sumupKey) add("affiliate-key", sumupKey);
-  add("app-id", location.host || "caisse");
+  add("app-id", sumupApp || location.host || "caisse");
   add("total", t);
   add("amount", t);                                  // ancien nom, avant SumUp 1.88
   add("currency", "EUR");
@@ -1971,6 +1979,10 @@ document.getElementById("sumupKey").addEventListener("input", e => {
   sumupKey = e.target.value.trim();
   store.set("sumupKey", sumupKey);
 });
+document.getElementById("sumupApp").addEventListener("input", e => {
+  sumupApp = e.target.value.trim();
+  store.set("sumupApp", sumupApp);
+});
 document.getElementById("payDefSeg").addEventListener("click", e => {
   const b = e.target.closest("[data-pay-def]");
   if (!b) return;
@@ -2005,6 +2017,9 @@ function applyToggles(){
     b.setAttribute("aria-pressed", String(parseInt(b.dataset.sumup, 10) === sumupOn)));
   document.getElementById("sumupFields").hidden = !sumupOn;
   document.getElementById("sumupKey").value = sumupKey;
+  const appIn = document.getElementById("sumupApp");
+  appIn.value = sumupApp;
+  appIn.placeholder = location.host || "caisse";
   document.querySelectorAll("[data-pay-def]").forEach(b =>
     b.setAttribute("aria-pressed", String(b.dataset.payDef === payDefault)));
   document.getElementById("payDefNote").textContent = {
