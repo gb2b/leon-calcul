@@ -431,6 +431,35 @@ body.settings .panel{transform:none; visibility:visible}
 .sale-btns{display:flex; gap:.4rem}
 .sale-btns .btn{min-height:2.4rem; font-size:.82rem; border-radius:9px}
 .muted-note{color:var(--muted); font-size:.85rem; margin:0}
+.editor{display:flex; flex-direction:column; gap:.25rem; max-height:26rem; overflow-y:auto}
+.ed-cat{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--c,var(--muted)); font-weight:700; margin-top:.5rem}
+.ed-row{
+  display:flex; align-items:center; gap:.5rem; width:100%; text-align:left;
+  border:1px solid var(--line); background:var(--surface-2); border-radius:10px; padding:.45rem .6rem;
+}
+.ed-row .en{flex:1; min-width:0; font-size:.88rem; line-height:1.25}
+.ed-row .en small{display:block; color:var(--muted); font-size:.75rem}
+.ed-row .ep{font-family:var(--mono); font-weight:700; font-size:.9rem; font-variant-numeric:tabular-nums}
+.ed-row svg{width:1rem; height:1rem; color:var(--muted)}
+.ed-add{
+  border:1px dashed var(--line); background:none; border-radius:10px; padding:.45rem .6rem;
+  font-size:.85rem; font-weight:600; color:var(--accent); text-align:left;
+}
+.field{display:flex; flex-direction:column; gap:.3rem}
+.field label{font-size:.72rem; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); font-weight:700}
+.field input, .field select{
+  font:inherit; font-size:min(1rem,4.2vw); padding:.55rem .7rem; border-radius:10px;
+  border:1px solid var(--line); background:var(--surface-2); color:var(--ink); width:100%;
+}
+.field input[type="text"]{font-weight:600}
+.field .price-in{font-family:var(--mono); font-weight:700}
+.icon-pick{display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:.35rem}
+.icon-pick button{
+  aspect-ratio:1; border:1px solid var(--line); background:var(--surface-2); border-radius:9px;
+  display:flex; align-items:center; justify-content:center; color:var(--ink);
+}
+.icon-pick button svg{width:1.3rem; height:1.3rem}
+.icon-pick button[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
 .stock{display:flex; flex-direction:column; gap:.3rem; max-height:24rem; overflow-y:auto}
 .stock-cat{font-size:.7rem; letter-spacing:.12em; text-transform:uppercase; color:var(--c,var(--muted)); font-weight:700; margin-top:.4rem}
 .stock-row{display:flex; align-items:center; gap:.5rem}
@@ -653,6 +682,37 @@ body.settings .panel{transform:none; visibility:visible}
   </div>
 </div>
 
+<div class="modal-scrim" id="itemModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="itemTitle">
+    <h2 id="itemTitle">Modifier l’article</h2>
+    <div class="field">
+      <label for="fName">Nom</label>
+      <input type="text" id="fName" autocomplete="off" placeholder="Bière pression">
+    </div>
+    <div class="field">
+      <label for="fSub">Description (facultatif)</label>
+      <input type="text" id="fSub" autocomplete="off" placeholder="Le verre">
+    </div>
+    <div class="field">
+      <label for="fPrice">Prix en euros</label>
+      <input type="text" inputmode="decimal" id="fPrice" class="price-in" placeholder="3">
+    </div>
+    <div class="field">
+      <label for="fCat">Catégorie</label>
+      <select id="fCat"></select>
+    </div>
+    <div class="field">
+      <label>Icône</label>
+      <div class="icon-pick" id="fIcons"></div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn danger" id="fDelete">Supprimer</button>
+      <button type="button" class="btn" id="fCancel">Annuler</button>
+      <button type="button" class="btn primary" id="fSave">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-scrim" id="consigneModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="consTitle">
     <h2 id="consTitle">Consigne ?</h2>
@@ -764,6 +824,13 @@ body.settings .panel{transform:none; visibility:visible}
   </section>
 
   <section class="set">
+    <h3>Modifier le menu</h3>
+    <p>Prix, noms, articles. Les commandes déjà encaissées gardent leurs montants.</p>
+    <div class="editor" id="editor"></div>
+    <button type="button" class="btn" id="menuReset">Rétablir le menu d’origine</button>
+  </section>
+
+  <section class="set">
     <h3>Stock</h3>
     <p>Marquez un article épuisé : il reste affiché, barré, et ne peut plus être ajouté.</p>
     <div class="stock" id="stockList"></div>
@@ -828,7 +895,12 @@ body.settings .panel{transform:none; visibility:visible}
 
 <script>
 /* ===================== Menu ===================== */
-const MENU = [
+const store = {
+  get(k, d){ try { const v = localStorage.getItem("caisse-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v){ try { localStorage.setItem("caisse-" + k, JSON.stringify(v)); } catch (e) {} }
+};
+
+const DEFAULT_MENU = [
   { cat:"Plancha", c:"c1", st:"plancha", icon:"ic-sausage", items:[
     { id:"chipo",  name:"Chipolatas + frites", sub:"Sausage and chips", price:8, icon:"ic-sausage" },
     { id:"poulet", name:"Poulet mariné + frites", sub:"Marinated chicken and chips", price:9, icon:"ic-chicken" },
@@ -863,8 +935,24 @@ const MENU = [
     { id:"eau15", drink:true, name:"Eau 1,5 L", sub:"", price:2, icon:"ic-water" },
   ]},
 ];
+/* Le menu est modifiable depuis les réglages ; le tableau ci-dessus sert de base. */
+const clone = o => JSON.parse(JSON.stringify(o));
+function loadMenu(){
+  const saved = store.get("menu", null);
+  if (!saved || !Array.isArray(saved) || !saved.length) return clone(DEFAULT_MENU);
+  // on repart des catégories d'origine pour garder couleur, icône et poste
+  return saved.map(c => {
+    const base = DEFAULT_MENU.find(d => d.cat === c.cat) || {};
+    return Object.assign({}, base, c, { items:c.items.map(i => Object.assign({}, i)) });
+  });
+}
+let MENU = loadMenu();
 const ALL = {};
-MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = Object.assign({ c:c.c, st:c.st }, i); }));
+function indexMenu(){
+  Object.keys(ALL).forEach(k => delete ALL[k]);
+  MENU.forEach(c => c.items.forEach(i => { ALL[i.id] = Object.assign({ c:c.c, st:c.st }, i); }));
+}
+indexMenu();
 
 /* Billets et pièces aux couleurs réelles. Pas de centimes : tous les prix sont entiers. */
 const MONEY = [
@@ -880,10 +968,6 @@ const MONEY = [
 const euro = n => n.toFixed(2).replace(".", ",") + " €";
 const euroC = c => euro(c / 100);
 
-const store = {
-  get(k, d){ try { const v = localStorage.getItem("caisse-" + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
-  set(k, v){ try { localStorage.setItem("caisse-" + k, JSON.stringify(v)); } catch (e) {} }
-};
 
 /* ===================== État ===================== */
 let order = store.get("order", {});
@@ -917,7 +1001,9 @@ function buzz(pattern){ if (vibe && canVibrate){ try { navigator.vibrate(pattern
 const menuEl = document.getElementById("menu");
 const tabsEl = document.getElementById("tabs");
 
-menuEl.innerHTML = MENU.map(c => `
+function buildMenu(){
+  indexMenu();
+  menuEl.innerHTML = MENU.map(c => `
   <section class="cat ${c.c}" data-cat="${c.cat}">
     <h2><span>${c.cat}</span></h2>
     <div class="grid">
@@ -936,7 +1022,7 @@ menuEl.innerHTML = MENU.map(c => `
     </div>
   </section>`).join("");
 
-tabsEl.innerHTML = `
+  tabsEl.innerHTML = `
   <button type="button" class="tab c0" data-cat-set="__all">
     <svg aria-hidden="true"><use href="#ic-all"></use></svg>Tout
   </button>` + MENU.map(c => `
@@ -944,10 +1030,15 @@ tabsEl.innerHTML = `
     <svg aria-hidden="true"><use href="#${c.icon}"></use></svg>${c.cat}
   </button>`).join("");
 
+  secOrder = Array.prototype.slice.call(menuEl.children);
+  tabOrder = Array.prototype.slice.call(tabsEl.children);
+  Object.keys(order).forEach(id => { if (!ALL[id]) delete order[id]; });
+}
+
 const atStation = it => station === "tout" || !station || it.st === station;
 
-const secOrder = Array.prototype.slice.call(menuEl.children);
-const tabOrder = Array.prototype.slice.call(tabsEl.children);
+let secOrder = [], tabOrder = [];
+buildMenu();
 /* Au bar, la consigne passe en tête : c'est ce qu'on ajoute en premier. */
 function orderSections(){
   const first = x => x.dataset.cat === "Consigne" || x.dataset.catSet === "Consigne";
@@ -957,6 +1048,17 @@ function orderSections(){
     ? [tabOrder[0]].concat(tabOrder.slice(1).filter(first), tabOrder.slice(1).filter(x => !first(x)))
     : tabOrder;
   tabs.forEach(x => tabsEl.appendChild(x));
+}
+
+function firstCat(){
+  const plein = c => c.items.some(i => ALL[i.id] && atStation(ALL[i.id]));
+  // même ordre qu'à l'affichage : au bar, la consigne d'abord
+  const liste = station === "bar"
+    ? MENU.filter(c => c.cat === "Consigne").concat(MENU.filter(c => c.cat !== "Consigne"))
+    : MENU;
+  if (lastCat && liste.some(c => c.cat === lastCat && plein(c))) return lastCat;
+  const c = liste.find(plein);
+  return c ? c.cat : null;
 }
 
 function renderView(){
@@ -1187,7 +1289,9 @@ document.getElementById("validateBtn").addEventListener("click", () => {
   if (!t) return;
   const no = nextNo();
   const at = new Date().toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit" });
-  lastSale = { no, at, total:t, items:Object.assign({}, order) };
+  const snap = {};
+  Object.keys(order).forEach(id => { snap[id] = { n:ALL[id].name, p:ALL[id].price }; });
+  lastSale = { no, at, total:t, items:Object.assign({}, order), snap };
   sales.push(lastSale);
   store.set("sales", sales);
   buzz([14, 40, 14]);
@@ -1235,6 +1339,102 @@ function dropSale(no){
   if (lastSale && lastSale.no === no) lastSale = null;
   render();
 }
+
+/* ===================== Éditeur de menu ===================== */
+const ICONS = ["ic-sausage","ic-chicken","ic-fries","ic-plate","ic-cake","ic-mug","ic-pitcher",
+               "ic-bottle","ic-cocktail","ic-wine","ic-flute","ic-champbottle","ic-can","ic-glass",
+               "ic-straw","ic-bubbles","ic-water","ic-coffee"];
+let editing = null;        // { id } pour une modification, { newIn:"Bières" } pour un ajout
+let pickedIcon = ICONS[0];
+
+function renderEditor(){
+  document.getElementById("editor").innerHTML = MENU.map(c => `
+    <div class="ed-cat ${c.c}">${c.cat}</div>
+    ${c.items.map(i => `
+      <button type="button" class="ed-row" data-item-edit="${i.id}">
+        <svg aria-hidden="true"><use href="#${i.icon}"></use></svg>
+        <span class="en">${i.name}${i.sub ? `<small>${i.sub}</small>` : ""}</span>
+        <span class="ep">${euro(i.price)}</span>
+      </button>`).join("")}
+    <button type="button" class="ed-add" data-item-new="${c.cat}">+ Ajouter dans « ${c.cat} »</button>`).join("");
+}
+
+function openItem(edit){
+  editing = edit;
+  const it = edit.id ? ALL[edit.id] : null;
+  document.getElementById("itemTitle").textContent = it ? "Modifier l’article" : "Nouvel article";
+  document.getElementById("fName").value = it ? it.name : "";
+  document.getElementById("fSub").value = it && it.sub ? it.sub : "";
+  document.getElementById("fPrice").value = it ? String(it.price).replace(".", ",") : "";
+  document.getElementById("fCat").innerHTML = MENU.map(c =>
+    `<option value="${c.cat}">${c.cat}</option>`).join("");
+  document.getElementById("fCat").value = it ? catOf(edit.id).cat : edit.newIn;
+  pickedIcon = it ? it.icon : (MENU.find(c => c.cat === edit.newIn) || MENU[0]).icon;
+  document.getElementById("fIcons").innerHTML = ICONS.map(ic =>
+    `<button type="button" data-icon="${ic}" aria-pressed="${ic === pickedIcon}" aria-label="${ic}">
+       <svg aria-hidden="true"><use href="#${ic}"></use></svg></button>`).join("");
+  document.getElementById("fDelete").hidden = !it;
+  document.getElementById("itemModal").hidden = false;
+  document.getElementById("fName").focus();
+}
+const catOf = id => MENU.find(c => c.items.some(i => i.id === id)) || MENU[0];
+function closeItem(){ document.getElementById("itemModal").hidden = true; editing = null; }
+
+function saveMenu(){
+  store.set("menu", MENU);
+  buildMenu();
+  renderEditor(); renderStock(); renderView(); render();
+}
+
+document.getElementById("fIcons").addEventListener("click", e => {
+  const b = e.target.closest("[data-icon]");
+  if (!b) return;
+  pickedIcon = b.dataset.icon;
+  document.querySelectorAll("[data-icon]").forEach(x =>
+    x.setAttribute("aria-pressed", String(x.dataset.icon === pickedIcon)));
+});
+document.getElementById("fCancel").addEventListener("click", closeItem);
+document.getElementById("fSave").addEventListener("click", () => {
+  const name = document.getElementById("fName").value.trim();
+  const price = parseFloat(document.getElementById("fPrice").value.replace(",", "."));
+  if (!name){ toast("Il faut un nom"); return; }
+  if (!isFinite(price) || price < 0){ toast("Prix invalide"); return; }
+  const sub = document.getElementById("fSub").value.trim();
+  const cible = MENU.find(c => c.cat === document.getElementById("fCat").value) || MENU[0];
+
+  if (editing.id){
+    const source = catOf(editing.id);
+    const idx = source.items.findIndex(i => i.id === editing.id);
+    const it = Object.assign({}, source.items[idx], { name, sub, price, icon:pickedIcon });
+    source.items.splice(idx, 1);
+    cible.items.push(it);                         // même tableau si la catégorie n'a pas changé
+  } else {
+    const id = "u" + Math.random().toString(36).slice(2, 8);
+    cible.items.push({ id, name, sub, price, icon:pickedIcon });
+  }
+  closeItem();
+  saveMenu();
+  toast("Menu mis à jour");
+});
+document.getElementById("fDelete").addEventListener("click", e => {
+  arm(e.currentTarget, "Confirmer la suppression ?", () => {
+    const source = catOf(editing.id);
+    source.items = source.items.filter(i => i.id !== editing.id);
+    delete order[editing.id];
+    delete stock[editing.id];
+    store.set("stock", stock);
+    closeItem();
+    saveMenu();
+    toast("Article supprimé");
+  });
+});
+document.getElementById("menuReset").addEventListener("click", e => {
+  arm(e.currentTarget, "Rétablir le menu d’origine ?", () => {
+    MENU = clone(DEFAULT_MENU);
+    saveMenu();
+    toast("Menu d’origine rétabli");
+  });
+});
 
 /* ===================== Poste de caisse et stock ===================== */
 function applyStation(){
@@ -1298,9 +1498,15 @@ function renderDay(){
 function soldLines(){
   const agg = {};
   sales.forEach(s => Object.keys(s.items).forEach(id => { agg[id] = (agg[id] || 0) + s.items[id]; }));
-  return Object.keys(agg).filter(id => ALL[id])
-    .map(id => ({ id, name:ALL[id].name, c:ALL[id].c, q:agg[id], sum:ALL[id].price * agg[id] }))
-    .sort((a, b) => b.sum - a.sum);
+  const info = id => {
+    if (ALL[id]) return { name:ALL[id].name, price:ALL[id].price, c:ALL[id].c };
+    for (const s of sales) if (s.snap && s.snap[id]) return { name:s.snap[id].n, price:s.snap[id].p, c:"c0" };
+    return null;
+  };
+  return Object.keys(agg).map(id => {
+    const i = info(id);
+    return i && { id, name:i.name, c:i.c, q:agg[id], sum:i.price * agg[id] };
+  }).filter(Boolean).sort((a, b) => b.sum - a.sum);
 }
 function renderTally(){
   const rows = soldLines();
@@ -1314,7 +1520,10 @@ function renderHist(){
   el.innerHTML = sales.slice().reverse().map(s => `
     <div class="sale">
       <div class="sale-top"><b>n° ${s.no}</b> <span class="muted-note">${s.at}</span> <span class="amt">${euro(s.total)}</span></div>
-      <div class="sale-items">${Object.keys(s.items).map(id => (ALL[id] ? s.items[id] + " × " + ALL[id].name : "")).filter(Boolean).join(" · ") || "—"}</div>
+      <div class="sale-items">${Object.keys(s.items).map(id => {
+        const nom = ALL[id] ? ALL[id].name : (s.snap && s.snap[id] ? s.snap[id].n : null);
+        return nom ? s.items[id] + " × " + nom : "";
+      }).filter(Boolean).join(" · ") || "—"}</div>
       <div class="sale-btns">
         <button type="button" class="btn ghost" data-edit="${s.no}">Modifier</button>
         <button type="button" class="btn ghost" data-cancel="${s.no}">Annuler</button>
@@ -1401,14 +1610,18 @@ document.addEventListener("click", e => {
   const tab = e.target.closest("[data-cat-set]");
   if (tab){ activeCat = tab.dataset.catSet === "__all" ? null : tab.dataset.catSet; renderView(); return; }
   if (e.target.closest("#viewBtn")){
-    activeCat = activeCat === null ? (lastCat || MENU[0].cat) : null;
+    activeCat = activeCat === null ? firstCat() : null;
     renderView();
     return;
   }
   const vb = e.target.closest("[data-view]");
-  if (vb){ activeCat = vb.dataset.view === "all" ? null : (lastCat || MENU[0].cat); renderView(); return; }
+  if (vb){ activeCat = vb.dataset.view === "all" ? null : firstCat(); renderView(); return; }
   const edit = e.target.closest("[data-edit]");
   if (edit){ if (restoreSale(parseInt(edit.dataset.edit, 10))){ closeSettings(); openSheet(); } return; }
+  const ie = e.target.closest("[data-item-edit]");
+  if (ie){ openItem({ id:ie.dataset.itemEdit }); return; }
+  const inew = e.target.closest("[data-item-new]");
+  if (inew){ openItem({ newIn:inew.dataset.itemNew }); return; }
   const st = e.target.closest("[data-stock]");
   if (st){ toggleStock(st.dataset.stock); return; }
   const cancel = e.target.closest("[data-cancel]");
@@ -1446,7 +1659,7 @@ document.getElementById("dayReset").addEventListener("click", e => {
 });
 
 /* ===================== Réglages ===================== */
-function openSettings(){ document.body.classList.add("settings"); renderStock(); refreshOffline(); }
+function openSettings(){ document.body.classList.add("settings"); renderStock(); renderEditor(); refreshOffline(); }
 function closeSettings(){ disarm(); document.body.classList.remove("settings"); }
 const settingsBtn = document.getElementById("settingsBtn");
 let holdTimer = null;
@@ -1464,6 +1677,8 @@ document.getElementById("scrim").addEventListener("click", closeSettings);
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (!idleModal.hidden) return;
+  const item = document.getElementById("itemModal");
+  if (!item.hidden){ closeItem(); return; }
   const cons = document.getElementById("consigneModal");
   if (!cons.hidden){ closeConsigne(false); return; }
   const done = document.getElementById("doneModal");

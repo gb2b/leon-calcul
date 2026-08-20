@@ -35,6 +35,10 @@ monnaie à rendre — en billets et en pièces.
 - Historique des commandes encaissées : chacune peut être annulée ou reprise pour
   modification.
 - Rappel « commande oubliée » après un délai sans appui (réglable, désactivable).
+- Éditeur de menu dans les réglages : changer un prix, un nom, une description ou une
+  icône, déplacer un article de catégorie, en ajouter, en supprimer, et rétablir le menu
+  d'origine. Le menu modifié est enregistré sur l'appareil ; les commandes déjà
+  encaissées gardent leurs montants même si l'article disparaît.
 - Réglages à part : taille du texte (5 paliers), thème auto/clair/sombre, affichage du
   menu, retour tactile, ouverture des réglages par appui long.
 - Tout est calculé sur l'appareil ; la commande en cours, l'historique et les réglages
@@ -81,5 +85,6 @@ Les sauces (mayonnaise, ketchup) sont offertes « à la demande » sur le menu :
 figurent donc pas dans la caisse. Tous les prix étant des euros entiers, le clavier
 d'encaissement ne propose pas de centimes ; le champ libre accepte n'importe quel montant.
 
-Pour changer un prix ou un libellé, modifiez le tableau `MENU` en haut du `<script>`
-dans `index.html`.
+Pour changer un prix ou un libellé, passez par Réglages → « Modifier le menu ». Le
+tableau `DEFAULT_MENU` en haut du `<script>` reste la base rétablie par le bouton
+« Rétablir le menu d'origine ».
