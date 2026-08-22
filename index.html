@@ -975,6 +975,7 @@ body.settings .panel{transform:none; visibility:visible}
     <h3>Gestion</h3>
     <button type="button" class="btn nav" data-page="menu">Modifier le menu <span>›</span></button>
     <button type="button" class="btn nav" data-page="stock">Stock <span>›</span></button>
+    <button type="button" class="btn nav" data-page="bilan">Bilan de la journée <span>›</span></button>
   </section>
 
   <section class="set">
@@ -1162,7 +1163,7 @@ if (idleSec === null){                                  // reprise de l'ancien r
 }
 let consMode = store.get("consMode", "ask");    // ask | manual
 if (consMode === "auto") consMode = "ask";      // ancien mode automatique, retiré
-const VERSION = "2026-08-20 · 19";                  // repère de version, affiché dans les réglages
+const VERSION = "2026-08-20 · 20";                  // repère de version, affiché dans les réglages
 let payDefault = store.get("payDefault", "cash");   // cash | card | cardonly
 let payMode = "cash";        // cash | card
 let givenCents = 0;

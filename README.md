@@ -59,8 +59,6 @@ monnaie à rendre — en billets et en pièces.
   compte : le réseau ne sert qu'à charger la page. Effacer les données du navigateur ou
   désinstaller l'application efface tout, bilan compris. C'est rappelé dans les réglages,
   section « Données ».
-- Le bilan de la journée reste calculé et sa page existe, mais son entrée est retirée des
-  réglages pour le moment (une ligne de HTML à remettre pour la rétablir).
 
 ## Utiliser hors ligne
 
